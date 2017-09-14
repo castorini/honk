@@ -18,6 +18,21 @@ class AudioSnippet(object):
             snippet.append(s)
         return snippet
 
+    def trim_window(self, window_size):
+        nbytes = len(self.byte_data) // len(self.amplitudes)
+        window_size //= nbytes
+        cc_window = np.ones(window_size)
+        clip_energy = np.correlate(np.abs(self.amplitudes), cc_window)
+        smooth_window_size = 1000
+        smooth_window = np.ones(smooth_window_size)
+        scale = len(self.amplitudes) / (len(self.amplitudes) - smooth_window_size + 1)
+        clip_energy2 = np.correlate(clip_energy, smooth_window)
+        window_i = int(np.argmax(clip_energy2) * scale)
+        window_i = max(0, window_i - window_i % nbytes)
+        self.amplitudes = self.amplitudes[window_i:window_i + window_size]
+        window_i *= nbytes
+        self.byte_data = self.byte_data[window_i:window_i + window_size * nbytes]
+
     def ltrim(self, limit=0.01):
         if not self.byte_data:
             return
@@ -117,7 +132,6 @@ def record_speech_sequentially(file_name_prefix="output", min_sound_lvl=0.01, sp
                 print("Time left: {:<10}".format(active_count), end="\r")
                 if active_count == 0:
                     output_name = "{}.{}.wav".format(file_name_prefix, i)
-                    #curr_snippet.trim()
                     i += 1
                     with wave.open(output_name, "w") as f:
                         f.setnchannels(1)
@@ -128,7 +142,8 @@ def record_speech_sequentially(file_name_prefix="output", min_sound_lvl=0.01, sp
                     break
 
 def clean_dir(directory=".", cutoff_ms=1000):
-    """Trims all audio in directory to cutoff_ms. 1 second is consistent with speech command dataset.
+    """Trims all audio in directory to the loudest window of length cutoff_ms. 1 second is consistent 
+    with the speech command dataset.
 
     Args:
         directory: The directory containing all the .wav files. Should have nothing but .wav
@@ -141,12 +156,14 @@ def clean_dir(directory=".", cutoff_ms=1000):
                 n_channels = f.getnchannels()
                 width = f.getsampwidth()
                 rate = f.getframerate()
-                data = f.readframes(int((cutoff_ms / 1000) * rate))
+                n_samples = int((cutoff_ms / 1000) * rate)
+                snippet = AudioSnippet(f.readframes(10 * n_samples))
+            snippet.trim_window(n_samples * width)
             with wave.open(fullpath, "w") as f:
                 f.setnchannels(n_channels)
                 f.setsampwidth(width)
                 f.setframerate(rate)
-                f.writeframes(data)
+                f.writeframes(snippet.byte_data)
             print("Trimmed {} to {} ms".format(filename, cutoff_ms))
         except wave.Error:
             pass
@@ -191,7 +208,7 @@ def main():
             type=str,
             nargs="?",
             default=".",
-            help="Clean the directory's audio files")
+            help="Trim the directory's audio files")
         flags, _ = parser.parse_known_args()
         clean_dir(flags.directory)
     elif subcommand == "listen":
