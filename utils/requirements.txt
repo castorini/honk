@@ -1,0 +1,2 @@
+PyAudio>=0.2
+numpy>=1.12
