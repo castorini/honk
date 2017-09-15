@@ -165,7 +165,7 @@ def clean_dir(directory=".", cutoff_ms=1000):
                 f.setframerate(rate)
                 f.writeframes(snippet.byte_data)
             print("Trimmed {} to {} ms".format(filename, cutoff_ms))
-        except wave.Error:
+        except (wave.Error, IsADirectoryError, PermissionError) as e:
             pass
 
 def main():
