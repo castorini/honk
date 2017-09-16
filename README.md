@@ -11,11 +11,11 @@ Since the server is behind a firewall, one workflow is to create an SSH tunnel a
 ```
 POST /listen
 ```
-Args:
-[*] `wav_data`: 16kHz sampling rate, 16-bit PCM mono-channel raw audio data (with no WAVE header), gzipped and base64-encoded.
+Args (JSON):
+* `wav_data`: 16kHz sampling rate, 16-bit PCM mono-channel raw audio data (with no WAVE header), gzipped and base64-encoded.
 
-Returns:
-[*] `contains_command`: `true` if `wav_data` contains "anserini," `false` otherwise.
+Returns (JSON):
+* `contains_command`: `true` if `wav_data` contains "anserini," `false` otherwise.
 
 For a real-time example, please see `utils/client.py`.
 
