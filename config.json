@@ -1,0 +1,7 @@
+{
+    "server": {
+        "server.socket_port": 16888,
+        "server.socket_host": "0.0.0.0"
+    },
+    "model_path": "model/graph.pb"
+}
