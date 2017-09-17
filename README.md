@@ -1,4 +1,23 @@
 # Speech Command Recognition
+## Server
+### Setup and deployment
+`python speech-command-recognition` deploys the web service for identifying if audio contain "anserini." By default, `config.json` is used for configuration, but that can be changed with `--config=<file_name>`.
+
+If the server fails to start with Tensorflow errors, then you don't have the Tensorflow nightly version. You may find that information [here](https://hub.docker.com/r/tensorflow/tensorflow/tags/). Tensorflow 1.4 will have the missing modules.
+
+Since the server is behind a firewall, one workflow is to create an SSH tunnel and use port forwarding with the port specified in config (default 16888).
+
+### Endpoint specifications
+```
+POST /listen
+```
+Args (JSON):
+* `wav_data`: 16kHz sampling rate, 16-bit PCM mono-channel raw audio data (with no WAVE header), gzipped and base64-encoded.
+
+Returns (JSON):
+* `contains_command`: `true` if `wav_data` contains "anserini," `false` otherwise.
+
+For a real-time example, please see `utils/client.py`.
 
 ## Utilities
 ### Recording audio
