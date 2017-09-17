@@ -32,16 +32,16 @@ class LabelService(object):
         return (self.labels[np.argmax(predictions)], max(predictions))
 
 def json_in(f):
-  def merge_dicts(x, y):
-    z = x.copy()
-    z.update(y)
-    return z
-  def wrapper(*args, **kwargs):
-    cl = cherrypy.request.headers["Content-Length"]
-    data = json.loads(cherrypy.request.body.read(int(cl)).decode("utf-8"))
-    kwargs = merge_dicts(kwargs, data)
-    return f(*args, **kwargs)
-  return wrapper
+    def merge_dicts(x, y):
+        z = x.copy()
+        z.update(y)
+        return z
+    def wrapper(*args, **kwargs):
+        cl = cherrypy.request.headers["Content-Length"]
+        data = json.loads(cherrypy.request.body.read(int(cl)).decode("utf-8"))
+        kwargs = merge_dicts(kwargs, data)
+        return f(*args, **kwargs)
+    return wrapper
 
 def stride(array, stride_size, window_size):
     i = 0
