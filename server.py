@@ -10,13 +10,14 @@ import wave
 import zlib
 
 class LabelService(object):
-    def __init__(self, graph_filename, labels=["_silence_", "_unknown_", "anserini", "random"]):
+    def __init__(self, graph_filename, labels=["_silence_", "_unknown_", "anserini", "random"], max_memory_pct=0.01):
         with tf.gfile.FastGFile(graph_filename, "rb") as f:
             graph_def = tf.GraphDef()
             graph_def.ParseFromString(f.read())
             tf.import_graph_def(graph_def, name="")
         self.labels = labels
-        self.sess = tf.Session()
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=max_memory_pct)
+        self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 
     def label(self, wav_data):
         """Labels audio data as one of the specified trained labels
