@@ -10,7 +10,7 @@ import wave
 import zlib
 
 class LabelService(object):
-    def __init__(self, graph_filename, labels=["_silence_", "_unknown_", "anserini", "random"], max_memory_pct=0.1):
+    def __init__(self, graph_filename, labels=["_silence_", "_unknown_", "anserini", "random"], max_memory_pct=0.01):
         with tf.gfile.FastGFile(graph_filename, "rb") as f:
             graph_def = tf.GraphDef()
             graph_def.ParseFromString(f.read())

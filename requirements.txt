@@ -1,5 +1,7 @@
 PyAudio>=0.2
 numpy>=1.12
-cherrypy>=11.0.0,<11.99
-requests>=2.18,<2.99
+cherrypy>=11.0.0,<=11.99
+requests>=2.18,<=2.99
 SpeechRecognition==3.7.1
+pyttsx3==2.6
+Pillow>=4.0.0,<=4.99
