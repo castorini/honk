@@ -1,2 +1,4 @@
 PyAudio>=0.2
 numpy>=1.12
+cherrypy>=11.0.0,<11.99
+requests>=2.18,<2.99
