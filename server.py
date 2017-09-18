@@ -52,7 +52,7 @@ def stride(array, stride_size, window_size):
 
 class ListenEndpoint(object):
     exposed = True
-    def __init__(self, label_service, stride_size=500, min_keyword_prob=0.8, keyword="anserini"):
+    def __init__(self, label_service, stride_size=500, min_keyword_prob=0., keyword="anserini"):
         """The REST API endpoint that determines if audio contains the keyword.
 
         Args:
@@ -87,11 +87,12 @@ class ListenEndpoint(object):
     @json_in
     def POST(self, **kwargs):
         wav_data = zlib.decompress(base64.b64decode(kwargs["wav_data"]))
-        labels = {label: 0. for label in self.label_service.labels}
         for data in stride(wav_data, int(2 * 16000 * self.stride_size / 1000), 2 * 16000):
             label, prob = self.label_service.label(self._encode_audio(data))
-            labels[label] = max(labels[label], prob)
-        return dict(contains_command=bool(labels[self.keyword] > self.min_keyword_prob))
+            if label == "anserini" and prob >= self.min_keyword_prob:
+                return dict(contains_command=True)
+        return dict(contains_command=False)
+
 
 def start(config):
     cherrypy.config.update({

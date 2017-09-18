@@ -57,6 +57,8 @@ class GooseWindow(Thread):
         self._switch = not self._switch
 
 def clean_text(text):
+    if not text:
+        return ""
     pattern = re.compile(r"^([A-z0-9,\.]+(\-*[A-z0-9,\.]+)*)+$")
     words = []
     for tok in text.split():
@@ -172,8 +174,11 @@ class Client(object):
                 question = self._recognize_speech()
                 print("You asked, \"{}\"".format(question))
                 answer = clean_text(self.query_qa(question))
-                print("Answer: {}".format(answer))
-                self.say_text(answer)
+                if answer:
+                    print("Answer: {}".format(answer))
+                    self.say_text(answer)
+                else:
+                    print("No answer available!")
 
                 buf = [self.stream.read(self.chunk_size), self.stream.read(self.chunk_size)]
                 self.goose_window.draw_goose("inactive")
@@ -213,4 +218,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
