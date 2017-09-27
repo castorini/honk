@@ -3,5 +3,16 @@
         "server.socket_port": 16888,
         "server.socket_host": "0.0.0.0"
     },
-    "model_path": "model/graph.pb"
+    "model_path": "model/graph.pb",
+    "train_scripts_path": "speech_commands",
+    "speech_dataset_path": "/tmp/speech_dataset/",
+    "model_options": {
+        "train": {
+            "how_many_training_steps": "1700,300",
+            "wanted_words": "command,random",
+            "train_dir": "/tmp/speech_commands_train",
+            "unknown_percentage": 20
+        },
+        "freeze": {}
+    }
 }

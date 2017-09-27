@@ -1,4 +1,3 @@
-from manage_audio import AudioSnippet
 from threading import Lock, Thread
 from tkinter import *
 from tkinter.ttk import *
@@ -7,15 +6,18 @@ import base64
 import io
 import json
 import os
-import PIL.ImageTk as itk
-import pyaudio
-import pyttsx3
 import re
 import requests
-import speech_recognition as sr
 import time
 import wave
 import zlib
+
+import PIL.ImageTk as itk
+import pyaudio
+import pyttsx3
+import speech_recognition as sr
+
+from manage_audio import AudioSnippet
 
 class GooseWindow(Thread):
     def __init__(self, assets_dir):
@@ -100,9 +102,9 @@ def play_audio(data, amplitude_cb=None):
         audio.terminate()
 
 class Client(object):
-    def __init__(self, listen_endpoint, qa_endpoint, goose_window, watson_api=None):
+    def __init__(self, server_endpoint, qa_endpoint, goose_window, watson_api=None):
         self.watson_api = watson_api
-        self.listen_endpoint = listen_endpoint
+        self.server_endpoint = server_endpoint
         self.qa_endpoint = qa_endpoint
         self.chunk_size = 16000
         self.recognizer = sr.Recognizer()
@@ -131,7 +133,7 @@ class Client(object):
 
     def contains_command(self, data):
         data = base64.b64encode(zlib.compress(data))
-        response = requests.post("{}/listen".format(self.listen_endpoint), json=dict(wav_data=data.decode()))
+        response = requests.post("{}/listen".format(self.server_endpoint), json=dict(wav_data=data.decode()))
         return json.loads(response.content.decode())["contains_command"]
 
     def query_qa(self, question):
@@ -189,7 +191,7 @@ class Client(object):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--listen-endpoint",
+        "--server-endpoint",
         type=str,
         default="http://127.0.0.1:16888",
         help="The endpoint to use")
@@ -213,7 +215,7 @@ def main():
     watson_api = None
     if flags.watson_username and flags.watson_password:
         watson_api = WatsonApi(flags.watson_username, flags.watson_password)
-    client = Client(flags.listen_endpoint, flags.qa_endpoint, goose_window, watson_api)
+    client = Client(flags.server_endpoint, flags.qa_endpoint, goose_window, watson_api)
     client.start_live_qa()
 
 if __name__ == "__main__":
