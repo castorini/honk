@@ -34,11 +34,11 @@ class GooseWindow(Thread):
         img_width, img_height = (213, 365)
         self.canvas = Canvas(width=img_width + 64, height=img_height + 64, bg="white")
         self.canvas.pack()
-        self.init_images()
+        self._init_resources()
         self.draw_goose("inactive")
         window.mainloop()
 
-    def init_images(self, names=["awake", "inactive", "open"]):
+    def _init_resources(self, names=["awake", "inactive", "open"]):
         self.images = {}
         for name in names:
             file = os.path.join(self.assets_dir, "anserini-{}.png".format(name))
@@ -164,11 +164,11 @@ class Client(object):
         self.stream.close()
         self.audio.terminate()
 
-    def send_retarget(self, data, positive=True):
+    def send_retarget_data(self, data, positive=True):
         data = base64.b64encode(zlib.compress(data))
-        #requests.post("{}/data".format(self.server_endpoint), json=dict(wav_data=data.decode(), positive=positive))
+        requests.post("{}/data".format(self.server_endpoint), json=dict(wav_data=data.decode(), positive=positive))
 
-    def _do_negative_retargeting(self, n_minutes=1):
+    def _retarget_negative(self, n_minutes=1):
         if n_minutes == 1:
             self.say_text("Please speak random words for the next minute.")
         else:
@@ -178,9 +178,9 @@ class Client(object):
         while t0 < n_minutes * 60:
             snippet.append(AudioSnippet(self.stream.read(self.chunk_size)))
             t0 += self.chunk_size / 16000
-        self.send_retarget(snippet.byte_data, positive=False)
+        self.send_retarget_data(snippet.byte_data, positive=False)
 
-    def _do_positive_retargeting(self, n_times=2):
+    def _retarget_positive(self, n_times=2):
         self.say_text("Please speak the new command {} times.".format(n_times))
         self.goose_window.draw_goose("inactive")
         n_said = 0
@@ -201,13 +201,22 @@ class Client(object):
                 snippet = AudioSnippet(self.stream.read(self.chunk_size))
             if tot_snippet.byte_data:
                 tot_snippet.trim_window(16000 * 2)
-                self.send_retarget(tot_snippet.byte_data)
+                self.send_retarget_data(tot_snippet.byte_data)
+
+    def _do_retarget(self):
+        requests.post("{}/train".format(self.server_endpoint))
+        self.say_text("Started training your custom keyword")
+        while True:
+            time.sleep(10)
+            if not json.loads(requests.get("{}/train".format(self.server_endpoint)))["in_progress"]:
+                self.say_text("Completed keyword retargeting!")
 
     def start_retarget(self):
         print("Follow the goose!")
         self._start_listening()
-        self._do_positive_retargeting()
-        self._do_negative_retargeting()
+        self._retarget_positive()
+        self._retarget_negative()
+        self._do_retarget()
 
     def start_live_qa(self):
         self._start_listening()

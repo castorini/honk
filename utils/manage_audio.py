@@ -1,9 +1,11 @@
 import argparse
-import numpy as np
 import os
-import pyaudio
+import random
 import sys
 import wave
+
+import numpy as np
+import pyaudio
 
 class AudioSnippet(object):
     def __init__(self, byte_data=b"", dtype=np.int16):
@@ -17,6 +19,26 @@ class AudioSnippet(object):
         for s in snippets:
             snippet.append(s)
         return snippet
+
+    def copy(self):
+        return AudioSnippet(self.byte_data)
+
+    def chunk(self, size=32000 // 5, stride=4000):
+        chunks = []
+        i = 0
+        while i + size < len(self.byte_data):
+            chunks.append(AudioSnippet(self.byte_data[i:i + size]))
+            i += stride
+        return chunks
+
+    def rand_pad(self, total_length, noise_level=0.001):
+        space = total_length - len(self.byte_data)
+        len_a = random.randint(0, space)
+        len_b = space - len_a
+        rand_a = (noise_level * np.random.random(size=len_a).astype(self.dtype)).astype(self.dtype)
+        rand_b = (noise_level * np.random.random(size=len_b).astype(self.dtype)).astype(self.dtype)
+        self.byte_data = b"".join([rand_a, self.byte_data, rand_b])
+        self._compute_amps()
 
     def trim_window(self, window_size):
         nbytes = len(self.byte_data) // len(self.amplitudes)
@@ -44,10 +66,12 @@ class AudioSnippet(object):
         i = max(0, i - i % nbytes)
         self.amplitudes = self.amplitudes[i:]
         self.byte_data = self.byte_data[i * nbytes:]
+        return self
 
     def trim(self, limit=0.01):
         self.ltrim(limit)
         self.rtrim(limit)
+        return self
 
     def rtrim(self, limit=0.01):
         if not self.byte_data:
@@ -60,6 +84,7 @@ class AudioSnippet(object):
         i = min(len(self.amplitudes), i + (nbytes - i % nbytes))
         self.amplitudes = self.amplitudes[:i]
         self.byte_data = self.byte_data[:i * nbytes]
+        return self
 
     def _compute_amps(self):
         self.amplitudes = np.frombuffer(self.byte_data, self.dtype).astype(float) / np.iinfo(self.dtype).max
