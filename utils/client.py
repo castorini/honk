@@ -164,6 +164,51 @@ class Client(object):
         self.stream.close()
         self.audio.terminate()
 
+    def send_retarget(self, data, positive=True):
+        data = base64.b64encode(zlib.compress(data))
+        #requests.post("{}/data".format(self.server_endpoint), json=dict(wav_data=data.decode(), positive=positive))
+
+    def _do_negative_retargeting(self, n_minutes=1):
+        if n_minutes == 1:
+            self.say_text("Please speak random words for the next minute.")
+        else:
+            self.say_text("Please speak random words for the next {} minutes.".format(n_minutes))
+        t0 = 0
+        snippet = AudioSnippet()
+        while t0 < n_minutes * 60:
+            snippet.append(AudioSnippet(self.stream.read(self.chunk_size)))
+            t0 += self.chunk_size / 16000
+        self.send_retarget(snippet.byte_data, positive=False)
+
+    def _do_positive_retargeting(self, n_times=2):
+        self.say_text("Please speak the new command {} times.".format(n_times))
+        self.goose_window.draw_goose("inactive")
+        n_said = 0
+        while n_said < n_times:
+            self.goose_window.draw_goose("inactive")
+            snippet = AudioSnippet(self.stream.read(self.chunk_size))
+            tot_snippet = AudioSnippet()
+
+            while snippet.amplitude_rms() > 0.01:
+                if not tot_snippet.byte_data:
+                    self.goose_window.draw_goose("awake")
+                    if n_said == n_times // 2:
+                        self.say_text("Only {} times left.".format(n_times - n_said))
+                    elif n_said == n_times - 5:
+                        self.say_text("Only 5 more times.")
+                    n_said += 1
+                tot_snippet.append(snippet)
+                snippet = AudioSnippet(self.stream.read(self.chunk_size))
+            if tot_snippet.byte_data:
+                tot_snippet.trim_window(16000 * 2)
+                self.send_retarget(tot_snippet.byte_data)
+
+    def start_retarget(self):
+        print("Follow the goose!")
+        self._start_listening()
+        self._do_positive_retargeting()
+        self._do_negative_retargeting()
+
     def start_live_qa(self):
         self._start_listening()
         print("Speak Anserini when ready!")
@@ -188,6 +233,18 @@ class Client(object):
             buf[0] = buf[1]
             buf[1] = self.stream.read(self.chunk_size)
 
+def start_client(flags):
+    file_dir = os.path.dirname(os.path.realpath(__file__))
+    goose_window = GooseWindow(file_dir)
+    watson_api = None
+    if flags.watson_username and flags.watson_password:
+        watson_api = WatsonApi(flags.watson_username, flags.watson_password)
+    client = Client(flags.server_endpoint, flags.qa_endpoint, goose_window, watson_api)
+    if flags.mode == "query":
+        client.start_live_qa()
+    elif flags.mode == "retarget":
+        client.start_retarget()
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -195,6 +252,12 @@ def main():
         type=str,
         default="http://127.0.0.1:16888",
         help="The endpoint to use")
+    parser.add_argument(
+        "--mode",
+        type=str,
+        default="query",
+        choices=["retarget", "query"],
+        help="The mode to run the client in.")
     parser.add_argument(
         "--qa-endpoint",
         type=str,
@@ -210,13 +273,7 @@ def main():
         default="",
         help="If supplied, uses Watson's TTS")
     flags, _ = parser.parse_known_args()
-    file_dir = os.path.dirname(os.path.realpath(__file__))
-    goose_window = GooseWindow(file_dir)
-    watson_api = None
-    if flags.watson_username and flags.watson_password:
-        watson_api = WatsonApi(flags.watson_username, flags.watson_password)
-    client = Client(flags.server_endpoint, flags.qa_endpoint, goose_window, watson_api)
-    client.start_live_qa()
+    start_client(flags)
 
 if __name__ == "__main__":
     main()

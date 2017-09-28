@@ -81,7 +81,7 @@ class TrainingService(object):
         subprocess.run(cmd_strs)
         self.script_running = False
 
-    def run_script(self):
+    def run_train_script(self):
         if self.script_running:
             return False
         with self._run_lck:
@@ -129,7 +129,7 @@ class TrainEndpoint(object):
 
     @cherrypy.tools.json_out()
     def POST(self):
-        return dict(success=self.train_service.run_script())
+        return dict(success=self.train_service.run_train_script())
 
     @cherrypy.tools.json_out()
     def GET(self):
