@@ -20,6 +20,9 @@ Returns (JSON):
 For a real-time example, please see `utils/client.py`.
 
 ## Utilities
+### Client
+`python client.py` runs the client. You may retarget a keyword by doing `python client.py --mode=retarget`. Please note that text-to-speech may not work well on Linux distros; in this case, please supply IBM Watson credentials via `--watson-username` and `--watson--password`. You can view all the options by doing `python client.py -h`.
+
 ### Recording audio
 
 You may do the following to record sequential audio and save to the same format as that of speech command dataset:
