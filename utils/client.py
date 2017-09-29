@@ -178,9 +178,10 @@ class Client(object):
         while t0 < n_minutes * 60:
             snippet.append(AudioSnippet(self.stream.read(self.chunk_size)))
             t0 += self.chunk_size / 16000
-        self.send_retarget_data(snippet.byte_data, positive=False)
+        for chunk in snippet.chunk(32000, 16000):
+            self.send_retarget_data(chunk.byte_data, positive=False)
 
-    def _retarget_positive(self, n_times=2):
+    def _retarget_positive(self, n_times=30):
         self.say_text("Please speak the new command {} times.".format(n_times))
         self.goose_window.draw_goose("inactive")
         n_said = 0
@@ -198,6 +199,7 @@ class Client(object):
                         self.say_text("Only 5 more times.")
                     n_said += 1
                 tot_snippet.append(snippet)
+                tot_snippet.append(AudioSnippet(self.stream.read(self.chunk_size)))
                 snippet = AudioSnippet(self.stream.read(self.chunk_size))
             if tot_snippet.byte_data:
                 tot_snippet.trim_window(16000 * 2)
@@ -207,13 +209,16 @@ class Client(object):
         requests.post("{}/train".format(self.server_endpoint))
         self.say_text("Started training your custom keyword")
         while True:
-            time.sleep(10)
-            if not json.loads(requests.get("{}/train".format(self.server_endpoint)))["in_progress"]:
+            time.sleep(5)
+            response = requests.get("{}/train".format(self.server_endpoint)).content
+            if not json.loads(response.decode())["in_progress"]:
                 self.say_text("Completed keyword retargeting!")
+                break
 
     def start_retarget(self):
         print("Follow the goose!")
         self._start_listening()
+        requests.delete("{}/data".format(self.server_endpoint))
         self._retarget_positive()
         self._retarget_negative()
         self._do_retarget()

@@ -1,3 +1,4 @@
+import io
 import os
 import shutil
 import subprocess
@@ -35,7 +36,7 @@ class LabelService(object):
         return (self.labels[np.argmax(predictions)], max(predictions))
 
 
-def encode_audio(self, wav_data):
+def encode_audio(wav_data):
     """Encodes raw audio data in WAVE format
 
     Args:
@@ -78,11 +79,20 @@ class TrainingService(object):
         if not os.path.exists(self.pos_directory):
             os.makedirs(self.pos_directory)
 
-    def generate_constrastive(self, data):
+    def generate_contrastive(self, data):
         snippet = AudioSnippet(data)
         chunks = snippet.trim().chunk()
+        chunks2 = snippet.chunk()
+        chunks3 = snippet.chunk()
         for chunk in chunks:
             chunk.rand_pad(32000)
+        for chunk in chunks2:
+            chunk.repeat_fill(24000)
+            chunk.rand_pad(32000)
+        for chunk in chunks3:
+            chunk.repeat_fill(32000)
+        chunks.extend(chunks2)
+        chunks.extend(chunks3)
         return chunks
 
     def clear_examples(self, positive=True):
@@ -97,19 +107,22 @@ class TrainingService(object):
         with wave.open(filename, "wb") as f:
             set_speech_format(f)
             f.writeframes(wav_data)
-        return buf.getvalue()
 
     def _run_script(self, script, options):
         cmd_strs = ["python", script]
         for option, value in options.items():
             cmd_strs.append("--{}={}".format(option, value))
         subprocess.run(cmd_strs)
+
+    def _run_training_script(self):
+        with self._run_lck:
+            self.script_running = True
+        self._run_script(self.train_script, self.options["train"])
+        self._run_script(self.freeze_script, self.options["freeze"])
         self.script_running = False
 
     def run_train_script(self):
         if self.script_running:
             return False
-        with self._run_lck:
-            self.script_running = True
-        threading.Thread(target=self._run_script, args=(self.train_script, self.options["train"])).start()
+        threading.Thread(target=self._run_training_script).start()
         return True

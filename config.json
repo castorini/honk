@@ -13,6 +13,10 @@
             "train_dir": "/tmp/speech_commands_train",
             "unknown_percentage": 20
         },
-        "freeze": {}
+        "freeze": {
+            "wanted_words": "command,random",
+            "output_file": "model/graph.pb",
+            "start_checkpoint": "/tmp/speech_commands_train/conv.ckpt-2000"
+        }
     }
 }

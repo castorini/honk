@@ -21,7 +21,7 @@ class AudioSnippet(object):
         return snippet
 
     def copy(self):
-        return AudioSnippet(self.byte_data)
+        return AudioSnippet(np.copy(self.byte_data))
 
     def chunk(self, size=32000 // 5, stride=4000):
         chunks = []
@@ -33,12 +33,14 @@ class AudioSnippet(object):
 
     def rand_pad(self, total_length, noise_level=0.001):
         space = total_length - len(self.byte_data)
-        len_a = random.randint(0, space)
+        len_a = (random.randint(0, space)) // 2 * 2
         len_b = space - len_a
-        rand_a = (noise_level * np.random.random(size=len_a).astype(self.dtype)).astype(self.dtype)
-        rand_b = (noise_level * np.random.random(size=len_b).astype(self.dtype)).astype(self.dtype)
-        self.byte_data = b"".join([rand_a, self.byte_data, rand_b])
+        self.byte_data = b"".join([b"".join([b"\x00"] * len_a), self.byte_data, b"".join([b"\x00"] * len_b)])
         self._compute_amps()
+
+    def repeat_fill(self, length):
+        n_times = max(1, length // len(self.byte_data))
+        self.byte_data = b"".join([self.byte_data] * n_times)[:length]
 
     def trim_window(self, window_size):
         nbytes = len(self.byte_data) // len(self.amplitudes)

@@ -46,7 +46,7 @@ class DataEndpoint(object):
     @cherrypy.tools.json_out()
     @json_in
     def POST(self, **kwargs):
-        wav_data = zlib.decompress(base64.b64.decode(kwargs["wav_data"]))
+        wav_data = zlib.decompress(base64.b64decode(kwargs["wav_data"]))
         positive = kwargs["positive"]
         self.train_service.write_example(wav_data, positive=positive)
         success = dict(success=True)
@@ -60,9 +60,9 @@ class DataEndpoint(object):
         return success
 
     @cherrypy.tools.json_out()
-    @json_in
-    def DELETE(self, **kwargs):
-        self.train_service.clear_examples(positive=kwargs["positive"])
+    def DELETE(self):
+        self.train_service.clear_examples(positive=True)
+        self.train_service.clear_examples(positive=False)
         return dict(success=True)
 
 class ListenEndpoint(object):
