@@ -1,36 +1,17 @@
-from tensorflow.contrib.framework.python.ops import audio_ops
 import base64
-import cherrypy
 import json
 import io
-import numpy as np
 import os
-import tensorflow as tf
+import re
+import threading
 import wave
 import zlib
 
-class LabelService(object):
-    def __init__(self, graph_filename, labels=["_silence_", "_unknown_", "anserini", "random"], max_memory_pct=0.01):
-        with tf.gfile.FastGFile(graph_filename, "rb") as f:
-            graph_def = tf.GraphDef()
-            graph_def.ParseFromString(f.read())
-            tf.import_graph_def(graph_def, name="")
-        self.labels = labels
-        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=max_memory_pct)
-        self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+import cherrypy
+import numpy as np
 
-    def label(self, wav_data):
-        """Labels audio data as one of the specified trained labels
-
-        Args:
-            wav_data: The WAVE to label
-
-        Returns:
-            A (most likely label, probability) tuple
-        """
-        output = self.sess.graph.get_tensor_by_name("labels_softmax:0")
-        predictions, = self.sess.run(output, {"wav_data:0": wav_data})
-        return (self.labels[np.argmax(predictions)], max(predictions))
+from service import LabelService, TrainingService
+from service import encode_audio, stride
 
 def json_in(f):
     def merge_dicts(x, y):
@@ -44,15 +25,51 @@ def json_in(f):
         return f(*args, **kwargs)
     return wrapper
 
-def stride(array, stride_size, window_size):
-    i = 0
-    while i < len(array):
-        yield array[i:i + window_size]
-        i += stride_size
+class TrainEndpoint(object):
+    exposed = True
+    def __init__(self, train_service, label_service):
+        self.train_service = train_service
+        self.label_service = label_service
+
+    @cherrypy.tools.json_out()
+    def POST(self):
+        return dict(success=self.train_service.run_train_script(callback=self.label_service.reload))
+
+    @cherrypy.tools.json_out()
+    def GET(self):
+        return dict(in_progress=self.train_service.script_running)
+
+class DataEndpoint(object):
+    exposed = True
+    def __init__(self, train_service):
+        self.train_service = train_service
+
+    @cherrypy.tools.json_out()
+    @json_in
+    def POST(self, **kwargs):
+        wav_data = zlib.decompress(base64.b64decode(kwargs["wav_data"]))
+        positive = kwargs["positive"]
+        for _ in range(3):
+            self.train_service.write_example(wav_data, positive=positive)
+        success = dict(success=True)
+        if not positive:
+            return success
+        neg_examples = self.train_service.generate_contrastive(wav_data)
+        if not neg_examples:
+            return success
+        for example in neg_examples:
+            self.train_service.write_example(example.byte_data, positive=False, tag="gen")
+        return success
+
+    @cherrypy.tools.json_out()
+    def DELETE(self):
+        self.train_service.clear_examples(positive=True)
+        self.train_service.clear_examples(positive=False, tag="gen")
+        return dict(success=True)
 
 class ListenEndpoint(object):
     exposed = True
-    def __init__(self, label_service, stride_size=500, min_keyword_prob=0., keyword="anserini"):
+    def __init__(self, label_service, stride_size=500, min_keyword_prob=0.85, keyword="command"):
         """The REST API endpoint that determines if audio contains the keyword.
 
         Args:
@@ -66,33 +83,20 @@ class ListenEndpoint(object):
         self.min_keyword_prob = min_keyword_prob
         self.keyword = keyword
 
-    def _encode_audio(self, wav_data):
-        """Encodes raw audio data in WAVE format
-
-        Args:
-            wav_data: The raw amplitude data in standard speech command dataset format
-
-        Returns:
-            Encoded WAVE audio
-        """
-        buf = io.BytesIO()
-        with wave.open(buf, "w") as f:
-            f.setnchannels(1)
-            f.setsampwidth(2)
-            f.setframerate(16000)
-            f.writeframes(wav_data)
-        return buf.getvalue()
-
     @cherrypy.tools.json_out()
     @json_in
     def POST(self, **kwargs):
         wav_data = zlib.decompress(base64.b64decode(kwargs["wav_data"]))
         for data in stride(wav_data, int(2 * 16000 * self.stride_size / 1000), 2 * 16000):
-            label, prob = self.label_service.label(self._encode_audio(data))
-            if label == "anserini" and prob >= self.min_keyword_prob:
+            label, prob = self.label_service.label(encode_audio(data))
+            if label == "command" and prob >= self.min_keyword_prob:
                 return dict(contains_command=True)
         return dict(contains_command=False)
 
+def make_abspath(rel_path):
+    if not os.path.isabs(rel_path):
+        rel_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), rel_path)
+    return rel_path
 
 def start(config):
     cherrypy.config.update({
@@ -103,8 +107,14 @@ def start(config):
     rest_config = {"/": {
         "request.dispatch": cherrypy.dispatch.MethodDispatcher()
     }}
-    model_path = config["model_path"]
-    if not os.path.isabs(model_path):
-        model_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), model_path)
-    service = LabelService(model_path)
-    cherrypy.quickstart(ListenEndpoint(service), "/listen", rest_config)
+    model_path = make_abspath(config["model_path"])
+    scripts_path = make_abspath(config["scripts_path"])
+    speech_dataset_path = make_abspath(config["speech_dataset_path"])
+
+    lbl_service = LabelService(model_path)
+    train_service = TrainingService(scripts_path, speech_dataset_path, config["model_options"])
+    cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
+    cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)
+    cherrypy.tree.mount(TrainEndpoint(train_service, lbl_service), "/train", rest_config)
+    cherrypy.engine.start()
+    cherrypy.engine.block()

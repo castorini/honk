@@ -1,4 +1,3 @@
-from manage_audio import AudioSnippet
 from threading import Lock, Thread
 from tkinter import *
 from tkinter.ttk import *
@@ -7,15 +6,18 @@ import base64
 import io
 import json
 import os
-import PIL.ImageTk as itk
-import pyaudio
-import pyttsx3
 import re
 import requests
-import speech_recognition as sr
 import time
 import wave
 import zlib
+
+import PIL.ImageTk as itk
+import pyaudio
+import pyttsx3
+import speech_recognition as sr
+
+from manage_audio import AudioSnippet
 
 class GooseWindow(Thread):
     def __init__(self, assets_dir):
@@ -32,11 +34,11 @@ class GooseWindow(Thread):
         img_width, img_height = (213, 365)
         self.canvas = Canvas(width=img_width + 64, height=img_height + 64, bg="white")
         self.canvas.pack()
-        self.init_images()
+        self._init_resources()
         self.draw_goose("inactive")
         window.mainloop()
 
-    def init_images(self, names=["awake", "inactive", "open"]):
+    def _init_resources(self, names=["awake", "inactive", "open"]):
         self.images = {}
         for name in names:
             file = os.path.join(self.assets_dir, "anserini-{}.png".format(name))
@@ -100,9 +102,9 @@ def play_audio(data, amplitude_cb=None):
         audio.terminate()
 
 class Client(object):
-    def __init__(self, listen_endpoint, qa_endpoint, goose_window, watson_api=None):
+    def __init__(self, server_endpoint, qa_endpoint, goose_window, watson_api=None):
         self.watson_api = watson_api
-        self.listen_endpoint = listen_endpoint
+        self.server_endpoint = server_endpoint
         self.qa_endpoint = qa_endpoint
         self.chunk_size = 16000
         self.recognizer = sr.Recognizer()
@@ -131,7 +133,7 @@ class Client(object):
 
     def contains_command(self, data):
         data = base64.b64encode(zlib.compress(data))
-        response = requests.post("{}/listen".format(self.listen_endpoint), json=dict(wav_data=data.decode()))
+        response = requests.post("{}/listen".format(self.server_endpoint), json=dict(wav_data=data.decode()))
         return json.loads(response.content.decode())["contains_command"]
 
     def query_qa(self, question):
@@ -162,6 +164,65 @@ class Client(object):
         self.stream.close()
         self.audio.terminate()
 
+    def send_retarget_data(self, data, positive=True):
+        data = base64.b64encode(zlib.compress(data))
+        requests.post("{}/data".format(self.server_endpoint), json=dict(wav_data=data.decode(), positive=positive))
+
+    def _retarget_negative(self, n_minutes=1):
+        if n_minutes == 1:
+            self.say_text("Please speak random words for the next minute.")
+        else:
+            self.say_text("Please speak random words for the next {} minutes.".format(n_minutes))
+        t0 = 0
+        snippet = AudioSnippet()
+        while t0 < n_minutes * 60:
+            snippet.append(AudioSnippet(self.stream.read(self.chunk_size)))
+            t0 += self.chunk_size / 16000
+        for chunk in snippet.chunk(32000, 16000):
+            self.send_retarget_data(chunk.byte_data, positive=False)
+
+    def _retarget_positive(self, n_times=10):
+        self.say_text("Please speak the new command {} times.".format(n_times))
+        self.goose_window.draw_goose("inactive")
+        n_said = 0
+        while n_said < n_times:
+            self.goose_window.draw_goose("inactive")
+            snippet = AudioSnippet(self.stream.read(self.chunk_size))
+            tot_snippet = AudioSnippet()
+
+            while snippet.amplitude_rms() > 0.01:
+                if not tot_snippet.byte_data:
+                    self.goose_window.draw_goose("awake")
+                    if n_said == n_times // 2 and n_said >= 5:
+                        self.say_text("Only {} times left.".format(n_times - n_said))
+                    elif n_said == n_times - 5:
+                        self.say_text("Only 5 more times.")
+                    n_said += 1
+                tot_snippet.append(snippet)
+                tot_snippet.append(AudioSnippet(self.stream.read(self.chunk_size)))
+                snippet = AudioSnippet(self.stream.read(self.chunk_size))
+            if tot_snippet.byte_data:
+                tot_snippet.trim_window(16000 * 2)
+                self.send_retarget_data(tot_snippet.byte_data)
+
+    def _do_retarget(self):
+        requests.post("{}/train".format(self.server_endpoint))
+        self.say_text("Started training your custom keyword")
+        while True:
+            time.sleep(5)
+            response = requests.get("{}/train".format(self.server_endpoint)).content
+            if not json.loads(response.decode())["in_progress"]:
+                self.say_text("Completed keyword retargeting!")
+                break
+
+    def start_retarget(self):
+        print("Follow the goose!")
+        self._start_listening()
+        requests.delete("{}/data".format(self.server_endpoint))
+        self._retarget_positive()
+        #self._retarget_negative()
+        self._do_retarget()
+
     def start_live_qa(self):
         self._start_listening()
         print("Speak Anserini when ready!")
@@ -186,13 +247,31 @@ class Client(object):
             buf[0] = buf[1]
             buf[1] = self.stream.read(self.chunk_size)
 
+def start_client(flags):
+    file_dir = os.path.dirname(os.path.realpath(__file__))
+    goose_window = GooseWindow(file_dir)
+    watson_api = None
+    if flags.watson_username and flags.watson_password:
+        watson_api = WatsonApi(flags.watson_username, flags.watson_password)
+    client = Client(flags.server_endpoint, flags.qa_endpoint, goose_window, watson_api)
+    if flags.mode == "query":
+        client.start_live_qa()
+    elif flags.mode == "retarget":
+        client.start_retarget()
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--listen-endpoint",
+        "--server-endpoint",
         type=str,
         default="http://127.0.0.1:16888",
         help="The endpoint to use")
+    parser.add_argument(
+        "--mode",
+        type=str,
+        default="query",
+        choices=["retarget", "query"],
+        help="The mode to run the client in.")
     parser.add_argument(
         "--qa-endpoint",
         type=str,
@@ -208,13 +287,7 @@ def main():
         default="",
         help="If supplied, uses Watson's TTS")
     flags, _ = parser.parse_known_args()
-    file_dir = os.path.dirname(os.path.realpath(__file__))
-    goose_window = GooseWindow(file_dir)
-    watson_api = None
-    if flags.watson_username and flags.watson_password:
-        watson_api = WatsonApi(flags.watson_username, flags.watson_password)
-    client = Client(flags.listen_endpoint, flags.qa_endpoint, goose_window, watson_api)
-    client.start_live_qa()
+    start_client(flags)
 
 if __name__ == "__main__":
     main()

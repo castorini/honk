@@ -1,9 +1,11 @@
 import argparse
-import numpy as np
 import os
-import pyaudio
+import random
 import sys
 import wave
+
+import numpy as np
+import pyaudio
 
 class AudioSnippet(object):
     def __init__(self, byte_data=b"", dtype=np.int16):
@@ -17,6 +19,28 @@ class AudioSnippet(object):
         for s in snippets:
             snippet.append(s)
         return snippet
+
+    def copy(self):
+        return AudioSnippet(np.copy(self.byte_data))
+
+    def chunk(self, size, stride=1000):
+        chunks = []
+        i = 0
+        while i + size < len(self.byte_data):
+            chunks.append(AudioSnippet(self.byte_data[i:i + size]))
+            i += stride
+        return chunks
+
+    def rand_pad(self, total_length, noise_level=0.001):
+        space = total_length - len(self.byte_data)
+        len_a = (random.randint(0, space)) // 2 * 2
+        len_b = space - len_a
+        self.byte_data = b"".join([b"".join([b"\x00"] * len_a), self.byte_data, b"".join([b"\x00"] * len_b)])
+        self._compute_amps()
+
+    def repeat_fill(self, length):
+        n_times = max(1, length // len(self.byte_data))
+        self.byte_data = b"".join([self.byte_data] * n_times)[:length]
 
     def trim_window(self, window_size):
         nbytes = len(self.byte_data) // len(self.amplitudes)
@@ -33,7 +57,7 @@ class AudioSnippet(object):
         window_i *= nbytes
         self.byte_data = self.byte_data[window_i:window_i + window_size * nbytes]
 
-    def ltrim(self, limit=0.01):
+    def ltrim(self, limit=0.1):
         if not self.byte_data:
             return
         i = 0
@@ -44,12 +68,14 @@ class AudioSnippet(object):
         i = max(0, i - i % nbytes)
         self.amplitudes = self.amplitudes[i:]
         self.byte_data = self.byte_data[i * nbytes:]
+        return self
 
-    def trim(self, limit=0.01):
+    def trim(self, limit=0.1):
         self.ltrim(limit)
         self.rtrim(limit)
+        return self
 
-    def rtrim(self, limit=0.01):
+    def rtrim(self, limit=0.05):
         if not self.byte_data:
             return
         i = len(self.amplitudes)
@@ -60,6 +86,7 @@ class AudioSnippet(object):
         i = min(len(self.amplitudes), i + (nbytes - i % nbytes))
         self.amplitudes = self.amplitudes[:i]
         self.byte_data = self.byte_data[:i * nbytes]
+        return self
 
     def _compute_amps(self):
         self.amplitudes = np.frombuffer(self.byte_data, self.dtype).astype(float) / np.iinfo(self.dtype).max
