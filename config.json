@@ -8,7 +8,9 @@
     "speech_dataset_path": "/tmp/speech_dataset/",
     "model_options": {
         "train": {
-            "how_many_training_steps": "1700,300",
+            "testing_percentage": "0",
+            "validation_percentage": "0",
+            "how_many_training_steps": "900,300",
             "wanted_words": "command,random",
             "train_dir": "/tmp/speech_commands_train",
             "unknown_percentage": 20
@@ -16,7 +18,7 @@
         "freeze": {
             "wanted_words": "command,random",
             "output_file": "model/graph.pb",
-            "start_checkpoint": "/tmp/speech_commands_train/conv.ckpt-2000"
+            "start_checkpoint": "/tmp/speech_commands_train/conv.ckpt-1200"
         }
     }
 }

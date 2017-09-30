@@ -181,7 +181,7 @@ class Client(object):
         for chunk in snippet.chunk(32000, 16000):
             self.send_retarget_data(chunk.byte_data, positive=False)
 
-    def _retarget_positive(self, n_times=30):
+    def _retarget_positive(self, n_times=10):
         self.say_text("Please speak the new command {} times.".format(n_times))
         self.goose_window.draw_goose("inactive")
         n_said = 0
@@ -193,7 +193,7 @@ class Client(object):
             while snippet.amplitude_rms() > 0.01:
                 if not tot_snippet.byte_data:
                     self.goose_window.draw_goose("awake")
-                    if n_said == n_times // 2:
+                    if n_said == n_times // 2 and n_said >= 5:
                         self.say_text("Only {} times left.".format(n_times - n_said))
                     elif n_said == n_times - 5:
                         self.say_text("Only 5 more times.")
@@ -220,7 +220,7 @@ class Client(object):
         self._start_listening()
         requests.delete("{}/data".format(self.server_endpoint))
         self._retarget_positive()
-        self._retarget_negative()
+        #self._retarget_negative()
         self._do_retarget()
 
     def start_live_qa(self):

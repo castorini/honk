@@ -23,7 +23,7 @@ class AudioSnippet(object):
     def copy(self):
         return AudioSnippet(np.copy(self.byte_data))
 
-    def chunk(self, size=32000 // 5, stride=4000):
+    def chunk(self, size, stride=1000):
         chunks = []
         i = 0
         while i + size < len(self.byte_data):
@@ -57,7 +57,7 @@ class AudioSnippet(object):
         window_i *= nbytes
         self.byte_data = self.byte_data[window_i:window_i + window_size * nbytes]
 
-    def ltrim(self, limit=0.01):
+    def ltrim(self, limit=0.1):
         if not self.byte_data:
             return
         i = 0
@@ -70,12 +70,12 @@ class AudioSnippet(object):
         self.byte_data = self.byte_data[i * nbytes:]
         return self
 
-    def trim(self, limit=0.01):
+    def trim(self, limit=0.1):
         self.ltrim(limit)
         self.rtrim(limit)
         return self
 
-    def rtrim(self, limit=0.01):
+    def rtrim(self, limit=0.05):
         if not self.byte_data:
             return
         i = len(self.amplitudes)

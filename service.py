@@ -14,12 +14,20 @@ from utils.manage_audio import AudioSnippet
 
 class LabelService(object):
     def __init__(self, graph_filename, labels=["_silence_", "_unknown_", "command", "random"], max_memory_pct=0.01):
-        with tf.gfile.FastGFile(graph_filename, "rb") as f:
+        self.sess = None
+        self.labels = labels
+        self.graph_filename = graph_filename
+        self.max_memory_pct = max_memory_pct
+        self.reload()
+
+    def reload(self):
+        if self.sess:
+            self.sess.close()
+        with tf.gfile.FastGFile(self.graph_filename, "rb") as f:
             graph_def = tf.GraphDef()
             graph_def.ParseFromString(f.read())
             tf.import_graph_def(graph_def, name="")
-        self.labels = labels
-        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=max_memory_pct)
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=self.max_memory_pct)
         self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
 
     def label(self, wav_data):
@@ -81,27 +89,40 @@ class TrainingService(object):
 
     def generate_contrastive(self, data):
         snippet = AudioSnippet(data)
-        chunks = snippet.trim().chunk()
-        chunks2 = snippet.chunk()
-        chunks3 = snippet.chunk()
+        chunks = snippet.trim().chunk(3000, 1000)
+        if len(chunks) == 1:
+            return []
+        long_chunks = snippet.chunk(5000, 1000)
+        if len(long_chunks) > 1:
+            chunks.extend(long_chunks)
+        long_chunks = snippet.chunk(8000, 1000)
+        if len(long_chunks) > 1:
+            chunks.extend(long_chunks)
+        chunks2 = snippet.chunk(5000, 1000)
         for chunk in chunks:
             chunk.rand_pad(32000)
         for chunk in chunks2:
-            chunk.repeat_fill(24000)
-            chunk.rand_pad(32000)
-        for chunk in chunks3:
             chunk.repeat_fill(32000)
+            chunk.rand_pad(32000)
+        chunks = chunks * 2
         chunks.extend(chunks2)
-        chunks.extend(chunks3)
         return chunks
 
-    def clear_examples(self, positive=True):
-        shutil.rmtree(self.pos_directory if positive else self.neg_directory)
-        self._create_dirs()
+    def clear_examples(self, positive=True, tag=""):
+        directory = self.pos_directory if positive else self.neg_directory
+        if not tag:
+            shutil.rmtree(directory)
+            self._create_dirs()
+        else:
+            for name in os.listdir(directory):
+                if name.startswith("{}-".format(tag)):
+                    os.unlink(os.path.join(directory, name))
 
-    def write_example(self, wav_data, positive=True, filename=None):
+    def write_example(self, wav_data, positive=True, filename=None, tag=""):
+        if tag:
+            tag = "{}-".format(tag)
         if not filename:
-            filename = "{}.wav".format(str(uuid.uuid4()))
+            filename = "{}{}.wav".format(tag, str(uuid.uuid4()))
         directory = self.pos_directory if positive else self.neg_directory
         filename = os.path.join(directory, filename)
         with wave.open(filename, "wb") as f:
@@ -114,15 +135,17 @@ class TrainingService(object):
             cmd_strs.append("--{}={}".format(option, value))
         subprocess.run(cmd_strs)
 
-    def _run_training_script(self):
+    def _run_training_script(self, callback):
         with self._run_lck:
             self.script_running = True
         self._run_script(self.train_script, self.options["train"])
         self._run_script(self.freeze_script, self.options["freeze"])
+        if callback:
+            callback()
         self.script_running = False
 
-    def run_train_script(self):
+    def run_train_script(self, callback=None):
         if self.script_running:
             return False
-        threading.Thread(target=self._run_training_script).start()
+        threading.Thread(target=self._run_training_script, args=(callback,)).start()
         return True

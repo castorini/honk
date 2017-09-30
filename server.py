@@ -27,12 +27,13 @@ def json_in(f):
 
 class TrainEndpoint(object):
     exposed = True
-    def __init__(self, train_service):
+    def __init__(self, train_service, label_service):
         self.train_service = train_service
+        self.label_service = label_service
 
     @cherrypy.tools.json_out()
     def POST(self):
-        return dict(success=self.train_service.run_train_script())
+        return dict(success=self.train_service.run_train_script(callback=self.label_service.reload))
 
     @cherrypy.tools.json_out()
     def GET(self):
@@ -48,7 +49,8 @@ class DataEndpoint(object):
     def POST(self, **kwargs):
         wav_data = zlib.decompress(base64.b64decode(kwargs["wav_data"]))
         positive = kwargs["positive"]
-        self.train_service.write_example(wav_data, positive=positive)
+        for _ in range(3):
+            self.train_service.write_example(wav_data, positive=positive)
         success = dict(success=True)
         if not positive:
             return success
@@ -56,18 +58,18 @@ class DataEndpoint(object):
         if not neg_examples:
             return success
         for example in neg_examples:
-            self.train_service.write_example(example.byte_data, positive=False)
+            self.train_service.write_example(example.byte_data, positive=False, tag="gen")
         return success
 
     @cherrypy.tools.json_out()
     def DELETE(self):
         self.train_service.clear_examples(positive=True)
-        self.train_service.clear_examples(positive=False)
+        self.train_service.clear_examples(positive=False, tag="gen")
         return dict(success=True)
 
 class ListenEndpoint(object):
     exposed = True
-    def __init__(self, label_service, stride_size=500, min_keyword_prob=0., keyword="command"):
+    def __init__(self, label_service, stride_size=500, min_keyword_prob=0.85, keyword="command"):
         """The REST API endpoint that determines if audio contains the keyword.
 
         Args:
@@ -113,6 +115,6 @@ def start(config):
     train_service = TrainingService(scripts_path, speech_dataset_path, config["model_options"])
     cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
     cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)
-    cherrypy.tree.mount(TrainEndpoint(train_service), "/train", rest_config)
+    cherrypy.tree.mount(TrainEndpoint(train_service, lbl_service), "/train", rest_config)
     cherrypy.engine.start()
     cherrypy.engine.block()
