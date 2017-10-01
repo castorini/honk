@@ -1,3 +1,5 @@
+from collections import ChainMap
+import argparse
 import os
 import random
 
@@ -7,10 +9,32 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as data
 
+class ConfigBuilder(object):
+    def __init__(self, *default_configs):
+        self.default_config = ChainMap(*default_configs)
+
+    def build_argparse(self):
+        parser = argparse.ArgumentParser()
+        for key, value in conf.items():
+            key = "--{}".format(key)
+            if isinstance(value, tuple):
+                parser.add_argument(key, default=list(value), nargs=len(value), type=type(value[0]))
+            elif isinstance(value, list):
+                parser.add_argument(key, default=value, nargs="+", type=type(value[0]))
+            elif isinstance(value, bool) and not value:
+                parser.add_argument(key, action="store_true")
+            else:
+                parser.add_argument("--{}".format(key), default=value, type=type(value))
+        return parser
+
+    def config_from_argparse(self):
+        parser = self.build_argparse()
+        args = vars(parser.parse_args())
+        return ChainMap(args, self.default_config)
+
 class SpeechModel(nn.Module):
-    def __init__(self, **config):
+    def __init__(self, config):
         super().__init__()
-        config = SpeechModel.init_default_config(config)
         n_labels = config["n_labels"]
         n_featmaps1 = config["n_feature_maps1"]
         n_featmaps2 = config["n_feature_maps2"]
@@ -36,6 +60,23 @@ class SpeechModel(nn.Module):
         self.dnn = nn.Linear(linear_size, dnn_size)
         self.output = nn.Linear(dnn_size, n_labels)
 
+    @staticmethod
+    def default_config():
+        # Full arch (~9.7M params)
+        # TODO: initialize width and height
+        config = {}
+        config["n_feature_maps1"] = 64
+        config["n_feature_maps2"] = 64
+        config["conv1_size"] = (20, 8)
+        config["conv2_size"] = (10, 4)
+        config["conv1_pool"] = (1, 3)
+        config["conv1_stride"] = (1, 1)
+        config["conv2_stride"] = (1, 1)
+        config["conv2_pool"] = (1, 1)
+        config["linear_size"] = 32
+        config["dnn_size"] = 128
+        return config
+
     def forward(self, x):
         x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
         x = self.pool1(x)
@@ -45,57 +86,69 @@ class SpeechModel(nn.Module):
         x = F.relu(self.dnn(x))
         return self.output(x)
 
-    @staticmethod
-    def init_default_config(config): 
-        # Full arch (~9.7M params)
-        # TODO: initialize width and height
-        config["n_feature_maps1"] = config.get("n_feature_maps1", 64)
-        config["n_feature_maps2"] = config.get("n_feature_maps2", 64)
-        config["conv1_size"] = config.get("conv1_size", (20, 8))
-        config["conv2_size"] = config.get("conv2_size", (10, 4))
-        config["conv1_pool"] = config.get("conv1_pool", (1, 3))
-        config["conv1_stride"] = config.get("conv1_stride", (1, 1))
-        config["conv2_stride"] = config.get("conv2_stride", (1, 1))
-        config["conv2_pool"] = config.get("conv2_pool", (1, 1)) # no-op
-        config["linear_size"] = config.get("linear_size", 32)
-        config["dnn_size"] = config.get("dnn_size", 128)
-
 class SpeechDataset(data.Dataset):
     LABEL_SILENCE = "__silence__"
     LABEL_UNKNOWN = "__unknown__"
-    def __init__(self, data, bg_noise_files=[], silence_prob=0.1, noise_prob=0.8):
+    def __init__(self, data, config):
         super().__init__()
         self.audio_files = list(data.keys())
         self.audio_labels = list(data.values())
-        self.bg_noise_audio = [librosa.core.load(file, sr=16000) for file in bg_noise_files]
-        self.unknown_prob = unknown_prob
-        self.silence_prob = silence_prob
-        self.noise_prob = noise_prob
-        self.filters = librosa.filters.dct(13, 40)
+        self.bg_noise_audio = [librosa.core.load(file, sr=16000) for file in config.get("bg_noise_files", [])]
+        self.unknown_prob = config["unknown_prob"]
+        self.silence_prob = config["silence_prob"]
+        self.noise_prob = config["noise_prob"]
+        self.n_dct = config["n_dict_filters"]
+        self.filters = librosa.filters.dct(config["n_dct_filters"], config["n_mels"])
+        self.n_mels = config["n_mels"]
 
-    def preprocess(self, example):
+    @staticmethod
+    def default_config():
+        config = {}
+        config["silence_prob"] = 0.1
+        config["noise_prob"] = 0.8
+        config["n_dct_filters"] = 13
+        config["input_length"] = 16000
+        config["n_mels"] = 40
+        config["unknown_prob"] = 0.1
+        config["train_pct"] = 80
+        config["dev_pct"] = 10
+        config["test_pct"] = 10
+        config["wanted_words"] = ["command", "random"]
+        config["data_folder"] = "/tmp/speech_dataset"
+        return config
+
+    def preprocess(self, example, bg_noise):
         bg_noise = random.choice(self.bg_noise_audio)
+        a = random.randint(0, len(bg_noise) - 16000 - 1)
         if bg_noise:
-            a = random.randint(0, len(bg_noise) - 16000 - 1)
             bg_noise = bg_noise[a:a + 16000]
         else:
             bg_noise = np.zeros(16000)
 
+        is_silence = False
         if random.random() < self.silence_prob:
-            data = bg_noise[a:a + 16000]
+            is_silence = True
+            data = bg_noise
         else:
             data = librosa.core.load(example, sr=16000)
             if random.random() < self.noise_prob:
                 a = random.random() * 0.3
                 data = a * bg_noise + (1 - a) * data
-        data = np.log(librosa.feature.melspectrogram(data[0], sr=data[1], n_mels=40, hop_length=160, n_fft=400))
+        data = np.log(librosa.feature.melspectrogram(data[0], sr=data[1], n_mels=self.n_mels, hop_length=160, n_fft=400))
         data = data.transpose()
-        data = np.array([np.matmul(self.filters, x) for x in np.split(data)])
-        data = [data[a:a + 32] for a in range(len(data) - 32)]
-        return data
+        data = np.array([np.matmul(self.filters, x)[1:1 + self.n_dct] for x in np.split(data)])
+        data = torch.from_numpy(data) # shape: (frames, dct_coeffs)
+        return data, is_silence
 
     @classmethod
-    def splits(cls, folder, wanted_words=["command", "random"], unknown_prob=0.1, train_pct=80, dev_pct=10, test_pct=10):
+    def splits(cls, config):
+        folder = config["data_folder"]
+        wanted_words = config["wanted_words"]
+        unknown_prob = config["unknown_prob"]
+        train_pct = config["train_pct"]
+        dev_pct = config["dev_pct"]
+        test_pct = config["test_pct"]
+
         words = {word: i + 2 for i, word in enumerate(wanted_words)}
         words.update(dict(cls.LABEL_SILENCE=0, cls.LABEL_UNKNOWN=1))
         files = {0: {}, 1: {}, 2: {}}
@@ -128,16 +181,69 @@ class SpeechDataset(data.Dataset):
                 else:
                     tag = 2
                 files[tag][wav_name] = words[label]
-        return (cls(files[0], bg_noise_files), cls(files[1], noise_prob=0), cls(files[2], noise_prob=0))
+        train_cfg = ChainMap(dict(bg_noise_files=bg_noise_files), config)
+        test_cfg = ChainMap(dict(noise_prob=0), config)
+        return (cls(files[0], train_cfg), cls(files[1], test_cfg), cls(files[2], test_cfg))
 
     def __getitem__(self, index):
-        return self.preprocess(self.audio_files[index]), self.audio_labels[index]
+        data, is_silence = self.preprocess(self.audio_files[index])
+        label = 0 if is_silence else self.audio_labels[index]
+        return data, label
 
     def __len__(self):
         return len(self.audio_labels)
 
+def print_eval(name, scores, labels, loss, end="\n"):
+    batch_size = labels.size(0)
+    accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).sum() / batch_size
+    print("{} accuracy: {:>15}, loss: {:>15}".format(name, accuracy, loss), end=end)
+
+def train(config):
+    train_set, dev_set, test_set = SpeechDataset.splits(config)
+    model = SpeechModel(config)
+    if not config["no_cuda"]:
+        torch.cuda.set_device(config["gpu_no"])
+        model.cuda()
+    optimizer = nn.optim.Adadelta(model.parameters(), lr=config["lr"])
+    criterion = nn.optim.CrossEntropyLoss()
+    
+    train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
+    dev_loader = data.DataLoader(dev_set, batch_size=len(dev_set))
+    test_loader = data.DataLoader(test_set, batch_size=len(test_set))
+
+    for epoch_idx in config["n_epochs"]:
+        for batch_idx, (model_in, labels) in train_loader:
+            model.train()
+            optimizer.zero_grad()
+            if not config["no_cuda"]:
+                model_in = model_in.cuda()
+            scores = model(model_in)
+            loss = criterion(scores, labels)
+            loss.backward()
+            optimizer.step()
+            print_eval("train", scores, labels, loss, end="\r")
+        if epoch_idx % 100 == 99:
+            model.eval()
+            for model_in, labels in dev_loader:
+                scores = model(model_in)
+                loss = criterion(scores, labels)
+                print_eval("dev", scores, labels, loss)
+    for model_in, labels in test_loader:
+        scores = model(model_in)
+        loss = criterion(scores, labels)
+        print_eval("test", scores, labels, loss)
+
 def main():
-    pass
+    global_config = dict(no_cuda=False, n_epochs=1200, lr=0.001, mode="train", batch_size=100,
+        input_file="", output_file="", gpu_no=0)
+    config = ConfigBuilder(
+        SpeechModel.default_config(),
+        SpeechDataset.default_config(),
+        global_config).config_from_argparse()
+    if config["mode"] == "train":
+        train(config)
+    elif config["mode"] == "eval":
+        evaluate(config)
 
 if __name__ == "__main__":
     main()
