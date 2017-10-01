@@ -34,6 +34,20 @@ class ConfigBuilder(object):
         args = vars(parser.parse_args())
         return ChainMap(args, self.default_config)
 
+class SimpleCache(dict):
+    def __init__(self, limit):
+        super().__init__()
+        self.limit = limit
+        self.n_keys = 0
+
+    def __setitem__(self, key, value):
+        if key in self.keys():
+            super().__setitem__(key, value)
+        elif self.n_keys < self.limit:
+            self.n_keys += 1
+            super().__setitem__(key, value)
+        return value
+
 class SpeechModel(nn.Module):
     def __init__(self, config):
         super().__init__()
@@ -113,6 +127,7 @@ class SpeechDataset(data.Dataset):
         self.n_dct = config["n_dct_filters"]
         self.filters = librosa.filters.dct(config["n_dct_filters"], config["n_mels"])
         self.n_mels = config["n_mels"]
+        self._audio_cache = SimpleCache(16384) # ~600 MB
 
     @staticmethod
     def default_config():
@@ -131,6 +146,10 @@ class SpeechDataset(data.Dataset):
         return config
 
     def preprocess(self, example):
+        try:
+            return self._audio_cache[example]
+        except KeyError:
+            pass
         if self.bg_noise_audio:
             bg_noise = random.choice(self.bg_noise_audio)
             a = random.randint(0, len(bg_noise) - 16000 - 1)
@@ -146,12 +165,13 @@ class SpeechDataset(data.Dataset):
             data = librosa.core.load(example, sr=16000)[0]
             data = np.pad(data, (0, max(0, 16000 - len(data))), "constant")
             if random.random() < self.noise_prob:
-                a = random.random() * 0.3
+                a = random.random() * 0.15
                 data = a * bg_noise + (1 - a) * data
         data = np.log(librosa.feature.melspectrogram(data, sr=16000, n_mels=self.n_mels, hop_length=160, n_fft=400))
         data = [np.matmul(self.filters, x) for x in np.split(data, data.shape[1], axis=1)]
         data = np.array(data, order="F").squeeze(2).astype(np.float32)
         data = torch.from_numpy(data) # shape: (frames, dct_coeffs)
+        self._audio_cache[example] = (data, is_silence)
         return data, is_silence
 
     @classmethod
@@ -238,7 +258,7 @@ def train(config):
             labels = Variable(labels, requires_grad=False)
             loss = criterion(scores, labels)
             loss.backward()
-            opitimizer.step()
+            optimizer.step()
             print_eval("train", scores, labels, loss, end="\r")
         print()
 
