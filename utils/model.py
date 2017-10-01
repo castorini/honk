@@ -1,3 +1,6 @@
+import os
+import random
+
 import librosa
 import torch
 import torch.nn as nn
@@ -58,15 +61,80 @@ class SpeechModel(nn.Module):
         config["dnn_size"] = config.get("dnn_size", 128)
 
 class SpeechDataset(data.Dataset):
-    def __init__(self, directory, wanted_words=["silence", "unknown", "command", "random"]):
+    LABEL_SILENCE = "__silence__"
+    LABEL_UNKNOWN = "__unknown__"
+    def __init__(self, data, bg_noise_files=[], silence_prob=0.1, noise_prob=0.8):
         super().__init__()
-        self.directory = directory
+        self.audio_files = list(data.keys())
+        self.audio_labels = list(data.values())
+        self.bg_noise_audio = [librosa.core.load(file, sr=16000) for file in bg_noise_files]
+        self.unknown_prob = unknown_prob
+        self.silence_prob = silence_prob
+        self.noise_prob = noise_prob
+        self.filters = librosa.filters.dct(13, 40)
+
+    def preprocess(self, example):
+        bg_noise = random.choice(self.bg_noise_audio)
+        if bg_noise:
+            a = random.randint(0, len(bg_noise) - 16000 - 1)
+            bg_noise = bg_noise[a:a + 16000]
+        else:
+            bg_noise = np.zeros(16000)
+
+        if random.random() < self.silence_prob:
+            data = bg_noise[a:a + 16000]
+        else:
+            data = librosa.core.load(example, sr=16000)
+            if random.random() < self.noise_prob:
+                a = random.random() * 0.3
+                data = a * bg_noise + (1 - a) * data
+        data = np.log(librosa.feature.melspectrogram(data[0], sr=data[1], n_mels=40, hop_length=160, n_fft=400))
+        data = data.transpose()
+        data = np.array([np.matmul(self.filters, x) for x in np.split(data)])
+        data = [data[a:a + 32] for a in range(len(data) - 32)]
+        return data
+
+    @classmethod
+    def splits(cls, folder, wanted_words=["command", "random"], unknown_prob=0.1, train_pct=80, dev_pct=10, test_pct=10):
+        words = {word: i + 2 for i, word in enumerate(wanted_words)}
+        words.update(dict(cls.LABEL_SILENCE=0, cls.LABEL_UNKNOWN=1))
+        files = {0: {}, 1: {}, 2: {}}
+        bg_noise_files = []
+
+        for folder_name in os.listdir(folder):
+            path_name = os.path.join(folder, folder_name)
+            is_bg_noise = False
+            if os.path.isfile(path_name):
+                continue
+            if folder_name in words:
+                label = words[folder_name]
+            elif folder_name == "_background_noise_":
+                is_bg_noise = True
+            else:
+                label = words[cls.LABEL_UNKNOWN]
+
+            for filename in os.listdir(path_name):
+                wav_name = os.path.join(path_name, filename)
+                if is_bg_noise and os.path.isfile(wav_name):
+                    bg_noise_files.append(wav_name)
+                    continue
+                if label == words[cls.LABEL_UNKNOWN] and random.random() > unknown_prob:
+                    continue
+                bucket = hash(filename) % 100
+                if bucket < train_pct:
+                    tag = 0
+                elif bucket < train_pct + dev_pct:
+                    tag = 1
+                else:
+                    tag = 2
+                files[tag][wav_name] = words[label]
+        return (cls(files[0], bg_noise_files), cls(files[1], noise_prob=0), cls(files[2], noise_prob=0))
 
     def __getitem__(self, index):
-        pass
+        return self.preprocess(self.audio_files[index]), self.audio_labels[index]
 
     def __len__(self):
-        pass
+        return len(self.audio_labels)
 
 def main():
     pass
