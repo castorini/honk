@@ -26,11 +26,12 @@ class ConfigBuilder(object):
             elif isinstance(value, bool) and not value:
                 parser.add_argument(key, action="store_true")
             else:
-                parser.add_argument("--{}".format(key), default=value, type=type(value))
+                parser.add_argument(key, default=value, type=type(value))
         return parser
 
-    def config_from_argparse(self):
-        parser = self.build_argparse()
+    def config_from_argparse(self, parser=None):
+        if not parser:
+            parser = self.build_argparse()
         args = vars(parser.parse_args())
         return ChainMap(args, self.default_config)
 
@@ -58,6 +59,7 @@ class SpeechModel(nn.Module):
         conv2_size = config["conv2_size"]
         conv1_pool = config["conv1_pool"]
         conv2_pool = config["conv2_pool"]
+        dropout_prob = config["dropout_prob"]
         conv1_stride = tuple(config["conv1_stride"])
         conv2_stride = tuple(config["conv2_stride"])
         linear_size = config["linear_size"]
@@ -82,12 +84,14 @@ class SpeechModel(nn.Module):
 
         self.linear = nn.Linear(n_featmaps2 * conv_net_size, linear_size)
         self.dnn = nn.Linear(linear_size, dnn_size)
+        self.dropout = nn.Dropout(dropout_prob)
         self.output = nn.Linear(dnn_size, n_labels)
 
     @staticmethod
     def default_config():
         # Full arch (~9.7M params)
         config = {}
+        config["dropout_prob"] = 0.5
         config["height"] = 101
         config["width"] = 40
         config["n_labels"] = 5
@@ -105,11 +109,14 @@ class SpeechModel(nn.Module):
 
     def forward(self, x):
         x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
+        x = self.dropout(x)
         x = self.pool1(x)
         x = F.relu(self.conv2(x)) # shape: (batch, o1, i2, o2)
+        x = self.dropout(x)
         x = self.pool2(x)
         x = self.linear(x.view(x.size(0), -1)) # shape: (batch, o3)
         x = F.relu(self.dnn(x))
+        x = self.dropout(x)
         return self.output(x)
 
 class SpeechDataset(data.Dataset):
@@ -141,7 +148,7 @@ class SpeechDataset(data.Dataset):
         config["train_pct"] = 80
         config["dev_pct"] = 10
         config["test_pct"] = 10
-        config["wanted_words"] = ["left", "bed", "random"]
+        config["wanted_words"] = ["left", "bed"]
         config["data_folder"] = "/data/speech_dataset"
         return config
 
@@ -165,9 +172,10 @@ class SpeechDataset(data.Dataset):
             data = librosa.core.load(example, sr=16000)[0]
             data = np.pad(data, (0, max(0, 16000 - len(data))), "constant")
             if random.random() < self.noise_prob:
-                a = random.random() * 0.15
+                a = random.random() * 0.1
                 data = a * bg_noise + (1 - a) * data
-        data = np.log(librosa.feature.melspectrogram(data, sr=16000, n_mels=self.n_mels, hop_length=160, n_fft=400))
+        data = librosa.feature.melspectrogram(data, sr=16000, n_mels=self.n_mels, hop_length=160, n_fft=400)
+        data[data > 0] = np.log(data[data > 0])
         data = [np.matmul(self.filters, x) for x in np.split(data, data.shape[1], axis=1)]
         data = np.array(data, order="F").squeeze(2).astype(np.float32)
         data = torch.from_numpy(data) # shape: (frames, dct_coeffs)
@@ -239,7 +247,7 @@ def train(config):
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
-    optimizer = torch.optim.Adadelta(model.parameters(), lr=config["lr"])
+    optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"])
     criterion = nn.CrossEntropyLoss()
     
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
@@ -259,7 +267,8 @@ def train(config):
             loss = criterion(scores, labels)
             loss.backward()
             optimizer.step()
-            print_eval("train", scores, labels, loss, end="\r")
+            if batch_idx % 10 == 0:
+                print_eval("train", scores, labels, loss, end="\r")
         print()
 
         if epoch_idx % 100 == 99:
@@ -285,7 +294,7 @@ def train(config):
         print_eval("test", scores, labels, loss)
 
 def main():
-    global_config = dict(no_cuda=False, n_epochs=1200, lr=0.01, mode="train", batch_size=100,
+    global_config = dict(no_cuda=False, n_epochs=1200, lr=0.001, mode="train", batch_size=100,
         input_file="", output_file="", gpu_no=1)
     config = ConfigBuilder(
         SpeechModel.default_config(),
