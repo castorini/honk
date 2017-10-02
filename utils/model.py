@@ -2,6 +2,8 @@ from collections import ChainMap
 import argparse
 import os
 import random
+import sys
+import zlib
 
 from torch.autograd import Variable
 import librosa
@@ -94,7 +96,7 @@ class SpeechModel(nn.Module):
         config["dropout_prob"] = 0.5
         config["height"] = 101
         config["width"] = 40
-        config["n_labels"] = 5
+        config["n_labels"] = 4
         config["n_feature_maps1"] = 64
         config["n_feature_maps2"] = 64
         config["conv1_size"] = (20, 8)
@@ -132,9 +134,10 @@ class SpeechDataset(data.Dataset):
         self.silence_prob = config["silence_prob"]
         self.noise_prob = config["noise_prob"]
         self.n_dct = config["n_dct_filters"]
+        self.input_length = config["input_length"]
         self.filters = librosa.filters.dct(config["n_dct_filters"], config["n_mels"])
         self.n_mels = config["n_mels"]
-        self._audio_cache = SimpleCache(16384) # ~600 MB
+        self._audio_cache = SimpleCache(config["cache_size"])
 
     @staticmethod
     def default_config():
@@ -148,7 +151,7 @@ class SpeechDataset(data.Dataset):
         config["train_pct"] = 80
         config["dev_pct"] = 10
         config["test_pct"] = 10
-        config["wanted_words"] = ["left", "bed"]
+        config["wanted_words"] = ["command", "random"]
         config["data_folder"] = "/data/speech_dataset"
         return config
 
@@ -157,12 +160,13 @@ class SpeechDataset(data.Dataset):
             return self._audio_cache[example]
         except KeyError:
             pass
+        in_len = self.input_length
         if self.bg_noise_audio:
             bg_noise = random.choice(self.bg_noise_audio)
-            a = random.randint(0, len(bg_noise) - 16000 - 1)
-            bg_noise = bg_noise[a:a + 16000]
+            a = random.randint(0, len(bg_noise) - in_len - 1)
+            bg_noise = bg_noise[a:a + in_len]
         else:
-            bg_noise = np.zeros(16000)
+            bg_noise = np.zeros(in_len)
 
         is_silence = False
         if random.random() < self.silence_prob:
@@ -170,7 +174,7 @@ class SpeechDataset(data.Dataset):
             data = bg_noise
         else:
             data = librosa.core.load(example, sr=16000)[0]
-            data = np.pad(data, (0, max(0, 16000 - len(data))), "constant")
+            data = np.pad(data, (0, max(0, in_len - len(data))), "constant")
             if random.random() < self.noise_prob:
                 a = random.random() * 0.1
                 data = a * bg_noise + (1 - a) * data
@@ -215,7 +219,7 @@ class SpeechDataset(data.Dataset):
                     continue
                 if label == words[cls.LABEL_UNKNOWN] and random.random() > unknown_prob:
                     continue
-                bucket = hash(filename) % 100
+                bucket = zlib.adler32(filename.encode()) % 100
                 if bucket < train_pct:
                     tag = 0
                 elif bucket < train_pct + dev_pct:
@@ -239,20 +243,56 @@ def print_eval(name, scores, labels, loss, end="\n"):
     batch_size = labels.size(0)
     accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).sum() / batch_size
     loss = loss.cpu().data.numpy()[0]
-    print("{} accuracy: {:>5}, loss: {:>15}".format(name, accuracy, loss), end=end)
+    print("{} accuracy: {:>5}, loss: {:<25}".format(name, accuracy, loss), end=end)
+
+def set_seed(config):
+    seed = config["seed"]
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    if not config["no_cuda"]:
+        torch.cuda.manual_seed(seed)
+    random.seed(seed)
+
+def evaluate(config, model=None, test_loader=None):
+    if not test_loader:
+        _, _, test_set = SpeechDataset.splits(config)
+        test_loader = data.DataLoader(test_set, batch_size=len(test_set))
+    if not config["no_cuda"]:
+        torch.cuda.set_device(config["gpu_no"])
+    if not model:
+        model = torch.load(config["input_file"])
+    if not config["no_cuda"]:
+        torch.cuda.set_device(config["gpu_no"])
+        model.cuda()
+    model.eval()
+    criterion = nn.CrossEntropyLoss()
+    for model_in, labels in test_loader:
+        model_in = Variable(model_in, requires_grad=False)
+        if not config["no_cuda"]:
+            model_in = model_in.cuda()
+            labels = labels.cuda()
+        scores = model(model_in)
+        labels = Variable(labels, requires_grad=False)
+        loss = criterion(scores, labels)
+        print_eval("test", scores, labels, loss)
 
 def train(config):
     train_set, dev_set, test_set = SpeechDataset.splits(config)
-    model = SpeechModel(config)
+    if config["input_file"]:
+        model = torch.load(config["input_file"])
+    else:
+        model = SpeechModel(config)
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
     optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"])
     criterion = nn.CrossEntropyLoss()
+    min_loss = sys.float_info.max
     
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
     dev_loader = data.DataLoader(dev_set, batch_size=len(dev_set))
     test_loader = data.DataLoader(test_set, batch_size=len(test_set))
+    step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
         for batch_idx, (model_in, labels) in enumerate(train_loader):
@@ -267,11 +307,10 @@ def train(config):
             loss = criterion(scores, labels)
             loss.backward()
             optimizer.step()
-            if batch_idx % 10 == 0:
-                print_eval("train", scores, labels, loss, end="\r")
-        print()
+            step_no += 1
+            print_eval("train step #{}".format(step_no), scores, labels, loss, end="\r")
 
-        if epoch_idx % 100 == 99:
+        if epoch_idx % config["dev_every"] == config["dev_every"] - 1:
             model.eval()
             for model_in, labels in dev_loader:
                 model_in = Variable(model_in, requires_grad=False)
@@ -281,25 +320,25 @@ def train(config):
                 scores = model(model_in)
                 labels = Variable(labels, requires_grad=False)
                 loss = criterion(scores, labels)
+                loss_numeric = loss.cpu().data.numpy()[0]
+                if loss_numeric < min_loss:
+                    min_loss = loss_numeric
+                    torch.save(model, config["output_file"])
                 print_eval("dev", scores, labels, loss)
-
-    for model_in, labels in test_loader:
-        model_in = Variable(model_in, requires_grad=False)
-        if not config["no_cuda"]:
-            model_in = model_in.cuda()
-            labels = labels.cuda()
-        scores = model(model_in)
-        labels = Variable(labels, requires_grad=False)
-        loss = criterion(scores, labels)
-        print_eval("test", scores, labels, loss)
+    evaluate(config, model, test_loader)
 
 def main():
-    global_config = dict(no_cuda=False, n_epochs=1200, lr=0.001, mode="train", batch_size=100,
-        input_file="", output_file="", gpu_no=1)
-    config = ConfigBuilder(
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "model", "model.pt")
+    global_config = dict(no_cuda=False, n_epochs=500, lr=0.001, batch_size=100, dev_every=10, seed=0,
+        input_file="", output_file=output_file, gpu_no=1, cache_size=32768)
+    builder = ConfigBuilder(
         SpeechModel.default_config(),
         SpeechDataset.default_config(),
-        global_config).config_from_argparse()
+        global_config)
+    parser = builder.build_argparse()
+    parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
+    config = builder.config_from_argparse(parser)
+    set_seed(config)
     if config["mode"] == "train":
         train(config)
     elif config["mode"] == "eval":
