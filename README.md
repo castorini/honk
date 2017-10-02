@@ -32,7 +32,7 @@ There are command options available:
 |----------------|--------------|---------|-------------|
 | `--batch_size`   | [1, n)       | 100     | the mini-batch size to use            |
 | `--cache_size`   | [0, inf)       | 32768     | number of items in audio cache, consumes around 32 KB * n   |
-| `--conv1_pool`   | [1, inf) [1, inf) | 1 3     | the width and height of the pool filter       |
+| `--conv1_pool`   | [1, inf) [1, inf) | 2 2     | the width and height of the pool filter       |
 | `--conv1_size`     | [1, inf) [1, inf) | 10 4  | the width and height of the conv filter            |
 | `--conv1_stride`     | [1, inf) [1, inf) | 1 1  | the width and length of the stride            |
 | `--conv2_pool`   | [1, inf) [1, inf) |  1 1    | the width and height of the pool filter            |
@@ -41,7 +41,6 @@ There are command options available:
 | `--data_folder`   | string       | /data/speech_dataset     | path to data       |
 | `--dev_every`    | [1, inf)     |  10     | dev interval in terms of epochs            |
 | `--dev_pct`   | [0, 100]       | 10     | percentage of total set to use for dev        |
-| `--dnn_size`     | [1, inf)     |  128       | the size of the DNN layer            |
 | `--dropout_prob` | [0.0, 1.0)   | 0.5     | the dropout rate to use            |
 | `--gpu_no`     | [-1, n] | 1  | the gpu to use            |
 | `--input_file`   | string       |      | the path to the model to load   |
@@ -60,6 +59,7 @@ There are command options available:
 | `--seed`   | (inf, inf)       | 0     | the seed to use        |
 | `--silence_prob`     | [0.0, 1.0] | 0.1  | the probability of picking silence    |
 | `--test_pct`   | [0, 100]       | 10     | percentage of total set to use for testing       |
+| `--timeshift_ms`| [0, inf)       | 100    | time in milliseconds to shift the audio randomly |
 | `--train_pct`   | [0, 100]       | 80     | percentage of total set to use for training       |
 | `--unknown_prob`     | [0.0, 1.0] | 0.01  | the probability of picking an unknown word    |
 | `--wanted_words` | string1 string2 ... stringn  | command random  | the desired target words            |
