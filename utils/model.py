@@ -1,9 +1,9 @@
 from collections import ChainMap
 import argparse
+import hashlib
 import os
 import random
 import sys
-import zlib
 
 from torch.autograd import Variable
 import librosa
@@ -64,8 +64,6 @@ class SpeechModel(nn.Module):
         dropout_prob = config["dropout_prob"]
         conv1_stride = tuple(config["conv1_stride"])
         conv2_stride = tuple(config["conv2_stride"])
-        linear_size = config["linear_size"]
-        dnn_size = config["dnn_size"]
         width = config["width"]
         height = config["height"]
         self.conv1 = nn.Conv2d(1, n_featmaps1, conv1_size, stride=conv1_stride)
@@ -84,14 +82,12 @@ class SpeechModel(nn.Module):
         p, q = conv2_pool
         conv_net_size = ((h - m1 + 1) // (s * p)) * ((w - m2 + 1) // (v * q))
 
-        self.linear = nn.Linear(n_featmaps2 * conv_net_size, linear_size)
-        self.dnn = nn.Linear(linear_size, dnn_size)
+        self.output = nn.Linear(n_featmaps2 * conv_net_size, n_labels)
         self.dropout = nn.Dropout(dropout_prob)
-        self.output = nn.Linear(dnn_size, n_labels)
 
     @staticmethod
     def default_config():
-        # Full arch (~9.7M params)
+        # Tensorflow arch
         config = {}
         config["dropout_prob"] = 0.5
         config["height"] = 101
@@ -101,12 +97,10 @@ class SpeechModel(nn.Module):
         config["n_feature_maps2"] = 64
         config["conv1_size"] = (20, 8)
         config["conv2_size"] = (10, 4)
-        config["conv1_pool"] = (1, 3)
+        config["conv1_pool"] = (2, 2)
         config["conv1_stride"] = (1, 1)
         config["conv2_stride"] = (1, 1)
         config["conv2_pool"] = (1, 1)
-        config["linear_size"] = 32
-        config["dnn_size"] = 128
         return config
 
     def forward(self, x):
@@ -116,9 +110,7 @@ class SpeechModel(nn.Module):
         x = F.relu(self.conv2(x)) # shape: (batch, o1, i2, o2)
         x = self.dropout(x)
         x = self.pool2(x)
-        x = self.linear(x.view(x.size(0), -1)) # shape: (batch, o3)
-        x = F.relu(self.dnn(x))
-        x = self.dropout(x)
+        x = x.view(x.size(0), -1) # shape: (batch, o3)
         return self.output(x)
 
 class SpeechDataset(data.Dataset):
@@ -135,9 +127,13 @@ class SpeechDataset(data.Dataset):
         self.noise_prob = config["noise_prob"]
         self.n_dct = config["n_dct_filters"]
         self.input_length = config["input_length"]
+        self.timeshift_ms = config["timeshift_ms"]
         self.filters = librosa.filters.dct(config["n_dct_filters"], config["n_mels"])
         self.n_mels = config["n_mels"]
         self._audio_cache = SimpleCache(config["cache_size"])
+        self._silence_data = self._preprocess_audio(np.zeros(self.input_length))
+        n_unk = len(list(filter(lambda x: x == 1, self.audio_labels)))
+        self.n_silence = int(self.silence_prob * (len(self.audio_labels) - n_unk))
 
     @staticmethod
     def default_config():
@@ -147,7 +143,8 @@ class SpeechDataset(data.Dataset):
         config["n_dct_filters"] = 40
         config["input_length"] = 16000
         config["n_mels"] = 40
-        config["unknown_prob"] = 0.01
+        config["timeshift_ms"] = 100
+        config["unknown_prob"] = 0.1
         config["train_pct"] = 80
         config["dev_pct"] = 10
         config["test_pct"] = 10
@@ -155,11 +152,27 @@ class SpeechDataset(data.Dataset):
         config["data_folder"] = "/data/speech_dataset"
         return config
 
+    def _timeshift_audio(self, data):
+        shift = (16000 * self.timeshift_ms) // 1000
+        shift = random.randint(-shift, shift)
+        a = -min(0, shift)
+        b = max(0, shift)
+        data = np.pad(data, (a, b), "constant")
+        return data[:len(data) - a] if a else data[b:]
+
+    def _preprocess_audio(self, data):
+        data = librosa.feature.melspectrogram(data, sr=16000, n_mels=self.n_mels, hop_length=160, n_fft=480, fmin=20, fmax=4000)
+        data[data > 0] = np.log(data[data > 0])
+        data = [np.matmul(self.filters, x) for x in np.split(data, data.shape[1], axis=1)]
+        data = np.array(data, order="F").squeeze(2).astype(np.float32)
+        return torch.from_numpy(data) # shape: (frames, dct_coeffs)
+
     def preprocess(self, example):
-        try:
-            return self._audio_cache[example]
-        except KeyError:
-            pass
+        if random.random() < 0.5:
+            try:
+                return self._audio_cache[example]
+            except KeyError:
+                pass
         in_len = self.input_length
         if self.bg_noise_audio:
             bg_noise = random.choice(self.bg_noise_audio)
@@ -168,23 +181,16 @@ class SpeechDataset(data.Dataset):
         else:
             bg_noise = np.zeros(in_len)
 
-        is_silence = False
-        if random.random() < self.silence_prob:
-            is_silence = True
-            data = bg_noise
-        else:
-            data = librosa.core.load(example, sr=16000)[0]
-            data = np.pad(data, (0, max(0, in_len - len(data))), "constant")
-            if random.random() < self.noise_prob:
-                a = random.random() * 0.1
-                data = a * bg_noise + (1 - a) * data
-        data = librosa.feature.melspectrogram(data, sr=16000, n_mels=self.n_mels, hop_length=160, n_fft=400)
-        data[data > 0] = np.log(data[data > 0])
-        data = [np.matmul(self.filters, x) for x in np.split(data, data.shape[1], axis=1)]
-        data = np.array(data, order="F").squeeze(2).astype(np.float32)
-        data = torch.from_numpy(data) # shape: (frames, dct_coeffs)
-        self._audio_cache[example] = (data, is_silence)
-        return data, is_silence
+        data = librosa.core.load(example, sr=16000)[0]
+        data = np.pad(data, (0, max(0, in_len - len(data))), "constant")
+        data = self._timeshift_audio(data)
+
+        if random.random() < self.noise_prob:
+            a = 0.1
+            data = np.clip(a * bg_noise + data, -1, 1)
+        data = self._preprocess_audio(data)
+        self._audio_cache[example] = data
+        return data
 
     @classmethod
     def splits(cls, config):
@@ -197,8 +203,10 @@ class SpeechDataset(data.Dataset):
 
         words = {word: i + 2 for i, word in enumerate(wanted_words)}
         words.update({cls.LABEL_SILENCE:0, cls.LABEL_UNKNOWN:1})
-        files = {0: {}, 1: {}, 2: {}}
+        sets = [{}, {}, {}]
+        unknowns = [0] * 3
         bg_noise_files = []
+        unknown_files = []
         
         for folder_name in os.listdir(folder):
             path_name = os.path.join(folder, folder_name)
@@ -217,27 +225,40 @@ class SpeechDataset(data.Dataset):
                 if is_bg_noise and os.path.isfile(wav_name):
                     bg_noise_files.append(wav_name)
                     continue
-                if label == words[cls.LABEL_UNKNOWN] and random.random() > unknown_prob:
+                elif label == words[cls.LABEL_UNKNOWN]:
+                    unknown_files.append(wav_name)
                     continue
-                bucket = zlib.adler32(filename.encode()) % 100
+                bucket = int(hashlib.sha1(filename.encode()).hexdigest(), 16) % 100
                 if bucket < train_pct:
                     tag = 0
                 elif bucket < train_pct + dev_pct:
                     tag = 1
                 else:
                     tag = 2
-                files[tag][wav_name] = label
+                sets[tag][wav_name] = label
+
+        for tag in range(len(sets)):
+            unknowns[tag] = int(unknown_prob * len(sets[tag]))
+        unk_files = np.random.choice(unknown_files, sum(unknowns), replace=False)
+        a = 0
+        for i, dataset in enumerate(sets):
+            b = a + unknowns[i]
+            unk_dict = {u: words[cls.LABEL_UNKNOWN] for u in unk_files[a:b]}
+            dataset.update(unk_dict)
+            a = b
+
         train_cfg = ChainMap(dict(bg_noise_files=bg_noise_files), config)
         test_cfg = ChainMap(dict(noise_prob=0), config)
-        return (cls(files[0], train_cfg), cls(files[1], test_cfg), cls(files[2], test_cfg))
+        datasets = (cls(sets[0], train_cfg), cls(sets[1], test_cfg), cls(sets[2], test_cfg))
+        return datasets
 
     def __getitem__(self, index):
-        data, is_silence = self.preprocess(self.audio_files[index])
-        label = 0 if is_silence else self.audio_labels[index]
-        return data, label
+        if index >= len(self.audio_labels):
+            return self._silence_data, 0
+        return self.preprocess(self.audio_files[index]), self.audio_labels[index]
 
     def __len__(self):
-        return len(self.audio_labels)
+        return len(self.audio_labels) + self.n_silence
 
 def print_eval(name, scores, labels, loss, end="\n"):
     batch_size = labels.size(0)
@@ -290,8 +311,8 @@ def train(config):
     min_loss = sys.float_info.max
     
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    dev_loader = data.DataLoader(dev_set, batch_size=len(dev_set))
-    test_loader = data.DataLoader(test_set, batch_size=len(test_set))
+    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 500))
+    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 500))
     step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
@@ -308,7 +329,7 @@ def train(config):
             loss.backward()
             optimizer.step()
             step_no += 1
-            print_eval("train step #{}".format(step_no), scores, labels, loss, end="\r")
+            print_eval("train step #{}".format(step_no), scores, labels, loss)
 
         if epoch_idx % config["dev_every"] == config["dev_every"] - 1:
             model.eval()
