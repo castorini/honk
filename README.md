@@ -59,6 +59,7 @@ There are command options available:
 | `--seed`   | (inf, inf)       | 0     | the seed to use        |
 | `--silence_prob`     | [0.0, 1.0] | 0.1  | the probability of picking silence    |
 | `--test_pct`   | [0, 100]       | 10     | percentage of total set to use for testing       |
+| `--timeshift_ms`| [0, inf)       | 100    | time in milliseconds to shift the audio randomly |
 | `--train_pct`   | [0, 100]       | 80     | percentage of total set to use for training       |
 | `--unknown_prob`     | [0.0, 1.0] | 0.01  | the probability of picking an unknown word    |
 | `--wanted_words` | string1 string2 ... stringn  | command random  | the desired target words            |
