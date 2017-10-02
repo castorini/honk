@@ -311,7 +311,6 @@ def train(config):
     min_loss = sys.float_info.max
     
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    print(len(train_set))
     dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 500))
     test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 500))
     step_no = 0
