@@ -11,7 +11,7 @@ import cherrypy
 import numpy as np
 
 from service import LabelService, TrainingService
-from service import encode_audio, stride
+from service import stride
 
 def json_in(f):
     def merge_dicts(x, y):
@@ -88,7 +88,7 @@ class ListenEndpoint(object):
     def POST(self, **kwargs):
         wav_data = zlib.decompress(base64.b64decode(kwargs["wav_data"]))
         for data in stride(wav_data, int(2 * 16000 * self.stride_size / 1000), 2 * 16000):
-            label, prob = self.label_service.label(encode_audio(data))
+            label, prob = self.label_service.label(data)
             if label == "command" and prob >= self.min_keyword_prob:
                 return dict(contains_command=True)
         return dict(contains_command=False)
@@ -108,11 +108,11 @@ def start(config):
         "request.dispatch": cherrypy.dispatch.MethodDispatcher()
     }}
     model_path = make_abspath(config["model_path"])
-    scripts_path = make_abspath(config["scripts_path"])
+    train_script = make_abspath(config["train_script"])
     speech_dataset_path = make_abspath(config["speech_dataset_path"])
 
     lbl_service = LabelService(model_path)
-    train_service = TrainingService(scripts_path, speech_dataset_path, config["model_options"])
+    train_service = TrainingService(train_script, speech_dataset_path, config["model_options"])
     cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
     cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)
     cherrypy.tree.mount(TrainEndpoint(train_service, lbl_service), "/train", rest_config)

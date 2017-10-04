@@ -4,14 +4,43 @@ import random
 import sys
 import wave
 
+import librosa
 import numpy as np
 import pyaudio
 
 class AudioSnippet(object):
+    _dct_filters = librosa.filters.dct(40, 40)
     def __init__(self, byte_data=b"", dtype=np.int16):
         self.byte_data = byte_data
         self.dtype = dtype
         self._compute_amps()
+
+    def chunk_phonemes(self):
+        audio_data, _ = librosa.effects.trim(self.amplitudes, top_db=16)
+        data = librosa.feature.melspectrogram(audio_data, sr=16000, n_mels=40, hop_length=160, n_fft=480, fmin=20, fmax=4000)
+        data[data > 0] = np.log(data[data > 0])
+        data = [np.matmul(AudioSnippet._dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
+        data = np.array(data, order="F").squeeze(2).astype(np.float32)
+        data = data[:, 1:25]
+        a = []
+        for i in range(data.shape[0] - 1):
+            a.append(np.linalg.norm(data[i] - data[i + 1]))
+        a = np.array(a)
+        q75, q25 = np.percentile(a, [75, 25])
+        segments = 160 * np.arange(a.shape[0])[a > 2 * q75 - q25]
+        segments = np.append(segments, [len(audio_data)])
+        delete_idx = []
+        for i in range(len(segments)):
+            for j in range(i + 1, len(segments)):
+                if segments[j] - segments[i] < 1000:
+                    delete_idx.append(j)
+                else:
+                    i = j - 1
+                    break
+        segments = np.delete(segments, delete_idx)
+        audio_segments = [audio_data[segments[i]:segments[i + 1]] for i in range(len(segments) - 1)]
+        audio_segments = [AudioSnippet.from_amps(seg) for seg in audio_segments]
+        return audio_segments
 
     @staticmethod
     def join(snippets):
@@ -21,7 +50,7 @@ class AudioSnippet(object):
         return snippet
 
     def copy(self):
-        return AudioSnippet(np.copy(self.byte_data))
+        return AudioSnippet(self.byte_data)
 
     def chunk(self, size, stride=1000):
         chunks = []
@@ -87,6 +116,11 @@ class AudioSnippet(object):
         self.amplitudes = self.amplitudes[:i]
         self.byte_data = self.byte_data[:i * nbytes]
         return self
+
+    @classmethod
+    def from_amps(cls, amps, dtype=np.int16):
+        byte_data = (np.iinfo(dtype).max * amps).astype(dtype).tobytes()
+        return cls(byte_data)
 
     def _compute_amps(self):
         self.amplitudes = np.frombuffer(self.byte_data, self.dtype).astype(float) / np.iinfo(self.dtype).max

@@ -85,6 +85,12 @@ class SpeechModel(nn.Module):
         self.output = nn.Linear(n_featmaps2 * conv_net_size, n_labels)
         self.dropout = nn.Dropout(dropout_prob)
 
+    def save(self, filename):
+        torch.save(self.state_dict(), filename)
+
+    def load(self, filename):
+        self.load_state_dict(torch.load(filename))
+
     @staticmethod
     def default_config():
         # Tensorflow arch
@@ -113,6 +119,13 @@ class SpeechModel(nn.Module):
         x = x.view(x.size(0), -1) # shape: (batch, o3)
         return self.output(x)
 
+def preprocess_audio(data, n_mels, dct_filters):
+    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480, fmin=20, fmax=4000)
+    data[data > 0] = np.log(data[data > 0])
+    data = [np.matmul(dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
+    data = np.array(data, order="F").squeeze(2).astype(np.float32)
+    return torch.from_numpy(data) # shape: (frames, dct_coeffs)
+
 class SpeechDataset(data.Dataset):
     LABEL_SILENCE = "__silence__"
     LABEL_UNKNOWN = "__unknown__"
@@ -131,7 +144,6 @@ class SpeechDataset(data.Dataset):
         self.filters = librosa.filters.dct(config["n_dct_filters"], config["n_mels"])
         self.n_mels = config["n_mels"]
         self._audio_cache = SimpleCache(config["cache_size"])
-        self._silence_data = self._preprocess_audio(np.zeros(self.input_length))
         n_unk = len(list(filter(lambda x: x == 1, self.audio_labels)))
         self.n_silence = int(self.silence_prob * (len(self.audio_labels) - n_unk))
 
@@ -160,15 +172,10 @@ class SpeechDataset(data.Dataset):
         data = np.pad(data, (a, b), "constant")
         return data[:len(data) - a] if a else data[b:]
 
-    def _preprocess_audio(self, data):
-        data = librosa.feature.melspectrogram(data, sr=16000, n_mels=self.n_mels, hop_length=160, n_fft=480, fmin=20, fmax=4000)
-        data[data > 0] = np.log(data[data > 0])
-        data = [np.matmul(self.filters, x) for x in np.split(data, data.shape[1], axis=1)]
-        data = np.array(data, order="F").squeeze(2).astype(np.float32)
-        return torch.from_numpy(data) # shape: (frames, dct_coeffs)
-
-    def preprocess(self, example):
-        if random.random() < 0.5:
+    def preprocess(self, example, silence=False):
+        if silence:
+            example = "__silence__"
+        if random.random() < 0.75:
             try:
                 return self._audio_cache[example]
             except KeyError:
@@ -181,14 +188,14 @@ class SpeechDataset(data.Dataset):
         else:
             bg_noise = np.zeros(in_len)
 
-        data = librosa.core.load(example, sr=16000)[0]
+        data = np.zeros(in_len, dtype=np.float32) if silence else librosa.core.load(example, sr=16000)[0]
         data = np.pad(data, (0, max(0, in_len - len(data))), "constant")
         data = self._timeshift_audio(data)
 
-        if random.random() < self.noise_prob:
+        if random.random() < self.noise_prob or silence:
             a = 0.1
             data = np.clip(a * bg_noise + data, -1, 1)
-        data = self._preprocess_audio(data)
+        data = preprocess_audio(data, self.n_mels, self.filters)
         self._audio_cache[example] = data
         return data
 
@@ -254,7 +261,7 @@ class SpeechDataset(data.Dataset):
 
     def __getitem__(self, index):
         if index >= len(self.audio_labels):
-            return self._silence_data, 0
+            return self.preprocess(None, silence=True), 0
         return self.preprocess(self.audio_files[index]), self.audio_labels[index]
 
     def __len__(self):
@@ -281,7 +288,8 @@ def evaluate(config, model=None, test_loader=None):
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
     if not model:
-        model = torch.load(config["input_file"])
+        model = SpeechModel(config)
+        model.load(config["input_file"])
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
@@ -300,7 +308,8 @@ def evaluate(config, model=None, test_loader=None):
 def train(config):
     train_set, dev_set, test_set = SpeechDataset.splits(config)
     if config["input_file"]:
-        model = torch.load(config["input_file"])
+        model = SpeechModel(config)
+        model.load(config["input_file"])
     else:
         model = SpeechModel(config)
     if not config["no_cuda"]:
@@ -309,7 +318,7 @@ def train(config):
     optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"])
     criterion = nn.CrossEntropyLoss()
     min_loss = sys.float_info.max
-    
+
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
     dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 500))
     test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 500))
@@ -344,7 +353,7 @@ def train(config):
                 loss_numeric = loss.cpu().data.numpy()[0]
                 if loss_numeric < min_loss:
                     min_loss = loss_numeric
-                    torch.save(model, config["output_file"])
+                    model.save(config["output_file"])
                 print_eval("dev", scores, labels, loss)
     evaluate(config, model, test_loader)
 

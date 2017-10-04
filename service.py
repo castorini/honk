@@ -6,29 +6,27 @@ import uuid
 import threading
 import wave
 
-from tensorflow.contrib.framework.python.ops import audio_ops
+import librosa
 import numpy as np
-import tensorflow as tf
+import torch
+import torch.nn.functional as F
 
 from utils.manage_audio import AudioSnippet
+import utils.model as model
 
 class LabelService(object):
-    def __init__(self, graph_filename, labels=["_silence_", "_unknown_", "command", "random"], max_memory_pct=0.01):
-        self.sess = None
+    def __init__(self, model_filename, no_cuda=False, labels=["_silence_", "_unknown_", "command", "random"]):
         self.labels = labels
-        self.graph_filename = graph_filename
-        self.max_memory_pct = max_memory_pct
+        self.model_filename = model_filename
+        self.no_cuda = no_cuda
+        self.filters = librosa.filters.dct(40, 40)
         self.reload()
 
     def reload(self):
-        if self.sess:
-            self.sess.close()
-        with tf.gfile.FastGFile(self.graph_filename, "rb") as f:
-            graph_def = tf.GraphDef()
-            graph_def.ParseFromString(f.read())
-            tf.import_graph_def(graph_def, name="")
-        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=self.max_memory_pct)
-        self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        self.model = model.SpeechModel(model.SpeechModel.default_config())
+        if not self.no_cuda:
+            self.model.cuda()
+        self.model.load(self.model_filename)
 
     def label(self, wav_data):
         """Labels audio data as one of the specified trained labels
@@ -39,25 +37,11 @@ class LabelService(object):
         Returns:
             A (most likely label, probability) tuple
         """
-        output = self.sess.graph.get_tensor_by_name("labels_softmax:0")
-        predictions, = self.sess.run(output, {"wav_data:0": wav_data})
+        wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
+        model_in = model.preprocess_audio(wav_data, 40, self.filters).unsqueeze(0)
+        model_in = torch.autograd.Variable(model_in, requires_grad=False).cuda()
+        predictions = F.softmax(self.model(model_in).squeeze(0).cpu()).data.numpy()
         return (self.labels[np.argmax(predictions)], max(predictions))
-
-
-def encode_audio(wav_data):
-    """Encodes raw audio data in WAVE format
-
-    Args:
-        wav_data: The raw amplitude data in standard speech command dataset format
-
-    Returns:
-        Encoded WAVE audio
-    """
-    buf = io.BytesIO()
-    with wave.open(buf, "w") as f:
-        set_speech_format(f)
-        f.writeframes(wav_data)
-    return buf.getvalue()
 
 def set_speech_format(f):
     f.setnchannels(1)
@@ -66,14 +50,13 @@ def set_speech_format(f):
 
 def stride(array, stride_size, window_size):
     i = 0
-    while i < len(array):
+    while i + window_size <= len(array):
         yield array[i:i + window_size]
         i += stride_size
 
 class TrainingService(object):
-    def __init__(self, scripts_path, speech_dataset_path, options):
-        self.freeze_script = os.path.join(scripts_path, "freeze.py")
-        self.train_script = os.path.join(scripts_path, "train.py")
+    def __init__(self, train_script, speech_dataset_path, options):
+        self.train_script = train_script
         self.neg_directory = os.path.join(speech_dataset_path, "random")
         self.pos_directory = os.path.join(speech_dataset_path, "command")
         self.options = options
@@ -92,19 +75,24 @@ class TrainingService(object):
         chunks = snippet.trim().chunk(3000, 1000)
         if len(chunks) == 1:
             return []
-        long_chunks = snippet.chunk(5000, 1000)
+        long_chunks = snippet.chunk(6000, 1000)
         if len(long_chunks) > 1:
             chunks.extend(long_chunks)
-        long_chunks = snippet.chunk(8000, 1000)
-        if len(long_chunks) > 1:
-            chunks.extend(long_chunks)
-        chunks2 = snippet.chunk(5000, 1000)
+        phoneme_chunks = AudioSnippet(data).chunk_phonemes()
+        if len(phoneme_chunks) <= 1:
+            phoneme_chunks = []
+        else:
+            phoneme_chunks2 = [chunk.copy() for chunk in phoneme_chunks]
+            phoneme_chunks.extend(phoneme_chunks2)
+        chunks2 = snippet.chunk(6000, 1000)
         for chunk in chunks:
+            chunk.rand_pad(32000)
+        for chunk in phoneme_chunks:
             chunk.rand_pad(32000)
         for chunk in chunks2:
             chunk.repeat_fill(32000)
             chunk.rand_pad(32000)
-        chunks = chunks * 2
+        chunks.extend(phoneme_chunks)
         chunks.extend(chunks2)
         return chunks
 
@@ -138,8 +126,7 @@ class TrainingService(object):
     def _run_training_script(self, callback):
         with self._run_lck:
             self.script_running = True
-        self._run_script(self.train_script, self.options["train"])
-        self._run_script(self.freeze_script, self.options["freeze"])
+        self._run_script(self.train_script, self.options)
         if callback:
             callback()
         self.script_running = False

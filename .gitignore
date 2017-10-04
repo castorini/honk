@@ -1,4 +1,5 @@
 local*config.json
+model.pt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
