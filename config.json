@@ -10,7 +10,7 @@
         "dev_pct": 5,
         "test_pct": 0,
         "train_pct": 95,
-        "n_epochs": "200",
+        "n_epochs": "300",
         "dev_every": 5,
         "data_folder": "/tmp/speech_dataset/",
         "output_file": "model/model.pt",

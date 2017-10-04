@@ -72,28 +72,27 @@ class TrainingService(object):
 
     def generate_contrastive(self, data):
         snippet = AudioSnippet(data)
-        chunks = snippet.trim().chunk(3000, 1000)
-        if len(chunks) == 1:
-            return []
-        long_chunks = snippet.chunk(6000, 1000)
-        if len(long_chunks) > 1:
-            chunks.extend(long_chunks)
         phoneme_chunks = AudioSnippet(data).chunk_phonemes()
-        if len(phoneme_chunks) <= 1:
+        phoneme_chunks2 = AudioSnippet(data).chunk_phonemes(factor=0.8, group_threshold=500)
+        joined_chunks = []
+        for i in range(len(phoneme_chunks) - 1):
+            joined_chunks.append(AudioSnippet.join([phoneme_chunks[i], phoneme_chunks[i + 1]]))
+        if len(joined_chunks) == 1:
+            joined_chunks = []
+        if len(phoneme_chunks) == 1:
             phoneme_chunks = []
-        else:
-            phoneme_chunks2 = [chunk.copy() for chunk in phoneme_chunks]
-            phoneme_chunks.extend(phoneme_chunks2)
-        chunks2 = snippet.chunk(6000, 1000)
+        if len(phoneme_chunks2) == 1:
+            phoneme_chunks2 = []
+        chunks = [c.copy() for c in phoneme_chunks2]
+        for chunk_list in (phoneme_chunks, joined_chunks, phoneme_chunks2):
+            for chunk in chunk_list:
+                chunk.rand_pad(32000)
         for chunk in chunks:
-            chunk.rand_pad(32000)
-        for chunk in phoneme_chunks:
-            chunk.rand_pad(32000)
-        for chunk in chunks2:
             chunk.repeat_fill(32000)
             chunk.rand_pad(32000)
         chunks.extend(phoneme_chunks)
-        chunks.extend(chunks2)
+        chunks.extend(phoneme_chunks2)
+        chunks.extend(joined_chunks)
         return chunks
 
     def clear_examples(self, positive=True, tag=""):

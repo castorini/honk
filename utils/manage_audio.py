@@ -15,7 +15,7 @@ class AudioSnippet(object):
         self.dtype = dtype
         self._compute_amps()
 
-    def chunk_phonemes(self):
+    def chunk_phonemes(self, factor=1.0, group_threshold=1000):
         audio_data, _ = librosa.effects.trim(self.amplitudes, top_db=16)
         data = librosa.feature.melspectrogram(audio_data, sr=16000, n_mels=40, hop_length=160, n_fft=480, fmin=20, fmax=4000)
         data[data > 0] = np.log(data[data > 0])
@@ -27,12 +27,12 @@ class AudioSnippet(object):
             a.append(np.linalg.norm(data[i] - data[i + 1]))
         a = np.array(a)
         q75, q25 = np.percentile(a, [75, 25])
-        segments = 160 * np.arange(a.shape[0])[a > 2 * q75 - q25]
+        segments = 160 * np.arange(a.shape[0])[a > q75 + factor * (q75 - q25)]
         segments = np.append(segments, [len(audio_data)])
         delete_idx = []
         for i in range(len(segments)):
             for j in range(i + 1, len(segments)):
-                if segments[j] - segments[i] < 1000:
+                if segments[j] - segments[i] < group_threshold:
                     delete_idx.append(j)
                 else:
                     i = j - 1
