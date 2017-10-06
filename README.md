@@ -5,14 +5,18 @@ Currently, PyTorch has official support for only Linux and OS X. Thus, Windows u
 To deploy the demo, run the following commands:
 - If you do not have PyTorch, please see [the website](http://pytorch.org).
 - Install Python dependencies: `pip install -r requirements.txt`
-- Install GLUT through your package manager (e.g. `apt-get install freeglut3-dev`)
+- Install GLUT (OpenGL Utility Toolkit) through your package manager (e.g. `apt-get install freeglut3-dev`)
 - Fetch the data and models: `./fetch_data.sh`
 - Start the PyTorch server: `python .`
 - Run the demo: `python utils/speech_demo.py`
 
-Please ensure that you have a working microphone. If you cannot get the demo working but would still like to see it in action, please see [the video](https://www.youtube.com/watch?v=31J4CD6VhX4).
+Please ensure that you have a working microphone. If you cannot get the demo working but would still like to see it in action,  see [the video](https://www.youtube.com/watch?v=31J4CD6VhX4).
 
 If you need to adjust options, like turning off CUDA, please edit `config.json`.
+
+Additional notes for Mac OS X:
+- GLUT is already installed on Mac OS X, so that step isn't needed.
+- If you have issues installing pyaudio, [this](https://stackoverflow.com/questions/33513522/when-installing-pyaudio-pip-cannot-find-portaudio-h-in-usr-local-include) may be the issue.
 
 ## Server
 ### Setup and deployment
