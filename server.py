@@ -87,11 +87,16 @@ class ListenEndpoint(object):
     @json_in
     def POST(self, **kwargs):
         wav_data = zlib.decompress(base64.b64decode(kwargs["wav_data"]))
+        labels = {}
         for data in stride(wav_data, int(2 * 16000 * self.stride_size / 1000), 2 * 16000):
             label, prob = self.label_service.label(data)
-            if label == "command" and prob >= self.min_keyword_prob:
+            try:
+                labels[label] += float(prob)
+            except KeyError:
+                labels[label] = float(prob)
+            if label == "command" and prob >= self.min_keyword_prob and kwargs["method"] == "command_tagging":
                 return dict(contains_command=True)
-        return dict(contains_command=False)
+        return dict(contains_command=False) if kwargs["method"] == "command_tagging" else labels
 
 def make_abspath(rel_path):
     if not os.path.isabs(rel_path):
@@ -110,8 +115,10 @@ def start(config):
     model_path = make_abspath(config["model_path"])
     train_script = make_abspath(config["train_script"])
     speech_dataset_path = make_abspath(config["speech_dataset_path"])
+    commands = ["__silence__", "__unknown__"]
+    commands.extend(config["commands"].split(","))
 
-    lbl_service = LabelService(model_path)
+    lbl_service = LabelService(model_path, labels=commands)
     train_service = TrainingService(train_script, speech_dataset_path, config["model_options"])
     cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
     cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)

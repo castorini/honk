@@ -3,7 +3,8 @@
         "server.socket_port": 16888,
         "server.socket_host": "0.0.0.0"
     },
-    "model_path": "model/model.pt",
+    "commands": "yes,no,up,down,left,right,on,off,stop,go",
+    "model_path": "model/model.pt"
     "train_script": "utils/model.py",
     "speech_dataset_path": "/tmp/speech_dataset/",
     "model_options": {

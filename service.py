@@ -23,7 +23,10 @@ class LabelService(object):
         self.reload()
 
     def reload(self):
-        self.model = model.SpeechModel(model.SpeechModel.default_config())
+        config = model.SpeechModel.default_config()
+        config["n_labels"] = len(self.labels)
+
+        self.model = model.SpeechModel(config)
         if not self.no_cuda:
             self.model.cuda()
         self.model.load(self.model_filename)

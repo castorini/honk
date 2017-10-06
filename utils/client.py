@@ -133,7 +133,7 @@ class Client(object):
 
     def contains_command(self, data):
         data = base64.b64encode(zlib.compress(data))
-        response = requests.post("{}/listen".format(self.server_endpoint), json=dict(wav_data=data.decode()))
+        response = requests.post("{}/listen".format(self.server_endpoint), json=dict(wav_data=data.decode(), method="command_tagging"))
         return json.loads(response.content.decode())["contains_command"]
 
     def query_qa(self, question):
