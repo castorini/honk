@@ -143,11 +143,14 @@ class Indicator(object):
 
     def draw(self):
         draw_text(self.text, self.text_pos[0], self.text_pos[1])
+        glEnable(GL_LINE_SMOOTH)
+        glLineWidth(2)
         glBegin(GL_LINE_STRIP)
         color = [0.4 + min(1 - self._color_lerp.val, 0.6)] * 3
         glColor3f(*color)
         draw_vertices(self.vertices)
         glEnd()
+        glDisable(GL_LINE_SMOOTH)
 
     def highlight(self, intensity):
         self._color_lerp.reset(1 - intensity)
@@ -175,9 +178,10 @@ class LabelClient(object):
         if not response:
             return data_ok
         max_key = max(response.items(), key=lambda x: x[1])[0]
-        total = sum(response.values())
         for key in response:
-            intensity = response[key] / total
+            p = response[key]
+            if p < 0.5 and key != "__unknown__":
+                continue
             key = key.replace("_", "")
             try:
                 Indicator.indicators[labels.index(key)].highlight(1.)
