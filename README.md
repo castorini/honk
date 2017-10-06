@@ -12,6 +12,8 @@ To deploy the demo, run the following commands:
 
 Please ensure that you have a working microphone. If you cannot get the demo working but would still like to see it in action, please see [the video](https://www.youtube.com/watch?v=31J4CD6VhX4).
 
+If you need to adjust options, like turning off CUDA, please edit `config.json`.
+
 ## Server
 ### Setup and deployment
 `python .` deploys the web service for identifying if audio contain the command word. By default, `config.json` is used for configuration, but that can be changed with `--config=<file_name>`.

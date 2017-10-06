@@ -203,7 +203,8 @@ class DemoApplication(object):
         glutIdleFunc(self.draw)
         glutReshapeFunc(self._on_resize)
         glClearColor(0.12, 0.12, 0.15, 1.)
-        textures["font"] = load_texture("fonts.png", 208, 15)
+        font_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "fonts.png")
+        textures["font"] = load_texture(font_path, 208, 15)
         self.children = [Indicator(labels[i], [400, 300], i) for i in range(len(labels))]
 
     def _refresh(self):

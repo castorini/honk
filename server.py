@@ -118,7 +118,7 @@ def start(config):
     commands = ["__silence__", "__unknown__"]
     commands.extend(config["commands"].split(","))
 
-    lbl_service = LabelService(model_path, labels=commands)
+    lbl_service = LabelService(model_path, labels=commands, no_cuda=config["model_options"]["no_cuda"])
     train_service = TrainingService(train_script, speech_dataset_path, config["model_options"])
     cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
     cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)

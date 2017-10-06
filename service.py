@@ -42,7 +42,9 @@ class LabelService(object):
         """
         wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
         model_in = model.preprocess_audio(wav_data, 40, self.filters).unsqueeze(0)
-        model_in = torch.autograd.Variable(model_in, requires_grad=False).cuda()
+        model_in = torch.autograd.Variable(model_in, requires_grad=False)
+        if not self.no_cuda:
+            model_in = model_in.cuda()
         predictions = F.softmax(self.model(model_in).squeeze(0).cpu()).data.numpy()
         return (self.labels[np.argmax(predictions)], max(predictions))
 

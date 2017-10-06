@@ -8,6 +8,7 @@
     "train_script": "utils/model.py",
     "speech_dataset_path": "/tmp/speech_dataset/",
     "model_options": {
+        "no_cuda": false,
         "dev_pct": 5,
         "test_pct": 0,
         "train_pct": 95,
