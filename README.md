@@ -6,6 +6,7 @@ To deploy the demo, run the following commands:
 - If you do not have PyTorch, please see [the website](http://pytorch.org).
 - Install Python dependencies: `pip install -r requirements.txt`
 - Install GLUT through your package manager (e.g. `apt-get install freeglut3-dev`)
+- Fetch the data and models: `./fetch_data.sh`
 - Start the PyTorch server: `python .`
 - Run the demo: `python utils/speech_demo.py`
 
@@ -67,7 +68,7 @@ There are command options available:
 | `--n_mels`       | [1, inf)     |   40    | the number of Mel filters to use            |
 | `--no_cuda`      | switch     | false   | whether to use CUDA            |
 | `--noise_prob`     | [0.0, 1.0] | 0.8  | the probability of mixing with noise    |
-| `--output_file`   | string    | model/model.pt     | the file to save the model to        |
+| `--output_file`   | string    | model/google-speech-dataset.pt     | the file to save the model to        |
 | `--seed`   | (inf, inf)       | 0     | the seed to use        |
 | `--silence_prob`     | [0.0, 1.0] | 0.1  | the probability of picking silence    |
 | `--test_pct`   | [0, 100]       | 10     | percentage of total set to use for testing       |
