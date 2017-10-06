@@ -1,11 +1,24 @@
-# Speech Command Recognition
+# Honk: Speech Command Recognition
+## Speech commands demo
+Currently, PyTorch has official support for only Linux and OS X. Thus, Windows users will not be able to run this demo easily.
+
+To deploy the demo, run the following commands:
+- If you do not have PyTorch, please see [the website](http://pytorch.org).
+- Install Python dependencies: `pip install -r requirements.txt`
+- Install GLUT through your package manager (e.g. `apt-get install freeglut3-dev`)
+- Fetch the data and models: `./fetch_data.sh`
+- Start the PyTorch server: `python .`
+- Run the demo: `python utils/speech_demo.py`
+
+Please ensure that you have a working microphone. If you cannot get the demo working but would still like to see it in action, please see [the video](https://www.youtube.com/watch?v=31J4CD6VhX4).
+
+If you need to adjust options, like turning off CUDA, please edit `config.json`.
+
 ## Server
 ### Setup and deployment
-`python speech-command-recognition` deploys the web service for identifying if audio contain "anserini." By default, `config.json` is used for configuration, but that can be changed with `--config=<file_name>`.
+`python .` deploys the web service for identifying if audio contain the command word. By default, `config.json` is used for configuration, but that can be changed with `--config=<file_name>`.
 
-If the server fails to start with Tensorflow errors, then you don't have the Tensorflow nightly version. You may find that information [here](https://hub.docker.com/r/tensorflow/tensorflow/tags/). Tensorflow 1.4 will have the missing modules.
-
-Since the server is behind a firewall, one workflow is to create an SSH tunnel and use port forwarding with the port specified in config (default 16888).
+If the server is behind a firewall, one workflow is to create an SSH tunnel and use port forwarding with the port specified in config (default 16888).
 
 ### Endpoint specifications
 ```
@@ -15,13 +28,15 @@ Args (JSON):
 * `wav_data`: 16kHz sampling rate, 16-bit PCM mono-channel raw audio data (with no WAVE header), gzipped and base64-encoded.
 
 Returns (JSON):
-* `contains_command`: `true` if `wav_data` contains "anserini," `false` otherwise.
+* `contains_command`: `true` if `wav_data` contains the command word, `false` otherwise.
 
 For a real-time example, please see `utils/client.py`.
 
 ## Utilities
-### Client
-`python client.py` runs the client. You may retarget a keyword by doing `python client.py --mode=retarget`. Please note that text-to-speech may not work well on Linux distros; in this case, please supply IBM Watson credentials via `--watson-username` and `--watson--password`. You can view all the options by doing `python client.py -h`.
+### QA client
+Unfortunately, the QA client has no support for the general public yet, since it requires a custom QA service. However, it can still be used to retarget the command keyword.
+
+`python client.py` runs the QA client. You may retarget a keyword by doing `python client.py --mode=retarget`. Please note that text-to-speech may not work well on Linux distros; in this case, please supply IBM Watson credentials via `--watson-username` and `--watson--password`. You can view all the options by doing `python client.py -h`.
 
 ### Training and evaluating the model
 `python model.py --mode [train|eval]` trains or evaluates the model. It expects all training examples to follow the same format as that of [Speech Commands Dataset](http://download.tensorflow.org/data/speech_commands_v0.01.tar.gz). The recommended workflow is to download the dataset and add custom keywords, since the dataset already contains many useful audio samples and background noise.
@@ -55,7 +70,7 @@ There are command options available:
 | `--n_mels`       | [1, inf)     |   40    | the number of Mel filters to use            |
 | `--no_cuda`      | switch     | false   | whether to use CUDA            |
 | `--noise_prob`     | [0.0, 1.0] | 0.8  | the probability of mixing with noise    |
-| `--output_file`   | string    | model/model.pt     | the file to save the model to        |
+| `--output_file`   | string    | model/google-speech-dataset.pt     | the file to save the model to        |
 | `--seed`   | (inf, inf)       | 0     | the seed to use        |
 | `--silence_prob`     | [0.0, 1.0] | 0.1  | the probability of picking silence    |
 | `--test_pct`   | [0, 100]       | 10     | percentage of total set to use for testing       |
@@ -89,10 +104,6 @@ python manage_audio.py listen
 This assists in setting sane values for `--min-sound-lvl` for recording.
 
 ### Trimming audio
-
 Speech command dataset contains one-second-long snippets of audio.
 
-```bash
-python manage_audio.py trim [directory]
-```
-trims (from the right) all .wav files in `[directory]`. The user should manually check all audio files beforehand using an audio editor.
+`python manage_audio.py trim [directory]` trims to the loudest one-second for all .wav files in `[directory]`. The careful user should manually check all audio samples using an audio editor like Audacity.
