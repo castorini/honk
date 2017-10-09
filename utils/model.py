@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import os
 import random
+import re
 import sys
 
 from torch.autograd import Variable
@@ -214,7 +215,7 @@ class SpeechDataset(data.Dataset):
         unknowns = [0] * 3
         bg_noise_files = []
         unknown_files = []
-        
+
         for folder_name in os.listdir(folder):
             path_name = os.path.join(folder, folder_name)
             is_bg_noise = False
@@ -235,13 +236,16 @@ class SpeechDataset(data.Dataset):
                 elif label == words[cls.LABEL_UNKNOWN]:
                     unknown_files.append(wav_name)
                     continue
-                bucket = int(hashlib.sha1(filename.encode()).hexdigest(), 16) % 100
-                if bucket < train_pct:
-                    tag = 0
-                elif bucket < train_pct + dev_pct:
+                hashname = re.sub(r"_nohash_.*$", "", filename)
+                max_no_wavs = 2**27 - 1
+                bucket = int(hashlib.sha1(hashname.encode()).hexdigest(), 16)
+                bucket = (bucket % (max_no_wavs + 1)) * (100. / max_no_wavs)
+                if bucket < dev_pct:
                     tag = 1
-                else:
+                elif bucket < test_pct + dev_pct:
                     tag = 2
+                else:
+                    tag = 0
                 sets[tag][wav_name] = label
 
         for tag in range(len(sets)):
