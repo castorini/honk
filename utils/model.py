@@ -1,6 +1,7 @@
 from collections import ChainMap
 from enum import Enum
 import hashlib
+import math
 import os
 import random
 import re
@@ -25,6 +26,60 @@ class SimpleCache(dict):
             self.n_keys += 1
             super().__setitem__(key, value)
         return value
+
+class ConfigType(Enum):
+    CNN_TRAD_POOL2 = "CNN_TRAD_POOL2" # default full model (TF variant)
+    CNN_ONE_FSTRIDE4 = "CNN_ONE_FSTRIDE4"
+    CNN_ONE_FSTRIDE8 = "CNN_ONE_FSTRIDE8"
+
+def find_config(conf):
+    if isinstance(conf, ConfigType):
+        conf = conf.value
+    return _configs[conf]
+
+def find_model(conf):
+    if isinstance(conf, ConfigType):
+        conf = conf.value
+    return _models[conf]
+
+class FreqStrideSpeechModel(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        n_labels = config["n_labels"]
+        n_featmaps1 = config["n_feature_maps1"]
+        conv1_size = config["conv1_size"]
+        conv1_pool = config["conv1_pool"]
+        conv1_stride = config["conv1_stride"]
+        dnn1_size = config["dnn1_size"]
+        dnn2_size = config["dnn2_size"]
+        width = config["width"]
+        height = config["height"]
+        dropout_prob = config["dropout_prob"]
+        self.conv1 = nn.Conv2d(1, n_featmaps1, conv1_size, stride=conv1_stride)
+        self.pool1 = nn.MaxPool2d(conv1_pool)
+
+        m1, m2 = conv1_size
+        s, v = conv1_stride
+        p, q = conv1_pool
+        h = math.ceil((height - m1 + 1) / (s * p)) 
+        w = math.ceil((width - m2 + 1) / (v * q))
+        conv_net_size = h * w
+
+        self.dropout = nn.Dropout(dropout_prob)
+        self.dnn1 = nn.Linear(n_featmaps1 * conv_net_size, dnn1_size)
+        self.dnn2 = nn.Linear(dnn1_size, dnn2_size)
+        self.output = nn.Linear(dnn2_size, n_labels)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
+        x = self.dropout(x)
+        x = self.pool1(x)
+        x = x.view(x.size(0), -1) # shape: (batch, o3)
+        x = self.dnn1(x)
+        x = self.dropout(x)
+        x = self.dnn2(x)
+        x = self.dropout(x)
+        return self.output(x)
 
 class SpeechModel(nn.Module):
     def __init__(self, config):
@@ -65,24 +120,6 @@ class SpeechModel(nn.Module):
 
     def load(self, filename):
         self.load_state_dict(torch.load(filename, map_location=lambda storage, loc: storage))
-
-    @staticmethod
-    def default_config():
-        # Tensorflow arch
-        config = {}
-        config["dropout_prob"] = 0.5
-        config["height"] = 101
-        config["width"] = 40
-        config["n_labels"] = 4
-        config["n_feature_maps1"] = 64
-        config["n_feature_maps2"] = 64
-        config["conv1_size"] = (20, 8)
-        config["conv2_size"] = (10, 4)
-        config["conv1_pool"] = (2, 2)
-        config["conv1_stride"] = (1, 1)
-        config["conv2_stride"] = (1, 1)
-        config["conv2_pool"] = (1, 1)
-        return config
 
     def forward(self, x):
         x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
@@ -251,3 +288,19 @@ class SpeechDataset(data.Dataset):
 
     def __len__(self):
         return len(self.audio_labels) + self.n_silence
+
+_models = {
+    ConfigType.CNN_TRAD_POOL2.value: SpeechModel,
+    ConfigType.CNN_ONE_FSTRIDE4.value: FreqStrideSpeechModel,
+    ConfigType.CNN_ONE_FSTRIDE8.value: FreqStrideSpeechModel
+}
+
+_configs = {
+    ConfigType.CNN_TRAD_POOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=64,
+        n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(2, 2), conv1_stride=(1, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1)),
+    ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
+        conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 4), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_ONE_FSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=336,
+        conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128)
+}
