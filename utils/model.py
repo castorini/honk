@@ -1,4 +1,5 @@
 from collections import ChainMap
+from enum import Enum
 import argparse
 import hashlib
 import os
@@ -127,6 +128,11 @@ def preprocess_audio(data, n_mels, dct_filters):
     data = np.array(data, order="F").squeeze(2).astype(np.float32)
     return torch.from_numpy(data) # shape: (frames, dct_coeffs)
 
+class DatasetType(Enum):
+    TRAIN = 0
+    DEV = 1
+    TEST = 2
+
 class SpeechDataset(data.Dataset):
     LABEL_SILENCE = "__silence__"
     LABEL_UNKNOWN = "__unknown__"
@@ -241,12 +247,12 @@ class SpeechDataset(data.Dataset):
                 bucket = int(hashlib.sha1(hashname.encode()).hexdigest(), 16)
                 bucket = (bucket % (max_no_wavs + 1)) * (100. / max_no_wavs)
                 if bucket < dev_pct:
-                    tag = 1
+                    tag = DatasetType.DEV
                 elif bucket < test_pct + dev_pct:
-                    tag = 2
+                    tag = DatasetType.TEST
                 else:
-                    tag = 0
-                sets[tag][wav_name] = label
+                    tag = DatasetType.TRAIN
+                sets[tag.value][wav_name] = label
 
         for tag in range(len(sets)):
             unknowns[tag] = int(unknown_prob * len(sets[tag]))
