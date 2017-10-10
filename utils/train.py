@@ -136,7 +136,7 @@ def main():
         global_config)
     parser = builder.build_argparse()
     parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
-    parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="CNN_TRAD_POOL2", type=str)
+    parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="cnn-trad-pool2", type=str)
     config = builder.config_from_argparse(parser)
     config = ChainMap(mod.find_config(config["model"]), config)
     set_seed(config)
