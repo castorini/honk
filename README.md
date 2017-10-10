@@ -62,6 +62,7 @@ There are command options available:
 | `--dev_pct`   | [0, 100]       | 10     | percentage of total set to use for dev        |
 | `--dropout_prob` | [0.0, 1.0)   | 0.5     | the dropout rate to use            |
 | `--gpu_no`     | [-1, n] | 1  | the gpu to use            |
+| `--group_speakers_by_id` | {true, false} | true | whether to group speakers across train/dev/test |
 | `--input_file`   | string       |      | the path to the model to load   |
 | `--input_length`   | [1, inf)       | 16000     | the length of the audio   |
 | `--lr`           | (0.0, inf)   | 0.001   | the learning rate to use            |
