@@ -31,6 +31,8 @@ class ConfigType(Enum):
     CNN_TSTRIDE2 = "cnn-tstride2"
     CNN_TSTRIDE4 = "cnn-tstride4"
     CNN_TSTRIDE8 = "cnn-tstride8"
+    CNN_TPOOL2 = "cnn-tpool2"
+    CNN_TPOOL3 = "cnn-tpool3"
     CNN_ONE_FSTRIDE4 = "cnn-one-fstride4"
     CNN_ONE_FSTRIDE8 = "cnn-one-fstride8"
 
@@ -308,6 +310,8 @@ _models = {
     ConfigType.CNN_TSTRIDE2.value: FullConvModel,
     ConfigType.CNN_TSTRIDE4.value: FullConvModel,
     ConfigType.CNN_TSTRIDE8.value: FullConvModel,
+    ConfigType.CNN_TPOOL2.value: FullConvModel,
+    ConfigType.CNN_TPOOL3.value: FullConvModel,
     ConfigType.CNN_ONE_FSTRIDE4.value: SingleConvModel,
     ConfigType.CNN_ONE_FSTRIDE8.value: SingleConvModel
 }
@@ -324,6 +328,12 @@ _configs = {
         conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_TSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=126,
         n_feature_maps2=78, conv1_size=(16, 8), conv2_size=(5, 4), conv1_pool=(1, 3), conv1_stride=(8, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_TPOOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=94,
+        n_feature_maps2=94, conv1_size=(21, 8), conv2_size=(6, 4), conv1_pool=(2, 3), conv1_stride=(1, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_TPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=94,
+        n_feature_maps2=94, conv1_size=(15, 8), conv2_size=(6, 4), conv1_pool=(3, 3), conv1_stride=(1, 1),
         conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
         conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 4), dnn1_size=128, dnn2_size=128),
