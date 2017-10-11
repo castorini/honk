@@ -33,7 +33,7 @@ class ConfigBuilder(object):
     def config_from_argparse(self, parser=None):
         if not parser:
             parser = self.build_argparse()
-        args = vars(parser.parse_args())
+        args = vars(parser.parse_known_args()[0])
         return ChainMap(args, self.default_config)
 
 def print_eval(name, scores, labels, loss, end="\n"):
@@ -128,16 +128,19 @@ def train(config):
 
 def main():
     output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "model", "model.pt")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="cnn-trad-pool2", type=str)
+    config, _ = parser.parse_known_args()
+
     global_config = dict(no_cuda=False, n_epochs=500, lr=0.001, batch_size=100, dev_every=10, seed=0,
         input_file="", output_file=output_file, gpu_no=1, cache_size=32768)
     builder = ConfigBuilder(
+        mod.find_config(config.model),
         mod.SpeechDataset.default_config(),
         global_config)
     parser = builder.build_argparse()
     parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
-    parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="cnn-trad-pool2", type=str)
     config = builder.config_from_argparse(parser)
-    config.maps.insert(1, mod.find_config(config["model"]))
     set_seed(config)
     if config["mode"] == "train":
         train(config)
