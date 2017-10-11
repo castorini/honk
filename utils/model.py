@@ -1,43 +1,17 @@
 from collections import ChainMap
 from enum import Enum
-import argparse
 import hashlib
+import math
 import os
 import random
 import re
-import sys
 
-from torch.autograd import Variable
 import librosa
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as data
-
-class ConfigBuilder(object):
-    def __init__(self, *default_configs):
-        self.default_config = ChainMap(*default_configs)
-
-    def build_argparse(self):
-        parser = argparse.ArgumentParser()
-        for key, value in self.default_config.items():
-            key = "--{}".format(key)
-            if isinstance(value, tuple):
-                parser.add_argument(key, default=list(value), nargs=len(value), type=type(value[0]))
-            elif isinstance(value, list):
-                parser.add_argument(key, default=value, nargs="+", type=type(value[0]))
-            elif isinstance(value, bool) and not value:
-                parser.add_argument(key, action="store_true")
-            else:
-                parser.add_argument(key, default=value, type=type(value))
-        return parser
-
-    def config_from_argparse(self, parser=None):
-        if not parser:
-            parser = self.build_argparse()
-        args = vars(parser.parse_args())
-        return ChainMap(args, self.default_config)
 
 class SimpleCache(dict):
     def __init__(self, limit):
@@ -53,38 +27,64 @@ class SimpleCache(dict):
             super().__setitem__(key, value)
         return value
 
+class ConfigType(Enum):
+    CNN_TRAD_POOL2 = "cnn-trad-pool2" # default full model (TF variant)
+    CNN_ONE_FPOOL3 = "cnn-one-fpool3"
+    CNN_ONE_FSTRIDE4 = "cnn-one-fstride4"
+    CNN_ONE_FSTRIDE8 = "cnn-one-fstride8"
+    CNN_TPOOL2 = "cnn-tpool2"
+    CNN_TPOOL3 = "cnn-tpool3"
+    CNN_TSTRIDE2 = "cnn-tstride2"
+    CNN_TSTRIDE4 = "cnn-tstride4"
+    CNN_TSTRIDE8 = "cnn-tstride8"
+
+def find_config(conf):
+    if isinstance(conf, ConfigType):
+        conf = conf.value
+    return _configs[conf]
+
 class SpeechModel(nn.Module):
     def __init__(self, config):
         super().__init__()
         n_labels = config["n_labels"]
-        n_featmaps1 = config["n_feature_maps1"]
-        n_featmaps2 = config["n_feature_maps2"]
+        last_featmaps = n_featmaps1 = config["n_feature_maps1"]
+        
         conv1_size = config["conv1_size"] # (time, frequency)
-        conv2_size = config["conv2_size"]
         conv1_pool = config["conv1_pool"]
-        conv2_pool = config["conv2_pool"]
-        dropout_prob = config["dropout_prob"]
         conv1_stride = tuple(config["conv1_stride"])
-        conv2_stride = tuple(config["conv2_stride"])
+        dropout_prob = config["dropout_prob"]
         width = config["width"]
         height = config["height"]
         self.conv1 = nn.Conv2d(1, n_featmaps1, conv1_size, stride=conv1_stride)
         self.pool1 = nn.MaxPool2d(conv1_pool)
-        self.conv2 = nn.Conv2d(n_featmaps1, n_featmaps2, conv2_size, stride=conv2_stride)
-        self.pool2 = nn.MaxPool2d(conv2_pool)
 
         m1, m2 = conv1_size
         s, v = conv1_stride
         p, q = conv1_pool
-        h = ((height - m1 + 1) // (s * p)) 
-        w = ((width - m2 + 1) // (v * q))
+        h = (height - m1 + 1) / (s * p)
+        w = (width - m2 + 1) / (v * q)
+        conv_net_size = math.ceil(h) * math.ceil(w)
 
-        m1, m2 = conv2_size
-        s, v = conv2_stride
-        p, q = conv2_pool
-        conv_net_size = ((h - m1 + 1) // (s * p)) * ((w - m2 + 1) // (v * q))
+        if "conv2_size" in config:
+            conv2_size = config["conv2_size"]
+            conv2_pool = config["conv2_pool"]
+            conv2_stride = tuple(config["conv2_stride"])
+            last_featmaps = n_featmaps2 = config["n_feature_maps2"]
+            self.conv2 = nn.Conv2d(n_featmaps1, n_featmaps2, conv2_size, stride=conv2_stride)
+            self.pool2 = nn.MaxPool2d(conv2_pool)
+            m1, m2 = conv2_size
+            s, v = conv2_stride
+            p, q = conv2_pool
+            conv_net_size = math.floor((h - m1 + 1) / (s * p)) * math.floor((w - m2 + 1) / (v * q))
 
-        self.output = nn.Linear(n_featmaps2 * conv_net_size, n_labels)
+        if "dnn1_size" in config and "dnn2_size" in config:
+            dnn1_size = config["dnn1_size"]
+            dnn2_size = config["dnn2_size"]
+            self.dnn1 = nn.Linear(last_featmaps * conv_net_size, dnn1_size)
+            self.dnn2 = nn.Linear(dnn1_size, dnn2_size)
+            self.output = nn.Linear(dnn2_size, n_labels)
+        else:
+            self.output = nn.Linear(last_featmaps * conv_net_size, n_labels)
         self.dropout = nn.Dropout(dropout_prob)
 
     def save(self, filename):
@@ -93,32 +93,20 @@ class SpeechModel(nn.Module):
     def load(self, filename):
         self.load_state_dict(torch.load(filename, map_location=lambda storage, loc: storage))
 
-    @staticmethod
-    def default_config():
-        # Tensorflow arch
-        config = {}
-        config["dropout_prob"] = 0.5
-        config["height"] = 101
-        config["width"] = 40
-        config["n_labels"] = 4
-        config["n_feature_maps1"] = 64
-        config["n_feature_maps2"] = 64
-        config["conv1_size"] = (20, 8)
-        config["conv2_size"] = (10, 4)
-        config["conv1_pool"] = (2, 2)
-        config["conv1_stride"] = (1, 1)
-        config["conv2_stride"] = (1, 1)
-        config["conv2_pool"] = (1, 1)
-        return config
-
     def forward(self, x):
         x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
         x = self.dropout(x)
         x = self.pool1(x)
-        x = F.relu(self.conv2(x)) # shape: (batch, o1, i2, o2)
-        x = self.dropout(x)
-        x = self.pool2(x)
+        if hasattr(self, "conv2"):
+            x = F.relu(self.conv2(x)) # shape: (batch, o1, i2, o2)
+            x = self.dropout(x)
+            x = self.pool2(x)
         x = x.view(x.size(0), -1) # shape: (batch, o3)
+        if hasattr(self, "dnn1") and hasattr(self, "dnn2"):
+            x = self.dnn1(x)
+            x = self.dropout(x)
+            x = self.dnn2(x)
+            x = self.dropout(x)
         return self.output(x)
 
 def preprocess_audio(data, n_mels, dct_filters):
@@ -157,6 +145,7 @@ class SpeechDataset(data.Dataset):
     @staticmethod
     def default_config():
         config = {}
+        config["group_speakers_by_id"] = True
         config["silence_prob"] = 0.1
         config["noise_prob"] = 0.8
         config["n_dct_filters"] = 40
@@ -242,7 +231,8 @@ class SpeechDataset(data.Dataset):
                 elif label == words[cls.LABEL_UNKNOWN]:
                     unknown_files.append(wav_name)
                     continue
-                hashname = re.sub(r"_nohash_.*$", "", filename)
+                if config["group_speakers_by_id"]:
+                    hashname = re.sub(r"_nohash_.*$", "", filename)
                 max_no_wavs = 2**27 - 1
                 bucket = int(hashlib.sha1(hashname.encode()).hexdigest(), 16)
                 bucket = (bucket % (max_no_wavs + 1)) * (100. / max_no_wavs)
@@ -277,112 +267,29 @@ class SpeechDataset(data.Dataset):
     def __len__(self):
         return len(self.audio_labels) + self.n_silence
 
-def print_eval(name, scores, labels, loss, end="\n"):
-    batch_size = labels.size(0)
-    accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).sum() / batch_size
-    loss = loss.cpu().data.numpy()[0]
-    print("{} accuracy: {:>5}, loss: {:<25}".format(name, accuracy, loss), end=end)
-
-def set_seed(config):
-    seed = config["seed"]
-    torch.manual_seed(seed)
-    np.random.seed(seed)
-    if not config["no_cuda"]:
-        torch.cuda.manual_seed(seed)
-    random.seed(seed)
-
-def evaluate(config, model=None, test_loader=None):
-    if not test_loader:
-        _, _, test_set = SpeechDataset.splits(config)
-        test_loader = data.DataLoader(test_set, batch_size=len(test_set))
-    if not config["no_cuda"]:
-        torch.cuda.set_device(config["gpu_no"])
-    if not model:
-        model = SpeechModel(config)
-        model.load(config["input_file"])
-    if not config["no_cuda"]:
-        torch.cuda.set_device(config["gpu_no"])
-        model.cuda()
-    model.eval()
-    criterion = nn.CrossEntropyLoss()
-    for model_in, labels in test_loader:
-        model_in = Variable(model_in, requires_grad=False)
-        if not config["no_cuda"]:
-            model_in = model_in.cuda()
-            labels = labels.cuda()
-        scores = model(model_in)
-        labels = Variable(labels, requires_grad=False)
-        loss = criterion(scores, labels)
-        print_eval("test", scores, labels, loss)
-
-def train(config):
-    train_set, dev_set, test_set = SpeechDataset.splits(config)
-    if config["input_file"]:
-        model = SpeechModel(config)
-        model.load(config["input_file"])
-    else:
-        model = SpeechModel(config)
-    if not config["no_cuda"]:
-        torch.cuda.set_device(config["gpu_no"])
-        model.cuda()
-    optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"])
-    criterion = nn.CrossEntropyLoss()
-    min_loss = sys.float_info.max
-
-    train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 500))
-    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 500))
-    step_no = 0
-
-    for epoch_idx in range(config["n_epochs"]):
-        for batch_idx, (model_in, labels) in enumerate(train_loader):
-            model.train()
-            optimizer.zero_grad()
-            if not config["no_cuda"]:
-                model_in = model_in.cuda()
-                labels = labels.cuda()
-            model_in = Variable(model_in, requires_grad=False)
-            scores = model(model_in)
-            labels = Variable(labels, requires_grad=False)
-            loss = criterion(scores, labels)
-            loss.backward()
-            optimizer.step()
-            step_no += 1
-            print_eval("train step #{}".format(step_no), scores, labels, loss)
-
-        if epoch_idx % config["dev_every"] == config["dev_every"] - 1:
-            model.eval()
-            for model_in, labels in dev_loader:
-                model_in = Variable(model_in, requires_grad=False)
-                if not config["no_cuda"]:
-                    model_in = model_in.cuda()
-                    labels = labels.cuda()
-                scores = model(model_in)
-                labels = Variable(labels, requires_grad=False)
-                loss = criterion(scores, labels)
-                loss_numeric = loss.cpu().data.numpy()[0]
-                if loss_numeric < min_loss:
-                    min_loss = loss_numeric
-                    model.save(config["output_file"])
-                print_eval("dev", scores, labels, loss)
-    evaluate(config, model, test_loader)
-
-def main():
-    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "model", "model.pt")
-    global_config = dict(no_cuda=False, n_epochs=500, lr=0.001, batch_size=100, dev_every=10, seed=0,
-        input_file="", output_file=output_file, gpu_no=1, cache_size=32768)
-    builder = ConfigBuilder(
-        SpeechModel.default_config(),
-        SpeechDataset.default_config(),
-        global_config)
-    parser = builder.build_argparse()
-    parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
-    config = builder.config_from_argparse(parser)
-    set_seed(config)
-    if config["mode"] == "train":
-        train(config)
-    elif config["mode"] == "eval":
-        evaluate(config)
-
-if __name__ == "__main__":
-    main()
+_configs = {
+    ConfigType.CNN_TRAD_POOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=64,
+        n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(2, 2), conv1_stride=(1, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1)),
+    ConfigType.CNN_TSTRIDE2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=78,
+        n_feature_maps2=78, conv1_size=(16, 8), conv2_size=(9, 4), conv1_pool=(1, 3), conv1_stride=(2, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_TSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=100,
+        n_feature_maps2=78, conv1_size=(16, 8), conv2_size=(5, 4), conv1_pool=(1, 3), conv1_stride=(4, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_TSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=126,
+        n_feature_maps2=78, conv1_size=(16, 8), conv2_size=(5, 4), conv1_pool=(1, 3), conv1_stride=(8, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_TPOOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=94,
+        n_feature_maps2=94, conv1_size=(21, 8), conv2_size=(6, 4), conv1_pool=(2, 3), conv1_stride=(1, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_TPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=94,
+        n_feature_maps2=94, conv1_size=(15, 8), conv2_size=(6, 4), conv1_pool=(3, 3), conv1_stride=(1, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_ONE_FPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=54,
+        conv1_size=(32, 8), conv1_pool=(1, 3), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
+        conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 4), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_ONE_FSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=336,
+        conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128)
+}
