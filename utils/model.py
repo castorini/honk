@@ -1,6 +1,7 @@
 from collections import ChainMap
 from enum import Enum
 import hashlib
+import math
 import os
 import random
 import re
@@ -28,102 +29,62 @@ class SimpleCache(dict):
 
 class ConfigType(Enum):
     CNN_TRAD_POOL2 = "cnn-trad-pool2" # default full model (TF variant)
+    CNN_ONE_FPOOL3 = "cnn-one-fpool3"
+    CNN_ONE_FSTRIDE4 = "cnn-one-fstride4"
+    CNN_ONE_FSTRIDE8 = "cnn-one-fstride8"
+    CNN_TPOOL2 = "cnn-tpool2"
+    CNN_TPOOL3 = "cnn-tpool3"
     CNN_TSTRIDE2 = "cnn-tstride2"
     CNN_TSTRIDE4 = "cnn-tstride4"
     CNN_TSTRIDE8 = "cnn-tstride8"
-    CNN_TPOOL2 = "cnn-tpool2"
-    CNN_TPOOL3 = "cnn-tpool3"
-    CNN_ONE_FSTRIDE4 = "cnn-one-fstride4"
-    CNN_ONE_FSTRIDE8 = "cnn-one-fstride8"
 
 def find_config(conf):
     if isinstance(conf, ConfigType):
         conf = conf.value
     return _configs[conf]
 
-def find_model(conf):
-    if isinstance(conf, ConfigType):
-        conf = conf.value
-    return _models[conf]
-
-class SingleConvModel(nn.Module):
+class SpeechModel(nn.Module):
     def __init__(self, config):
         super().__init__()
         n_labels = config["n_labels"]
-        n_featmaps1 = config["n_feature_maps1"]
-        conv1_size = config["conv1_size"]
-        conv1_pool = config["conv1_pool"]
-        conv1_stride = config["conv1_stride"]
-        dnn1_size = config["dnn1_size"]
-        dnn2_size = config["dnn2_size"]
-        width = config["width"]
-        height = config["height"]
-        dropout_prob = config["dropout_prob"]
-        self.conv1 = nn.Conv2d(1, n_featmaps1, conv1_size, stride=conv1_stride)
-        self.pool1 = nn.MaxPool2d(conv1_pool)
-
-        m1, m2 = conv1_size
-        s, v = conv1_stride
-        p, q = conv1_pool
-        h = round((height - m1 + 1) / (s * p)) 
-        w = round((width - m2 + 1) / (v * q))
-        conv_net_size = h * w
-
-        self.dropout = nn.Dropout(dropout_prob)
-        self.dnn1 = nn.Linear(n_featmaps1 * conv_net_size, dnn1_size)
-        self.dnn2 = nn.Linear(dnn1_size, dnn2_size)
-        self.output = nn.Linear(dnn2_size, n_labels)
-
-    def forward(self, x):
-        x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
-        x = self.dropout(x)
-        x = self.pool1(x)
-        x = x.view(x.size(0), -1) # shape: (batch, o3)
-        x = self.dnn1(x)
-        x = self.dropout(x)
-        x = self.dnn2(x)
-        x = self.dropout(x)
-        return self.output(x)
-
-class FullConvModel(nn.Module):
-    def __init__(self, config):
-        super().__init__()
-        n_labels = config["n_labels"]
-        n_featmaps1 = config["n_feature_maps1"]
-        n_featmaps2 = config["n_feature_maps2"]
+        last_featmaps = n_featmaps1 = config["n_feature_maps1"]
+        
         conv1_size = config["conv1_size"] # (time, frequency)
-        conv2_size = config["conv2_size"]
         conv1_pool = config["conv1_pool"]
-        conv2_pool = config["conv2_pool"]
-        dropout_prob = config["dropout_prob"]
         conv1_stride = tuple(config["conv1_stride"])
-        conv2_stride = tuple(config["conv2_stride"])
+        dropout_prob = config["dropout_prob"]
         width = config["width"]
         height = config["height"]
         self.conv1 = nn.Conv2d(1, n_featmaps1, conv1_size, stride=conv1_stride)
         self.pool1 = nn.MaxPool2d(conv1_pool)
-        self.conv2 = nn.Conv2d(n_featmaps1, n_featmaps2, conv2_size, stride=conv2_stride)
-        self.pool2 = nn.MaxPool2d(conv2_pool)
 
         m1, m2 = conv1_size
         s, v = conv1_stride
         p, q = conv1_pool
-        h = round((height - m1 + 1) / (s * p))
-        w = round((width - m2 + 1) / (v * q))
+        h = (height - m1 + 1) / (s * p)
+        w = (width - m2 + 1) / (v * q)
+        conv_net_size = math.ceil(h) * math.ceil(w)
 
-        m1, m2 = conv2_size
-        s, v = conv2_stride
-        p, q = conv2_pool
-        conv_net_size = round((h - m1 + 1) / (s * p)) * round((w - m2 + 1) / (v * q))
+        if "conv2_size" in config:
+            conv2_size = config["conv2_size"]
+            conv2_pool = config["conv2_pool"]
+            conv2_stride = tuple(config["conv2_stride"])
+            last_featmaps = n_featmaps2 = config["n_feature_maps2"]
+            self.conv2 = nn.Conv2d(n_featmaps1, n_featmaps2, conv2_size, stride=conv2_stride)
+            self.pool2 = nn.MaxPool2d(conv2_pool)
+            m1, m2 = conv2_size
+            s, v = conv2_stride
+            p, q = conv2_pool
+            conv_net_size = math.floor((h - m1 + 1) / (s * p)) * math.floor((w - m2 + 1) / (v * q))
 
         if "dnn1_size" in config and "dnn2_size" in config:
             dnn1_size = config["dnn1_size"]
             dnn2_size = config["dnn2_size"]
-            self.dnn1 = nn.Linear(n_featmaps2 * conv_net_size, dnn1_size)
+            self.dnn1 = nn.Linear(last_featmaps * conv_net_size, dnn1_size)
             self.dnn2 = nn.Linear(dnn1_size, dnn2_size)
             self.output = nn.Linear(dnn2_size, n_labels)
         else:
-            self.output = nn.Linear(n_featmaps2 * conv_net_size, n_labels)
+            self.output = nn.Linear(last_featmaps * conv_net_size, n_labels)
         self.dropout = nn.Dropout(dropout_prob)
 
     def save(self, filename):
@@ -136,9 +97,10 @@ class FullConvModel(nn.Module):
         x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
         x = self.dropout(x)
         x = self.pool1(x)
-        x = F.relu(self.conv2(x)) # shape: (batch, o1, i2, o2)
-        x = self.dropout(x)
-        x = self.pool2(x)
+        if hasattr(self, "conv2"):
+            x = F.relu(self.conv2(x)) # shape: (batch, o1, i2, o2)
+            x = self.dropout(x)
+            x = self.pool2(x)
         x = x.view(x.size(0), -1) # shape: (batch, o3)
         if hasattr(self, "dnn1") and hasattr(self, "dnn2"):
             x = self.dnn1(x)
@@ -305,17 +267,6 @@ class SpeechDataset(data.Dataset):
     def __len__(self):
         return len(self.audio_labels) + self.n_silence
 
-_models = {
-    ConfigType.CNN_TRAD_POOL2.value: FullConvModel,
-    ConfigType.CNN_TSTRIDE2.value: FullConvModel,
-    ConfigType.CNN_TSTRIDE4.value: FullConvModel,
-    ConfigType.CNN_TSTRIDE8.value: FullConvModel,
-    ConfigType.CNN_TPOOL2.value: FullConvModel,
-    ConfigType.CNN_TPOOL3.value: FullConvModel,
-    ConfigType.CNN_ONE_FSTRIDE4.value: SingleConvModel,
-    ConfigType.CNN_ONE_FSTRIDE8.value: SingleConvModel
-}
-
 _configs = {
     ConfigType.CNN_TRAD_POOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=64,
         n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(2, 2), conv1_stride=(1, 1),
@@ -335,6 +286,8 @@ _configs = {
     ConfigType.CNN_TPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=94,
         n_feature_maps2=94, conv1_size=(15, 8), conv2_size=(6, 4), conv1_pool=(3, 3), conv1_stride=(1, 1),
         conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_ONE_FPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=54,
+        conv1_size=(32, 8), conv1_pool=(1, 3), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
         conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 4), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_ONE_FSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=336,

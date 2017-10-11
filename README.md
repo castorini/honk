@@ -67,6 +67,7 @@ There are command options available:
 | `--input_length`   | [1, inf)       | 16000     | the length of the audio   |
 | `--lr`           | (0.0, inf)   | 0.001   | the learning rate to use            |
 | `--mode`         | {train, eval}| train   | the mode to use            |
+| `--model`        | string       | cnn-trad-pool2 | one of `cnn-trad-pool2`, `cnn-tstride-{2,4,8}`, `cnn-tpool{2,3}`, `cnn-one-fpool3`, `cnn-one-fstride{4,8}` |
 | `--n_dct_filters`| [1, inf)     | 40      | the number of DCT bases to use  |
 | `--n_epochs`     | [0, inf) | 500  | number of epochs            |
 | `--n_feature_maps1` | [1, inf)             | 64        | the number of feature maps for conv net 1            |

@@ -57,7 +57,7 @@ def evaluate(config, model=None, test_loader=None):
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
     if not model:
-        model = mod.find_model(config["model"])(config)
+        model = mod.SpeechModel(config)
         model.load(config["input_file"])
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
@@ -75,13 +75,12 @@ def evaluate(config, model=None, test_loader=None):
         print_eval("test", scores, labels, loss)
 
 def train(config):
-    mod_cls = mod.find_model(config["model"])
     train_set, dev_set, test_set = mod.SpeechDataset.splits(config)
     if config["input_file"]:
-        model = mod_cls(config)
+        model = mod.SpeechModel(config)
         model.load(config["input_file"])
     else:
-        model = mod_cls(config)
+        model = mod.SpeechModel(config)
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
@@ -138,7 +137,7 @@ def main():
     parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
     parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="cnn-trad-pool2", type=str)
     config = builder.config_from_argparse(parser)
-    config = ChainMap(mod.find_config(config["model"]), config)
+    config.maps.insert(1, mod.find_config(config["model"]))
     set_seed(config)
     if config["mode"] == "train":
         train(config)
