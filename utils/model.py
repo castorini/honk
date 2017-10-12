@@ -6,6 +6,7 @@ import os
 import random
 import re
 
+from torch.autograd import Variable
 import librosa
 import numpy as np
 import torch
@@ -43,11 +44,19 @@ def find_config(conf):
         conf = conf.value
     return _configs[conf]
 
+def truncated_normal(tensor, std_dev=0.01):
+    tensor.zero_()
+    tensor.normal_(std=std_dev)
+    while torch.sum(torch.abs(tensor) > 2 * std_dev) > 0:
+        t = tensor[torch.abs(tensor) > 2 * std_dev]
+        t.zero_()
+        tensor[torch.abs(tensor) > 2 * std_dev] = torch.normal(t, std=std_dev)
+
 class SpeechModel(nn.Module):
     def __init__(self, config):
         super().__init__()
         n_labels = config["n_labels"]
-        last_featmaps = n_featmaps1 = config["n_feature_maps1"]
+        n_featmaps1 = config["n_feature_maps1"]
         
         conv1_size = config["conv1_size"] # (time, frequency)
         conv1_pool = config["conv1_pool"]
@@ -56,35 +65,45 @@ class SpeechModel(nn.Module):
         width = config["width"]
         height = config["height"]
         self.conv1 = nn.Conv2d(1, n_featmaps1, conv1_size, stride=conv1_stride)
+        use_tf_init = config.get("use_tf_init")
+        if use_tf_init:
+            truncated_normal(self.conv1.weight.data)
+            self.conv1.bias.data.zero_()
         self.pool1 = nn.MaxPool2d(conv1_pool)
 
-        m1, m2 = conv1_size
-        s, v = conv1_stride
-        p, q = conv1_pool
-        h = (height - m1 + 1) / (s * p)
-        w = (width - m2 + 1) / (v * q)
-        conv_net_size = math.ceil(h) * math.ceil(w)
+        x = Variable(torch.zeros(1, 1, height, width), volatile=True)
+        x = self.pool1(self.conv1(x))
+        conv_net_size = x.view(1, -1).size(1)
 
         if "conv2_size" in config:
             conv2_size = config["conv2_size"]
             conv2_pool = config["conv2_pool"]
             conv2_stride = tuple(config["conv2_stride"])
-            last_featmaps = n_featmaps2 = config["n_feature_maps2"]
+            n_featmaps2 = config["n_feature_maps2"]
             self.conv2 = nn.Conv2d(n_featmaps1, n_featmaps2, conv2_size, stride=conv2_stride)
+            if use_tf_init:
+                truncated_normal(self.conv2.weight.data)
+                self.conv2.bias.data.zero_()
             self.pool2 = nn.MaxPool2d(conv2_pool)
-            m1, m2 = conv2_size
-            s, v = conv2_stride
-            p, q = conv2_pool
-            conv_net_size = math.floor((h - m1 + 1) / (s * p)) * math.floor((w - m2 + 1) / (v * q))
+            x = self.pool2(self.conv2(x))
+            conv_net_size = x.view(1, -1).size(1)
 
         if "dnn1_size" in config and "dnn2_size" in config:
             dnn1_size = config["dnn1_size"]
             dnn2_size = config["dnn2_size"]
-            self.dnn1 = nn.Linear(last_featmaps * conv_net_size, dnn1_size)
+            self.dnn1 = nn.Linear(conv_net_size, dnn1_size)
             self.dnn2 = nn.Linear(dnn1_size, dnn2_size)
+            if use_tf_init:
+                truncated_normal(self.dnn1.weight.data)
+                truncated_normal(self.dnn2.weight.data)
+                self.dnn1.bias.data.zero_()
+                self.dnn2.bias.data.zero_()
             self.output = nn.Linear(dnn2_size, n_labels)
         else:
-            self.output = nn.Linear(last_featmaps * conv_net_size, n_labels)
+            self.output = nn.Linear(conv_net_size, n_labels)
+        if use_tf_init:
+            truncated_normal(self.output.weight.data)
+            self.output.bias.data.zero_()
         self.dropout = nn.Dropout(dropout_prob)
 
     def save(self, filename):
@@ -110,7 +129,8 @@ class SpeechModel(nn.Module):
         return self.output(x)
 
 def preprocess_audio(data, n_mels, dct_filters):
-    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480, fmin=20, fmax=4000)
+    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480, 
+        fmin=20, fmax=4000)
     data[data > 0] = np.log(data[data > 0])
     data = [np.matmul(dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
     data = np.array(data, order="F").squeeze(2).astype(np.float32)
@@ -139,6 +159,7 @@ class SpeechDataset(data.Dataset):
         self.filters = librosa.filters.dct(config["n_dct_filters"], config["n_mels"])
         self.n_mels = config["n_mels"]
         self._audio_cache = SimpleCache(config["cache_size"])
+        self._file_cache = SimpleCache(config["cache_size"])
         n_unk = len(list(filter(lambda x: x == 1, self.audio_labels)))
         self.n_silence = int(self.silence_prob * (len(self.audio_labels) - n_unk))
 
@@ -171,7 +192,7 @@ class SpeechDataset(data.Dataset):
     def preprocess(self, example, silence=False):
         if silence:
             example = "__silence__"
-        if random.random() < 0.75:
+        if random.random() < 0.7:
             try:
                 return self._audio_cache[example]
             except KeyError:
@@ -184,12 +205,17 @@ class SpeechDataset(data.Dataset):
         else:
             bg_noise = np.zeros(in_len)
 
-        data = np.zeros(in_len, dtype=np.float32) if silence else librosa.core.load(example, sr=16000)[0]
+        if silence:
+            data = np.zeros(in_len, dtype=np.float32)
+        else:
+            file_data = self._file_cache.get(example)
+            data = librosa.core.load(example, sr=16000)[0] if file_data is None else file_data
+            self._file_cache[example] = data
         data = np.pad(data, (0, max(0, in_len - len(data))), "constant")
         data = self._timeshift_audio(data)
 
         if random.random() < self.noise_prob or silence:
-            a = 0.1
+            a = random.random() * 0.1
             data = np.clip(a * bg_noise + data, -1, 1)
         data = preprocess_audio(data, self.n_mels, self.filters)
         self._audio_cache[example] = data
@@ -246,7 +272,9 @@ class SpeechDataset(data.Dataset):
 
         for tag in range(len(sets)):
             unknowns[tag] = int(unknown_prob * len(sets[tag]))
-        unk_files = np.random.choice(unknown_files, sum(unknowns), replace=False)
+        #unk_files = np.random.choice(unknown_files, sum(unknowns), replace=False)
+        random.shuffle(unknown_files)
+        unk_files = unknown_files
         a = 0
         for i, dataset in enumerate(sets):
             b = a + unknowns[i]
@@ -270,7 +298,7 @@ class SpeechDataset(data.Dataset):
 _configs = {
     ConfigType.CNN_TRAD_POOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=64,
         n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(2, 2), conv1_stride=(1, 1),
-        conv2_stride=(1, 1), conv2_pool=(1, 1)),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), use_tf_init=True),
     ConfigType.CNN_TSTRIDE2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=78,
         n_feature_maps2=78, conv1_size=(16, 8), conv2_size=(9, 4), conv1_pool=(1, 3), conv1_stride=(2, 1),
         conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
@@ -287,9 +315,9 @@ _configs = {
         n_feature_maps2=94, conv1_size=(15, 8), conv2_size=(6, 4), conv1_pool=(3, 3), conv1_stride=(1, 1),
         conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_ONE_FPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=54,
-        conv1_size=(32, 8), conv1_pool=(1, 3), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128),
-    ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
-        conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 4), dnn1_size=128, dnn2_size=128),
+        conv1_size=(101, 8), conv1_pool=(1, 3), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128),
+    ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=98, width=40, n_labels=4, n_feature_maps1=186,
+        conv1_size=(98, 8), conv1_pool=(1, 1), conv1_stride=(4, 1), dnn1_size=128, dnn2_size=128, use_tf_init=True),
     ConfigType.CNN_ONE_FSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=336,
-        conv1_size=(32, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128)
+        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128, use_tf_init=True)
 }

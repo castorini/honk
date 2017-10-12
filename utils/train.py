@@ -89,8 +89,8 @@ def train(config):
     min_loss = sys.float_info.max
 
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 500))
-    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 500))
+    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 500), shuffle=True)
+    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 500), shuffle=True)
     step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
