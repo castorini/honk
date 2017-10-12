@@ -272,13 +272,11 @@ class SpeechDataset(data.Dataset):
 
         for tag in range(len(sets)):
             unknowns[tag] = int(unknown_prob * len(sets[tag]))
-        #unk_files = np.random.choice(unknown_files, sum(unknowns), replace=False)
         random.shuffle(unknown_files)
-        unk_files = unknown_files
         a = 0
         for i, dataset in enumerate(sets):
             b = a + unknowns[i]
-            unk_dict = {u: words[cls.LABEL_UNKNOWN] for u in unk_files[a:b]}
+            unk_dict = {u: words[cls.LABEL_UNKNOWN] for u in unknown_files[a:b]}
             dataset.update(unk_dict)
             a = b
 
