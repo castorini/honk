@@ -316,8 +316,8 @@ _configs = {
         conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_ONE_FPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=54,
         conv1_size=(101, 8), conv1_pool=(1, 3), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128),
-    ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=98, width=40, n_labels=4, n_feature_maps1=186,
-        conv1_size=(98, 8), conv1_pool=(1, 1), conv1_stride=(4, 1), dnn1_size=128, dnn2_size=128, use_tf_init=True),
+    ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
+        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(4, 1), dnn1_size=128, dnn2_size=128, use_tf_init=True),
     ConfigType.CNN_ONE_FSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=336,
         conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128, use_tf_init=True)
 }
