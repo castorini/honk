@@ -29,6 +29,27 @@ class LabelService(object):
         if not self.no_cuda:
             self.model.cuda()
         self.model.load(self.model_filename)
+        self.model.eval()
+
+    def evaluate(self, speech_dirs, indices=[]):
+        dir_labels = {}
+        if indices:
+            real_labels = [self.labels[i] for i in indices]
+        else:
+            real_labels = [os.dirname(d) for d in speech_dirs]
+        for i, label in enumerate(real_labels):
+            if label not in self.labels:
+                real_labels[i] = "_unknown_"
+            dir_labels[speech_dirs[i]] = real_labels[i]
+        accuracy = []
+        for folder in speech_dirs:
+            for filename in os.listdir(folder):
+                fp = os.path.join(folder, filename)
+                with wave.open(fp) as f:
+                    b_data = f.readframes(16000)
+                label, _ = self.label(b_data)
+                accuracy.append(int(label == dir_labels[folder]))
+        return sum(accuracy) / len(accuracy)                
 
     def label(self, wav_data):
         """Labels audio data as one of the specified trained labels
@@ -46,11 +67,6 @@ class LabelService(object):
             model_in = model_in.cuda()
         predictions = F.softmax(self.model(model_in).squeeze(0).cpu()).data.numpy()
         return (self.labels[np.argmax(predictions)], max(predictions))
-
-def set_speech_format(f):
-    f.setnchannels(1)
-    f.setsampwidth(2)
-    f.setframerate(16000)
 
 def stride(array, stride_size, window_size):
     i = 0
@@ -116,9 +132,7 @@ class TrainingService(object):
             filename = "{}{}.wav".format(tag, str(uuid.uuid4()))
         directory = self.pos_directory if positive else self.neg_directory
         filename = os.path.join(directory, filename)
-        with wave.open(filename, "wb") as f:
-            set_speech_format(f)
-            f.writeframes(wav_data)
+        AudioSnippet(wav_data).save(filename)
 
     def _run_script(self, script, options):
         cmd_strs = ["python", script]

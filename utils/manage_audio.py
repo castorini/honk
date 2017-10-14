@@ -8,12 +8,47 @@ import librosa
 import numpy as np
 import pyaudio
 
+def set_speech_format(f):
+    f.setnchannels(1)
+    f.setsampwidth(2)
+    f.setframerate(16000)
+
 class AudioSnippet(object):
     _dct_filters = librosa.filters.dct(40, 40)
     def __init__(self, byte_data=b"", dtype=np.int16):
         self.byte_data = byte_data
         self.dtype = dtype
         self._compute_amps()
+
+    def save(self, filename):
+        with wave.open(filename, "wb") as f:
+            set_speech_format(f)
+            f.writeframes(self.byte_data)
+
+    def generate_contrastive(self):
+        snippet = self.copy()
+        phoneme_chunks = snippet.chunk_phonemes()
+        phoneme_chunks2 = snippet.chunk_phonemes(factor=0.8, group_threshold=500)
+        joined_chunks = []
+        for i in range(len(phoneme_chunks) - 1):
+            joined_chunks.append(AudioSnippet.join([phoneme_chunks[i], phoneme_chunks[i + 1]]))
+        if len(joined_chunks) == 1:
+            joined_chunks = []
+        if len(phoneme_chunks) == 1:
+            phoneme_chunks = []
+        if len(phoneme_chunks2) == 1:
+            phoneme_chunks2 = []
+        chunks = [c.copy() for c in phoneme_chunks2]
+        for chunk_list in (phoneme_chunks, joined_chunks, phoneme_chunks2):
+            for chunk in chunk_list:
+                chunk.rand_pad(32000)
+        for chunk in chunks:
+            chunk.repeat_fill(32000)
+            chunk.rand_pad(32000)
+        chunks.extend(phoneme_chunks)
+        chunks.extend(phoneme_chunks2)
+        chunks.extend(joined_chunks)
+        return chunks
 
     def chunk_phonemes(self, factor=1.0, group_threshold=1000):
         audio_data, _ = librosa.effects.trim(self.amplitudes, top_db=16)
@@ -202,6 +237,22 @@ def record_speech_sequentially(file_name_prefix="output", min_sound_lvl=0.01, sp
                     print("Saved to {}".format(output_name))
                     break
 
+def generate_dir(directory):
+    for filename in os.listdir(directory):
+        fullpath = os.path.join(os.path.abspath(directory), filename)
+        try:
+            with wave.open(fullpath) as f:
+                n_channels = f.getnchannels()
+                width = f.getsampwidth()
+                rate = f.getframerate()
+                snippet = AudioSnippet(f.readframes(16000))
+            for i, e in enumerate(snippet.generate_contrastive()):
+                gen_name = os.path.join(directory, "gen-{}-{}".format(i, filename))
+                e.save(gen_name)
+            print("Generated from {}".format(filename))
+        except (wave.Error, IsADirectoryError, PermissionError) as e:
+            pass
+
 def clean_dir(directory=".", cutoff_ms=1000):
     """Trims all audio in directory to the loudest window of length cutoff_ms. 1 second is consistent 
     with the speech command dataset.
@@ -232,6 +283,7 @@ def clean_dir(directory=".", cutoff_ms=1000):
 def main():
     parser = argparse.ArgumentParser()
     commands = dict(record=record_speech_sequentially, trim=clean_dir, listen=print_sound_level)
+    commands["generate-contrastive"] = generate_dir
     parser.add_argument("subcommand")
     def print_sub_commands():
         print("Subcommands: {}".format(", ".join(commands.keys())))
@@ -263,6 +315,14 @@ def main():
         flags, _ = parser.parse_known_args()
         record_speech_sequentially(file_name_prefix=flags.output_prefix, i=flags.output_begin_index, 
             min_sound_lvl=flags.min_sound_lvl, speech_timeout_secs=flags.timeout_seconds)
+    elif subcommand == "generate-contrastive":
+        parser.add_argument(
+            "directory",
+            type=str,
+            default=".",
+            help="Generate from the directory's audio files")
+        flags, _ = parser.parse_known_args()
+        generate_dir(flags.directory)
     elif subcommand == "trim":
         parser.add_argument(
             "directory",
