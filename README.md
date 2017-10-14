@@ -109,7 +109,10 @@ python manage_audio.py listen
 
 This assists in setting sane values for `--min-sound-lvl` for recording.
 
+### Generating contrastive examples
+`python manage_audio.py generate-contrastive --directory [directory]` generates contrastive examples from all .wav files in `[directory]` using phonetic segmentation.
+
 ### Trimming audio
 Speech command dataset contains one-second-long snippets of audio.
 
-`python manage_audio.py trim [directory]` trims to the loudest one-second for all .wav files in `[directory]`. The careful user should manually check all audio samples using an audio editor like Audacity.
+`python manage_audio.py trim --directory [directory]` trims to the loudest one-second for all .wav files in `[directory]`. The careful user should manually check all audio samples using an audio editor like Audacity.

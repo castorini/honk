@@ -67,6 +67,19 @@ class DataEndpoint(object):
         self.train_service.clear_examples(positive=False, tag="gen")
         return dict(success=True)
 
+class EvaluateEndpoint(object):
+    exposed = True
+    def __init__(self, label_service):
+        self.label_service = label_service
+
+    @cherrypy.tools.json_out()
+    @json_in
+    def POST(self, **kwargs):
+        folders = kwargs["folders"]
+        indices = kwargs.get("indices", [])
+        accuracy = self.label_service.evaluate(folders, indices)
+        return dict(accuracy=accuracy)
+        
 class ListenEndpoint(object):
     exposed = True
     def __init__(self, label_service, stride_size=500, min_keyword_prob=0.85, keyword="command"):
@@ -122,6 +135,7 @@ def start(config):
     train_service = TrainingService(train_script, speech_dataset_path, config["model_options"])
     cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
     cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)
+    cherrypy.tree.mount(EvaluateEndpoint(lbl_service), "/evaluate", rest_config)
     cherrypy.tree.mount(TrainEndpoint(train_service, lbl_service), "/train", rest_config)
     cherrypy.engine.start()
     cherrypy.engine.block()
