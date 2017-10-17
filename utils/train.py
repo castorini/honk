@@ -41,6 +41,7 @@ def print_eval(name, scores, labels, loss, end="\n"):
     accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).sum() / batch_size
     loss = loss.cpu().data.numpy()[0]
     print("{} accuracy: {:>5}, loss: {:<25}".format(name, accuracy, loss), end=end)
+    return accuracy
 
 def set_seed(config):
     seed = config["seed"]
@@ -64,6 +65,8 @@ def evaluate(config, model=None, test_loader=None):
         model.cuda()
     model.eval()
     criterion = nn.CrossEntropyLoss()
+    results = []
+    total = 0
     for model_in, labels in test_loader:
         model_in = Variable(model_in, requires_grad=False)
         if not config["no_cuda"]:
@@ -72,7 +75,9 @@ def evaluate(config, model=None, test_loader=None):
         scores = model(model_in)
         labels = Variable(labels, requires_grad=False)
         loss = criterion(scores, labels)
-        print_eval("test", scores, labels, loss)
+        results.append(print_eval("test", scores, labels, loss) * model_in.size(0))
+        total += model_in.size(0)
+    print("final test accuracy: {}".format(sum(results) / total))
 
 def train(config):
     train_set, dev_set, test_set = mod.SpeechDataset.splits(config)
@@ -89,8 +94,8 @@ def train(config):
     min_loss = sys.float_info.max
 
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 500), shuffle=True)
-    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 500), shuffle=True)
+    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 100), shuffle=True)
+    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 100), shuffle=True)
     step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
