@@ -10,7 +10,7 @@ import zlib
 import cherrypy
 import numpy as np
 
-from service import LabelService, TrainingService
+from service import Caffe2LabelService, TorchLabelService, TrainingService
 from service import stride
 
 def json_in(f):
@@ -130,8 +130,15 @@ def start(config):
     speech_dataset_path = make_abspath(config["speech_dataset_path"])
     commands = ["__silence__", "__unknown__"]
     commands.extend(config["commands"].split(","))
+    
+    backend = config["backend"]
+    if backend.lower() == "caffe2":
+        lbl_service = Caffe2LabelService(model_path, commands)
+    elif backend.lower() == "pytorch":
+        lbl_service = LabelService(model_path, labels=commands, no_cuda=config["model_options"]["no_cuda"])
+    else:
+        raise ValueError("Backend {} not supported!".format(backend))
 
-    lbl_service = LabelService(model_path, labels=commands, no_cuda=config["model_options"]["no_cuda"])
     train_service = TrainingService(train_script, speech_dataset_path, config["model_options"])
     cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
     cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)

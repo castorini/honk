@@ -1,4 +1,3 @@
-from collections import ChainMap
 from enum import Enum
 import hashlib
 import math
@@ -6,6 +5,7 @@ import os
 import random
 import re
 
+from chainmap import ChainMap
 from torch.autograd import Variable
 import librosa
 import numpy as np
@@ -13,6 +13,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as data
+
+from manage_audio import preprocess_audio
 
 class SimpleCache(dict):
     def __init__(self, limit):
@@ -128,14 +130,6 @@ class SpeechModel(nn.Module):
             x = self.dropout(x)
         return self.output(x)
 
-def preprocess_audio(data, n_mels, dct_filters):
-    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480, 
-        fmin=20, fmax=4000)
-    data[data > 0] = np.log(data[data > 0])
-    data = [np.matmul(dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
-    data = np.array(data, order="F").squeeze(2).astype(np.float32)
-    return torch.from_numpy(data) # shape: (frames, dct_coeffs)
-
 class DatasetType(Enum):
     TRAIN = 0
     DEV = 1
@@ -222,7 +216,7 @@ class SpeechDataset(data.Dataset):
         if random.random() < self.noise_prob or silence:
             a = random.random() * 0.1
             data = np.clip(a * bg_noise + data, -1, 1)
-        data = preprocess_audio(data, self.n_mels, self.filters)
+        data = torch.from_numpy(preprocess_audio(data, self.n_mels, self.filters))
         self._audio_cache[example] = data
         return data
 

@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import os
 import random
@@ -12,6 +13,13 @@ def set_speech_format(f):
     f.setnchannels(1)
     f.setsampwidth(2)
     f.setframerate(16000)
+
+def preprocess_audio(data, n_mels, dct_filters):
+    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480, fmin=20, fmax=4000)
+    data[data > 0] = np.log(data[data > 0])
+    data = [np.matmul(dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
+    data = np.array(data, order="F").squeeze(2).astype(np.float32)
+    return data
 
 class AudioSnippet(object):
     _dct_filters = librosa.filters.dct(40, 40)
