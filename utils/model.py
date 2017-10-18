@@ -38,6 +38,15 @@ class ConfigType(Enum):
     CNN_TSTRIDE2 = "cnn-tstride2"
     CNN_TSTRIDE4 = "cnn-tstride4"
     CNN_TSTRIDE8 = "cnn-tstride8"
+    CNN_RESNET15 = "cnn-resnet15"
+
+def find_model(conf):
+    if isinstance(conf, ConfigType):
+        conf = conf.value
+    if conf == ConfigType.CNN_RESNET15.value:
+        return SpeechResModel
+    else:
+        return SpeechModel
 
 def find_config(conf):
     if isinstance(conf, ConfigType):
@@ -52,7 +61,47 @@ def truncated_normal(tensor, std_dev=0.01):
         t.zero_()
         tensor[torch.abs(tensor) > 2 * std_dev] = torch.normal(t, std=std_dev)
 
-class SpeechModel(nn.Module):
+class SerializableModule(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def save(self, filename):
+        torch.save(self.state_dict(), filename)
+
+    def load(self, filename):
+        self.load_state_dict(torch.load(filename, map_location=lambda storage, loc: storage))
+
+class SpeechResModel(SerializableModule):
+    def __init__(self, config):
+        super().__init__()
+        n_labels = config["n_labels"]
+        dropout_prob = config["dropout_prob"]
+        width = config["width"]
+        height = config["height"]
+        self.conv0 = nn.Conv2d(1, 42, (3, 3), padding=(1, 1), bias=False)
+        self.convs = [nn.Conv2d(42, 42, (3, 3), padding=int(2**(i // 3)), dilation=int(2**(i // 3)), bias=False) for i in range(15)]
+        for i, conv in enumerate(self.convs):
+            self.add_module("bn{}".format(i + 1), nn.BatchNorm2d(42, affine=False))
+            self.add_module("conv{}".format(i + 1), conv)
+
+        self.output = nn.Linear(42, n_labels)
+        self.dropout = nn.Dropout(dropout_prob)
+
+    def forward(self, x):
+        x = x.unsqueeze(1)
+        for i in range(14):
+            y = F.relu(getattr(self, "conv{}".format(i))(x))
+            if i > 0 and i % 2 == 0:
+                x = y + x
+            else:
+                x = y
+            if i > 0:
+                x = getattr(self, "bn{}".format(i))(x)
+        x = x.view(x.size(0), x.size(1), -1) # shape: (batch, feats, o3)
+        x = torch.mean(x, 2)
+        return self.output(x)
+
+class SpeechModel(SerializableModule):
     def __init__(self, config):
         super().__init__()
         n_labels = config["n_labels"]
@@ -105,12 +154,6 @@ class SpeechModel(nn.Module):
             truncated_normal(self.output.weight.data)
             self.output.bias.data.zero_()
         self.dropout = nn.Dropout(dropout_prob)
-
-    def save(self, filename):
-        torch.save(self.state_dict(), filename)
-
-    def load(self, filename):
-        self.load_state_dict(torch.load(filename, map_location=lambda storage, loc: storage))
 
     def forward(self, x):
         x = F.relu(self.conv1(x.unsqueeze(1))) # shape: (batch, channels, i1, o1)
@@ -323,5 +366,6 @@ _configs = {
     ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
         conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(4, 1), dnn1_size=128, dnn2_size=128, use_tf_init=True),
     ConfigType.CNN_ONE_FSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=336,
-        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128, use_tf_init=True)
+        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128, use_tf_init=True),
+    ConfigType.CNN_RESNET15.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4)
 }

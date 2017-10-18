@@ -58,7 +58,7 @@ def evaluate(config, model=None, test_loader=None):
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
     if not model:
-        model = mod.SpeechModel(config)
+        model = config["model_class"](config)
         model.load(config["input_file"])
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
@@ -81,21 +81,20 @@ def evaluate(config, model=None, test_loader=None):
 
 def train(config):
     train_set, dev_set, test_set = mod.SpeechDataset.splits(config)
+    model = config["model_class"](config)
     if config["input_file"]:
-        model = mod.SpeechModel(config)
         model.load(config["input_file"])
-    else:
-        model = mod.SpeechModel(config)
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
-    optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"])
+    optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"], nesterov=config["use_nesterov"], 
+        momentum=config["momentum"], weight_decay=config["weight_decay"])
     criterion = nn.CrossEntropyLoss()
     min_loss = sys.float_info.max
 
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 100), shuffle=True)
-    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 100), shuffle=True)
+    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 64), shuffle=True)
+    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 64), shuffle=True)
     step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
@@ -137,8 +136,9 @@ def main():
     parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="cnn-trad-pool2", type=str)
     config, _ = parser.parse_known_args()
 
-    global_config = dict(no_cuda=False, n_epochs=500, lr=0.001, batch_size=100, dev_every=10, seed=0,
-        input_file="", output_file=output_file, gpu_no=1, cache_size=32768)
+    global_config = dict(no_cuda=False, n_epochs=500, lr=0.001, batch_size=64, dev_every=10, seed=0,
+        use_nesterov=False, input_file="", output_file=output_file, gpu_no=1, cache_size=32768, momentum=0.9, weight_decay=0)
+    mod_cls = mod.find_model(config.model)
     builder = ConfigBuilder(
         mod.find_config(config.model),
         mod.SpeechDataset.default_config(),
@@ -146,6 +146,7 @@ def main():
     parser = builder.build_argparse()
     parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
     config = builder.config_from_argparse(parser)
+    config["model_class"] = mod_cls
     set_seed(config)
     if config["mode"] == "train":
         train(config)
