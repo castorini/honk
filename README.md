@@ -6,7 +6,7 @@ Honk is a PyTorch reimplementation of Google's TensorFlow convolutional neural n
 
 Honk is useful for building on-device speech recognition capabilities for interactive intelligent agents. Our code can be used to identify simple commands (e.g., "stop" and "go") and be adapted to detect custom "command triggers" (e.g., "Hey Siri!").
 
-Check out [this video](https://www.youtube.com/watch?v=31J4CD6VhX4) for a demo of Honk in action!
+Check out [this video](https://www.youtube.com/watch?v=UbAsDvinnXc) for a demo of Honk in action!
 
 ## Demo Application
 
