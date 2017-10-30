@@ -135,7 +135,7 @@ def start(config):
     if backend.lower() == "caffe2":
         lbl_service = Caffe2LabelService(model_path, commands)
     elif backend.lower() == "pytorch":
-        lbl_service = LabelService(model_path, labels=commands, no_cuda=config["model_options"]["no_cuda"])
+        lbl_service = TorchLabelService(model_path, labels=commands, no_cuda=config["model_options"]["no_cuda"])
     else:
         raise ValueError("Backend {} not supported!".format(backend))
 

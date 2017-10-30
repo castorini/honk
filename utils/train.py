@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.utils.data as data
 
-import model as mod
+from . import model as mod
 
 class ConfigBuilder(object):
     def __init__(self, *default_configs):
@@ -58,7 +58,7 @@ def evaluate(config, model=None, test_loader=None):
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
     if not model:
-        model = mod.SpeechModel(config)
+        model = config["model_class"](config)
         model.load(config["input_file"])
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
@@ -81,21 +81,22 @@ def evaluate(config, model=None, test_loader=None):
 
 def train(config):
     train_set, dev_set, test_set = mod.SpeechDataset.splits(config)
+    model = config["model_class"](config)
     if config["input_file"]:
-        model = mod.SpeechModel(config)
         model.load(config["input_file"])
-    else:
-        model = mod.SpeechModel(config)
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
-    optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"])
+    optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"][0], nesterov=config["use_nesterov"], weight_decay=config["weight_decay"], momentum=config["momentum"])
+    schedule_steps = config["schedule"]
+    schedule_steps.append(np.inf)
+    sched_idx = 0
     criterion = nn.CrossEntropyLoss()
-    min_loss = sys.float_info.max
+    max_acc = 0
 
     train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 100), shuffle=True)
-    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 100), shuffle=True)
+    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 16), shuffle=True)
+    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 16), shuffle=True)
     step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
@@ -112,10 +113,16 @@ def train(config):
             loss.backward()
             optimizer.step()
             step_no += 1
+            if step_no > schedule_steps[sched_idx]:
+                sched_idx += 1
+                print("changing learning rate to {}".format(config["lr"][sched_idx]))
+                optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"][sched_idx],
+                    nesterov=config["use_nesterov"], momentum=config["momentum"], weight_decay=config["weight_decay"])
             print_eval("train step #{}".format(step_no), scores, labels, loss)
 
         if epoch_idx % config["dev_every"] == config["dev_every"] - 1:
             model.eval()
+            accs = []
             for model_in, labels in dev_loader:
                 model_in = Variable(model_in, requires_grad=False)
                 if not config["no_cuda"]:
@@ -125,10 +132,13 @@ def train(config):
                 labels = Variable(labels, requires_grad=False)
                 loss = criterion(scores, labels)
                 loss_numeric = loss.cpu().data.numpy()[0]
-                if loss_numeric < min_loss:
-                    min_loss = loss_numeric
-                    model.save(config["output_file"])
-                print_eval("dev", scores, labels, loss)
+                accs.append(print_eval("dev", scores, labels, loss))
+            avg_acc = np.mean(accs)
+            print("final dev accuracy: {}".format(avg_acc))
+            if avg_acc > max_acc:
+                print("saving best model...")
+                max_acc = avg_acc
+                model.save(config["output_file"])
     evaluate(config, model, test_loader)
 
 def main():
@@ -137,8 +147,9 @@ def main():
     parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="cnn-trad-pool2", type=str)
     config, _ = parser.parse_known_args()
 
-    global_config = dict(no_cuda=False, n_epochs=500, lr=0.001, batch_size=100, dev_every=10, seed=0,
-        input_file="", output_file=output_file, gpu_no=1, cache_size=32768)
+    global_config = dict(no_cuda=False, n_epochs=500, lr=[0.001], schedule=[np.inf], batch_size=64, dev_every=10, seed=0,
+        use_nesterov=False, input_file="", output_file=output_file, gpu_no=1, cache_size=32768, momentum=0.9, weight_decay=0.00001)
+    mod_cls = mod.find_model(config.model)
     builder = ConfigBuilder(
         mod.find_config(config.model),
         mod.SpeechDataset.default_config(),
@@ -146,6 +157,7 @@ def main():
     parser = builder.build_argparse()
     parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
     config = builder.config_from_argparse(parser)
+    config["model_class"] = mod_cls
     set_seed(config)
     if config["mode"] == "train":
         train(config)

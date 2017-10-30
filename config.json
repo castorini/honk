@@ -4,8 +4,8 @@
         "server.socket_host": "0.0.0.0"
     },
     "commands": "yes,no,up,down,left,right,on,off,stop,go",
-    "model_path": "model/google-speech-dataset-full.onnx",
-    "backend": "caffe2",
+    "model_path": "model/google-speech-dataset.pt",
+    "backend": "pytorch",
     "train_script": "utils/model.py",
     "speech_dataset_path": "/tmp/speech_dataset/",
     "model_options": {

@@ -20,6 +20,7 @@ except ImportError:
     pass
 
 from utils.manage_audio import AudioSnippet, preprocess_audio
+import utils.model as model
 
 def _softmax(x):
     return np.exp(x) / np.sum(np.exp(x))
