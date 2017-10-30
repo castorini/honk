@@ -1,3 +1,4 @@
+# 89.5
 from collections import ChainMap
 from enum import Enum
 import hashlib
@@ -30,6 +31,7 @@ class SimpleCache(dict):
 
 class ConfigType(Enum):
     CNN_TRAD_POOL2 = "cnn-trad-pool2" # default full model (TF variant)
+    CNN_ONE_STRIDE1 = "cnn-one-stride1" # default compact model (TF variant)
     CNN_ONE_FPOOL3 = "cnn-one-fpool3"
     CNN_ONE_FSTRIDE4 = "cnn-one-fstride4"
     CNN_ONE_FSTRIDE8 = "cnn-one-fstride8"
@@ -38,12 +40,17 @@ class ConfigType(Enum):
     CNN_TSTRIDE2 = "cnn-tstride2"
     CNN_TSTRIDE4 = "cnn-tstride4"
     CNN_TSTRIDE8 = "cnn-tstride8"
-    CNN_RESNET15 = "cnn-resnet15"
+    RES15 = "res15"
+    RES26 = "res26"
+    RES8 = "res8"
+    RES15_NARROW = "res15-narrow"
+    RES8_NARROW = "res8-narrow"
+    RES26_NARROW = "res26-narrow"
 
 def find_model(conf):
     if isinstance(conf, ConfigType):
         conf = conf.value
-    if conf == ConfigType.CNN_RESNET15.value:
+    if conf.startswith("res"):
         return SpeechResModel
     else:
         return SpeechModel
@@ -75,24 +82,33 @@ class SpeechResModel(SerializableModule):
     def __init__(self, config):
         super().__init__()
         n_labels = config["n_labels"]
-        dropout_prob = config["dropout_prob"]
-        width = config["width"]
-        height = config["height"]
-        self.conv0 = nn.Conv2d(1, 42, (3, 3), padding=(1, 1), bias=False)
-        self.convs = [nn.Conv2d(42, 42, (3, 3), padding=int(2**(i // 3)), dilation=int(2**(i // 3)), bias=False) for i in range(15)]
-        for i, conv in enumerate(self.convs):
-            self.add_module("bn{}".format(i + 1), nn.BatchNorm2d(42, affine=False))
-            self.add_module("conv{}".format(i + 1), conv)
+        n_maps = config["n_feature_maps"]
+        self.conv0 = nn.Conv2d(1, n_maps, (3, 3), padding=(1, 1), bias=False)
+        if "res_pool" in config:
+            self.pool = nn.AvgPool2d(config["res_pool"])
 
-        self.output = nn.Linear(42, n_labels)
-        self.dropout = nn.Dropout(dropout_prob)
+        self.n_layers = n_layers = config["n_layers"]
+        dilation = config["use_dilation"]
+        if dilation:
+            self.convs = [nn.Conv2d(n_maps, n_maps, (3, 3), padding=int(2**(i // 3)), dilation=int(2**(i // 3)), bias=False) for i in range(n_layers)]
+        else:
+            self.convs = [nn.Conv2d(n_maps, n_maps, (3, 3), padding=1, dilation=1, bias=False) for _ in range(n_layers)]
+        for i, conv in enumerate(self.convs):
+            self.add_module("bn{}".format(i + 1), nn.BatchNorm2d(n_maps, affine=False))
+            self.add_module("conv{}".format(i + 1), conv)
+        self.output = nn.Linear(n_maps, n_labels)
 
     def forward(self, x):
         x = x.unsqueeze(1)
-        for i in range(14):
+        for i in range(self.n_layers + 1):
             y = F.relu(getattr(self, "conv{}".format(i))(x))
+            if i == 0:
+                if hasattr(self, "pool"):
+                    y = self.pool(y)
+                old_x = y
             if i > 0 and i % 2 == 0:
-                x = y + x
+                x = y + old_x
+                old_x = x
             else:
                 x = y
             if i > 0:
@@ -106,7 +122,7 @@ class SpeechModel(SerializableModule):
         super().__init__()
         n_labels = config["n_labels"]
         n_featmaps1 = config["n_feature_maps1"]
-        
+
         conv1_size = config["conv1_size"] # (time, frequency)
         conv1_pool = config["conv1_pool"]
         conv1_stride = tuple(config["conv1_stride"])
@@ -114,8 +130,9 @@ class SpeechModel(SerializableModule):
         width = config["width"]
         height = config["height"]
         self.conv1 = nn.Conv2d(1, n_featmaps1, conv1_size, stride=conv1_stride)
-        use_tf_init = config.get("use_tf_init")
-        if use_tf_init:
+        tf_variant = config.get("tf_variant")
+        self.tf_variant = tf_variant
+        if tf_variant:
             truncated_normal(self.conv1.weight.data)
             self.conv1.bias.data.zero_()
         self.pool1 = nn.MaxPool2d(conv1_pool)
@@ -123,6 +140,7 @@ class SpeechModel(SerializableModule):
         x = Variable(torch.zeros(1, 1, height, width), volatile=True)
         x = self.pool1(self.conv1(x))
         conv_net_size = x.view(1, -1).size(1)
+        last_size = conv_net_size
 
         if "conv2_size" in config:
             conv2_size = config["conv2_size"]
@@ -130,27 +148,34 @@ class SpeechModel(SerializableModule):
             conv2_stride = tuple(config["conv2_stride"])
             n_featmaps2 = config["n_feature_maps2"]
             self.conv2 = nn.Conv2d(n_featmaps1, n_featmaps2, conv2_size, stride=conv2_stride)
-            if use_tf_init:
+            if tf_variant:
                 truncated_normal(self.conv2.weight.data)
                 self.conv2.bias.data.zero_()
             self.pool2 = nn.MaxPool2d(conv2_pool)
             x = self.pool2(self.conv2(x))
             conv_net_size = x.view(1, -1).size(1)
+            last_size = conv_net_size
+        if not tf_variant:
+            self.lin = nn.Linear(conv_net_size, 32) 
 
-        if "dnn1_size" in config and "dnn2_size" in config:
+        if "dnn1_size" in config:
             dnn1_size = config["dnn1_size"]
-            dnn2_size = config["dnn2_size"]
-            self.dnn1 = nn.Linear(conv_net_size, dnn1_size)
-            self.dnn2 = nn.Linear(dnn1_size, dnn2_size)
-            if use_tf_init:
+            last_size = dnn1_size
+            if tf_variant:
+                self.dnn1 = nn.Linear(conv_net_size, dnn1_size)
                 truncated_normal(self.dnn1.weight.data)
-                truncated_normal(self.dnn2.weight.data)
                 self.dnn1.bias.data.zero_()
-                self.dnn2.bias.data.zero_()
-            self.output = nn.Linear(dnn2_size, n_labels)
-        else:
-            self.output = nn.Linear(conv_net_size, n_labels)
-        if use_tf_init:
+            else:
+                self.dnn1 = nn.Linear(32, dnn1_size)
+            if "dnn2_size" in config:
+                dnn2_size = config["dnn2_size"]
+                last_size = dnn2_size
+                self.dnn2 = nn.Linear(dnn1_size, dnn2_size)
+                if tf_variant:
+                    truncated_normal(self.dnn2.weight.data)
+                    self.dnn2.bias.data.zero_()
+        self.output = nn.Linear(last_size, n_labels)
+        if tf_variant:
             truncated_normal(self.output.weight.data)
             self.output.bias.data.zero_()
         self.dropout = nn.Dropout(dropout_prob)
@@ -164,18 +189,25 @@ class SpeechModel(SerializableModule):
             x = self.dropout(x)
             x = self.pool2(x)
         x = x.view(x.size(0), -1) # shape: (batch, o3)
-        if hasattr(self, "dnn1") and hasattr(self, "dnn2"):
+        if hasattr(self, "lin"):
+            x = self.lin(x)
+        if hasattr(self, "dnn1"):
             x = self.dnn1(x)
-            x = self.dropout(x)
+            if not self.tf_variant:
+                x = F.relu(x)
+            x = self.dropout(x)        
+        if hasattr(self, "dnn2"):
             x = self.dnn2(x)
             x = self.dropout(x)
         return self.output(x)
 
 def preprocess_audio(data, n_mels, dct_filters):
-    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480, 
+    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480,
         fmin=20, fmax=4000)
     data[data > 0] = np.log(data[data > 0])
     data = [np.matmul(dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
+    for _ in range(max(0, 101 - len(data))):
+        data.append(np.zeros([40,1]))
     data = np.array(data, order="F").squeeze(2).astype(np.float32)
     return torch.from_numpy(data) # shape: (frames, dct_coeffs)
 
@@ -344,8 +376,10 @@ class SpeechDataset(data.Dataset):
 
 _configs = {
     ConfigType.CNN_TRAD_POOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=64,
-        n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(2, 2), conv1_stride=(1, 1),
-        conv2_stride=(1, 1), conv2_pool=(1, 1), use_tf_init=True),
+        n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(1, 3), conv1_stride=(1, 1),
+        conv2_stride=(1, 1), conv2_pool=(1, 1), tf_variant=True),
+    ConfigType.CNN_ONE_STRIDE1.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
+        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128, tf_variant=True),
     ConfigType.CNN_TSTRIDE2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=78,
         n_feature_maps2=78, conv1_size=(16, 8), conv2_size=(9, 4), conv1_pool=(1, 3), conv1_stride=(2, 1),
         conv2_stride=(1, 1), conv2_pool=(1, 1), dnn1_size=128, dnn2_size=128),
@@ -364,8 +398,13 @@ _configs = {
     ConfigType.CNN_ONE_FPOOL3.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=54,
         conv1_size=(101, 8), conv1_pool=(1, 3), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_ONE_FSTRIDE4.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
-        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(4, 1), dnn1_size=128, dnn2_size=128, use_tf_init=True),
+        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 4), dnn1_size=128, dnn2_size=128),
     ConfigType.CNN_ONE_FSTRIDE8.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=336,
-        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128, use_tf_init=True),
-    ConfigType.CNN_RESNET15.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4)
+        conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 8), dnn1_size=128, dnn2_size=128),
+    ConfigType.RES15.value: dict(n_labels=12, use_dilation=True, n_layers=13, n_feature_maps=45),
+    ConfigType.RES8.value: dict(n_labels=12, n_layers=6, n_feature_maps=45, res_pool=(4, 3), use_dilation=False),
+    ConfigType.RES26.value: dict(n_labels=12, n_layers=24, n_feature_maps=45, res_pool=(2, 2), use_dilation=False),
+    ConfigType.RES15_NARROW.value: dict(n_labels=12, use_dilation=True, n_layers=13, n_feature_maps=19),
+    ConfigType.RES8_NARROW.value: dict(n_labels=12, n_layers=6, n_feature_maps=19, res_pool=(4, 3), use_dilation=False),
+    ConfigType.RES26_NARROW.value: dict(n_labels=12, n_layers=24, n_feature_maps=19, res_pool=(2, 2), use_dilation=False)
 }
