@@ -30,21 +30,9 @@ Additional notes for Mac OS X:
 
 ## Server
 ### Setup and deployment
-`python .` deploys the web service for identifying if audio contain the command word. By default, `config.json` is used for configuration, but that can be changed with `--config=<file_name>`.
+`python .` deploys the web service for identifying if audio contain the command word. By default, `config.json` is used for configuration, but that can be changed with `--config=<file_name>`. If the server is behind a firewall, one workflow is to create an SSH tunnel and use port forwarding with the port specified in config (default 16888).
 
-If the server is behind a firewall, one workflow is to create an SSH tunnel and use port forwarding with the port specified in config (default 16888).
-
-### Endpoint specifications
-```
-POST /listen
-```
-Args (JSON):
-* `wav_data`: 16kHz sampling rate, 16-bit PCM mono-channel raw audio data (with no WAVE header), gzipped and base64-encoded.
-
-Returns (JSON):
-* `contains_command`: `true` if `wav_data` contains the command word, `false` otherwise.
-
-For a real-time example, please see `utils/client.py`.
+In our [honk-models](https://github.com/honk-models) repository, there are several pre-trained models for Caffe2 (ONNX) and PyTorch. The `fetch_data.sh` script fetches these models and extracts them to the `model` directory. You may specify which model and backend to use in the config file's `model_path` and `backend`, respectively. Specifically, `backend` can be either `caffe2` or `pytorch`, depending on what format `model_path` is in. Note that, in order to run our ONNX models, the packages `onnx` and `onnx_caffe2` must be present on your system; these are absent in requirements.txt.
 
 ## Utilities
 ### QA client

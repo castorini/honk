@@ -8,29 +8,24 @@ import wave
 
 import librosa
 import numpy as np
-import torch
-import torch.nn.functional as F
+try:
+    import torch
+    import torch.nn.functional as F
+except ImportError:
+    pass
+try:
+    import onnx
+    import onnx_caffe2.backend
+except ImportError:
+    pass
 
-from utils.manage_audio import AudioSnippet
+from utils.manage_audio import AudioSnippet, preprocess_audio
 import utils.model as model
 
+def _softmax(x):
+    return np.exp(x) / np.sum(np.exp(x))
+
 class LabelService(object):
-    def __init__(self, model_filename, no_cuda=False, labels=["_silence_", "_unknown_", "command", "random"]):
-        self.labels = labels
-        self.model_filename = model_filename
-        self.no_cuda = no_cuda
-        self.filters = librosa.filters.dct(40, 40)
-        self.reload()
-
-    def reload(self):
-        config = model.find_config(model.ConfigType.CNN_TRAD_POOL2)
-        config["n_labels"] = len(self.labels)
-        self.model = model.SpeechModel(config)
-        if not self.no_cuda:
-            self.model.cuda()
-        self.model.load(self.model_filename)
-        self.model.eval()
-
     def evaluate(self, speech_dirs, indices=[]):
         dir_labels = {}
         if indices:
@@ -52,6 +47,42 @@ class LabelService(object):
         return sum(accuracy) / len(accuracy)                
 
     def label(self, wav_data):
+        raise NotImplementedError
+
+class Caffe2LabelService(LabelService):
+    def __init__(self, onnx_filename, labels):
+        self.labels = labels
+        self.model_filename = onnx_filename
+        self.filters = librosa.filters.dct(40, 40)
+        self._graph = onnx.load(onnx_filename)
+        self._in_name = self._graph.graph.input[0].name
+        self.model = onnx_caffe2.backend.prepare(self._graph)
+
+    def label(self, wav_data):
+        wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
+        model_in = preprocess_audio(wav_data, 40, self.filters).unsqueeze(0)
+        model_in = model_in.astype(np.float32)
+        predictions = _softmax(self.model.run({self._in_name: model_in})[0])
+        return (self.labels[np.argmax(predictions)], max(predictions))
+
+class TorchLabelService(LabelService):
+    def __init__(self, model_filename, no_cuda=False, labels=["_silence_", "_unknown_", "command", "random"]):
+        self.labels = labels
+        self.model_filename = model_filename
+        self.no_cuda = no_cuda
+        self.filters = librosa.filters.dct(40, 40)
+        self.reload()
+
+    def reload(self):
+        config = model.find_config(model.ConfigType.CNN_TRAD_POOL2)
+        config["n_labels"] = len(self.labels)
+        self.model = model.SpeechModel(config)
+        if not self.no_cuda:
+            self.model.cuda()
+        self.model.load(self.model_filename)
+        self.model.eval()
+
+    def label(self, wav_data):
         """Labels audio data as one of the specified trained labels
 
         Args:
@@ -61,7 +92,7 @@ class LabelService(object):
             A (most likely label, probability) tuple
         """
         wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
-        model_in = model.preprocess_audio(wav_data, 40, self.filters).unsqueeze(0)
+        model_in = preprocess_audio(wav_data, 40, self.filters).unsqueeze(0)
         model_in = torch.autograd.Variable(model_in, requires_grad=False)
         if not self.no_cuda:
             model_in = model_in.cuda()

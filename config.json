@@ -5,6 +5,7 @@
     },
     "commands": "yes,no,up,down,left,right,on,off,stop,go",
     "model_path": "model/google-speech-dataset.pt",
+    "backend": "pytorch",
     "train_script": "utils/model.py",
     "speech_dataset_path": "/tmp/speech_dataset/",
     "model_options": {

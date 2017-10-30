@@ -1,4 +1,3 @@
-from collections import ChainMap
 from enum import Enum
 import hashlib
 import math
@@ -6,6 +5,7 @@ import os
 import random
 import re
 
+from chainmap import ChainMap
 from torch.autograd import Variable
 import librosa
 import numpy as np
@@ -13,6 +13,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as data
+
+from .manage_audio import preprocess_audio
 
 class SimpleCache(dict):
     def __init__(self, limit):
@@ -202,16 +204,6 @@ class SpeechModel(SerializableModule):
             x = self.dropout(x)
         return self.output(x)
 
-def preprocess_audio(data, n_mels, dct_filters):
-    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480,
-        fmin=20, fmax=4000)
-    data[data > 0] = np.log(data[data > 0])
-    data = [np.matmul(dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
-    for _ in range(max(0, 101 - len(data))):
-        data.append(np.zeros([40,1]))
-    data = np.array(data, order="F").squeeze(2).astype(np.float32)
-    return torch.from_numpy(data) # shape: (frames, dct_coeffs)
-
 class DatasetType(Enum):
     TRAIN = 0
     DEV = 1
@@ -298,7 +290,7 @@ class SpeechDataset(data.Dataset):
         if random.random() < self.noise_prob or silence:
             a = random.random() * 0.1
             data = np.clip(a * bg_noise + data, -1, 1)
-        data = preprocess_audio(data, self.n_mels, self.filters)
+        data = torch.from_numpy(preprocess_audio(data, self.n_mels, self.filters))
         self._audio_cache[example] = data
         return data
 
@@ -377,7 +369,7 @@ class SpeechDataset(data.Dataset):
 
 _configs = {
     ConfigType.CNN_TRAD_POOL2.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=64,
-        n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(1, 3), conv1_stride=(1, 1),
+        n_feature_maps2=64, conv1_size=(20, 8), conv2_size=(10, 4), conv1_pool=(2, 2), conv1_stride=(1, 1),
         conv2_stride=(1, 1), conv2_pool=(1, 1), tf_variant=True),
     ConfigType.CNN_ONE_STRIDE1.value: dict(dropout_prob=0.5, height=101, width=40, n_labels=4, n_feature_maps1=186,
         conv1_size=(101, 8), conv1_pool=(1, 1), conv1_stride=(1, 1), dnn1_size=128, dnn2_size=128, tf_variant=True),

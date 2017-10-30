@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 import torch.utils.data as data
 
-import model as mod
+from . import model as mod
 
 class ConfigBuilder(object):
     def __init__(self, *default_configs):
@@ -87,7 +87,6 @@ def train(config):
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
-    print(config)
     optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"][0], nesterov=config["use_nesterov"], weight_decay=config["weight_decay"], momentum=config["momentum"])
     schedule_steps = config["schedule"]
     schedule_steps.append(np.inf)
