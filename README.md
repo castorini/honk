@@ -36,7 +36,7 @@ In our [honk-models](https://github.com/honk-models) repository, there are sever
 
 ### Raspberry Pi (RPi) Infrastructure Setup
 Unfortunately, getting the libraries to work on the RPi, especially librosa, isn't as straightforward as running a few commands. We outline our process, which may or may not work for you.
-1. Obtain an RPi, preferably an RPi 3 Model B running Raspbian.
+1. Obtain an RPi, preferably an RPi 3 Model B running Raspbian. Specifically, we used [this version](https://downloads.raspberrypi.org/raspbian/images/raspbian-2017-09-08/) of Raspbian Stretch.
 2. Install dependencies: `sudo apt-get install -y protobuf-compiler libprotoc-dev python-numpy python-pyaudio python-scipy python-sklearn`
 3. Install Protobuf: `pip install protobuf`
 4. Install ONNX without dependencies: `pip install --no-deps onnx`
