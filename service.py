@@ -20,7 +20,10 @@ except ImportError:
     pass
 
 from utils.manage_audio import AudioSnippet, preprocess_audio
-import utils.model as model
+try:
+    import utils.model as model
+except ImportError:
+    pass
 
 def _softmax(x):
     return np.exp(x) / np.sum(np.exp(x))
@@ -60,10 +63,11 @@ class Caffe2LabelService(LabelService):
 
     def label(self, wav_data):
         wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
-        model_in = preprocess_audio(wav_data, 40, self.filters).unsqueeze(0)
+        model_in = np.expand_dims(preprocess_audio(wav_data, 40, self.filters), 0)
+        model_in = np.expand_dims(model_in, 0)
         model_in = model_in.astype(np.float32)
         predictions = _softmax(self.model.run({self._in_name: model_in})[0])
-        return (self.labels[np.argmax(predictions)], max(predictions))
+        return (self.labels[np.argmax(predictions)], np.max(predictions))
 
 class TorchLabelService(LabelService):
     def __init__(self, model_filename, no_cuda=False, labels=["_silence_", "_unknown_", "command", "random"]):
@@ -92,12 +96,12 @@ class TorchLabelService(LabelService):
             A (most likely label, probability) tuple
         """
         wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
-        model_in = preprocess_audio(wav_data, 40, self.filters).unsqueeze(0)
+        model_in = torch.from_numpy(preprocess_audio(wav_data, 40, self.filters)).unsqueeze(0)
         model_in = torch.autograd.Variable(model_in, requires_grad=False)
         if not self.no_cuda:
             model_in = model_in.cuda()
         predictions = F.softmax(self.model(model_in).squeeze(0).cpu()).data.numpy()
-        return (self.labels[np.argmax(predictions)], max(predictions))
+        return (self.labels[np.argmax(predictions)], np.max(predictions))
 
 def stride(array, stride_size, window_size):
     i = 0
