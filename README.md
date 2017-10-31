@@ -65,6 +65,9 @@ Unfortunately, the QA client has no support for the general public yet, since it
 ```
 python -m utils.train --wanted_words yes no up down left right on off stop go --dev_every 1 --n_labels 12 --n_epochs 26 --weight_decay 0.00001 --lr 0.1 0.01 0.001 --schedule 3000 6000 --model res{8,15,26}[-narrow]
 ```
+For more information about our deep residual models, please see our paper:
+
++ Raphael Tang, Jimmy Lin. [Deep Residual Learning for Small-Footprint Keyword Spotting.](https://arxiv.org/abs/1710.10361) _arXiv:1710.10361_, October 2017.
 
 There are command options available:
 
