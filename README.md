@@ -34,6 +34,24 @@ Additional notes for Mac OS X:
 
 In our [honk-models](https://github.com/honk-models) repository, there are several pre-trained models for Caffe2 (ONNX) and PyTorch. The `fetch_data.sh` script fetches these models and extracts them to the `model` directory. You may specify which model and backend to use in the config file's `model_path` and `backend`, respectively. Specifically, `backend` can be either `caffe2` or `pytorch`, depending on what format `model_path` is in. Note that, in order to run our ONNX models, the packages `onnx` and `onnx_caffe2` must be present on your system; these are absent in requirements.txt.
 
+### Raspberry Pi (RPi) Infrastructure Setup
+Unfortunately, getting the libraries to work on the RPi, especially librosa, isn't as straightforward as running a few commands. We outline our process, which may or may not work for you.
+1. Obtain an RPi, preferably an RPi 3 Model B running Raspbian.
+2. Install dependencies: `sudo apt-get install -y protobuf-compiler libprotoc-dev python-numpy python-pyaudio python-scipy python-sklearn`
+3. Install Protobuf: `pip install protobuf`
+4. Install ONNX without dependencies: `pip install --no-deps onnx`
+5. Follow the [official instructions](https://caffe2.ai/docs/getting-started.html?platform=raspbian&configuration=compile) for installing Caffe2 on Raspbian. This process takes about two hours. You may need to add the `caffe2` module path to the `PYTHONPATH` environment variable. For us, this was accomplished by `export PYTHONPATH=$PYTHONPATH:/home/pi/caffe2/build`
+6. Install the ONNX extension for Caffe2: `pip install onnx-caffe2`
+7. Install further requirements: `pip install -r requirements_rpi.txt`
+8. Install librosa: `pip install --no-deps resampy librosa`
+9. Try importing librosa: `python -c "import librosa"`. It should throw an error regarding numba, since we haven't installed it.
+10. We haven't found a way to easily install numba on the RPi, so we need to remove it from resampy. For our setup, we needed to remove numba and `@numba.jit` from `/home/pi/.local/lib/python2.7/site-packages/resampy/interpn.py`
+11. All dependencies should now be installed. We should try deploying an ONNX model.
+12. Fetch the models and data: `./fetch_data.sh`
+13. In `config.json`, change `backend` to `caffe2` and `model_path` to `model/google-speech-dataset-full.onnx`.
+14. Deploy the server: `python .` If there are no errors, you have successfully deployed the model, accessible via port 16888 by default.
+15. Run the speech commands demo: `python utils/speech_demo.py`. You'll need a working microphone and speakers. If you're interacting with your RPi remotely, you can run the speech demo locally and specify the remote endpoint `--server-endpoint=http://[RPi IP address]:16888`.
+
 ## Utilities
 ### QA client
 Unfortunately, the QA client has no support for the general public yet, since it requires a custom QA service. However, it can still be used to retarget the command keyword.
