@@ -12,13 +12,14 @@ EXTERNAL_MODE = 'E'
 INTERNAL_MODE = 'I'
 TCPIP_MODE = 'T'
 FULLHANDLING = 2
+BAUDRATE = 115200
 
 app = Flask(__name__)
 meter = None
 
 class WattsUp(object):
     def __init__(self, port, interval=1.0):
-        self.serial = serial.Serial(port, 115200)
+        self.serial = serial.Serial(port, BAUDRATE)
         self.power_consumption = 0
         self.peak_watt = -1
         self.last_read = 0
@@ -30,7 +31,7 @@ class WattsUp(object):
             print("Logging...")
 
         # setup the serial to get the watt read
-        self.serial.write('#L,W,3,%s,,%d;' % (EXTERNAL_MODE, self.interval))
+        self.serial.write("#L,W,3,{},,{};".format(EXTERNAL_MODE, self.interval))
         line = self.serial.readline()
         n = 0
 
@@ -94,7 +95,7 @@ def main():
             break
 
     if serial_filepath == "":
-        print >>sys.stderr, "fatal error: cant find usb serial"
+        print >>sys.stderr, "fatal error: can't find usb serial"
         exit(1)
 
     print_inet_ip()

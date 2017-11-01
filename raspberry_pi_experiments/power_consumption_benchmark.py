@@ -1,9 +1,9 @@
-import service
 import requests
 import time
 import json
-import numpy as np
 import argparse
+import numpy as np
+import service
 
 non_keyword_set = set(["_silence_", "_unknown_"])
 keyword_list = ["_silence_", "_unknown_", "yes", "no", "up", "down", \
@@ -12,7 +12,7 @@ model_list = ["cnn_one_fstride4.onnx", "cnn_one_fstride8.onnx", "cnn_tpool2.onnx
 
 
 def wait_util_idle(get_last_read_url, idle_read=2.2):
-    for _ in xrange(15):
+    for _ in range(15):
         time.sleep(5)
         last_read = float(requests.get(get_last_read_url).json())
         if last_read <= idle_read:
@@ -20,8 +20,7 @@ def wait_util_idle(get_last_read_url, idle_read=2.2):
 
 def evaluate_model(get_read_url, get_last_read_url, reset_read_url):
     for model in model_list:
-        serv = service.Caffe2LabelService("model/%s" % model, keyword_list)
-        # print "model %s has loaded" % model
+        serv = service.Caffe2LabelService("model/{}".format(model), keyword_list)
         model_accuracy = []
         model_consumption = []
         model_duration = []
@@ -32,7 +31,6 @@ def evaluate_model(get_read_url, get_last_read_url, reset_read_url):
                 continue
 
             wait_util_idle(get_last_read_url)
-            # print "proceed with keyword", keyword
             requests.get(reset_read_url)
             start_time = time.time()
 
@@ -75,9 +73,9 @@ def main():
 
     wattsup_server_ip, wattsup_server_port = flags.ip, flags.port
 
-    get_read_url = "http://%s:%s/get_read" % (wattsup_server_ip, wattsup_server_port)
-    get_last_read_url = "http://%s:%s/get_last_read" % (wattsup_server_ip, wattsup_server_port)
-    reset_read_url = "http://%s:%s/reset_read" % (wattsup_server_ip, wattsup_server_port)
+    get_read_url = "http://{}:{}/get_read".format(wattsup_server_ip, wattsup_server_port)
+    get_last_read_url = "http://{}:{}/get_last_read".format(wattsup_server_ip, wattsup_server_port)
+    reset_read_url = "http://{}:{}/reset_read".format(wattsup_server_ip, wattsup_server_port)
 
     evaluate_model(get_read_url, get_last_read_url, reset_read_url)
 
