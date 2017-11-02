@@ -1,0 +1,55 @@
+---
+title: "power_usage"
+output: pdf_document
+---
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+power_data <- read.table("observations_agg.csv",header=TRUE,sep=",")
+#power_data <- read.table(
+#  "/Users/wwang/repository/Watts-Up--logger/observations.csv",
+#  header=TRUE,sep=",")
+e_a_model <- lm(formula = total_energy ~ accuracy, data = power_data) # 0.00137 **
+e_p_model <- lm(formula = total_energy ~ params, data = power_data) # 0.0121 *
+e_m_model <- lm(formula = total_energy ~ multiplies, data = power_data) # 0.0000749 ***
+t_p_model <- lm(formula = time ~ params, data = power_data) # 0.0158 *
+t_m_model <- lm(formula = time ~ multiplies, data = power_data) # 0.00146 **
+
+e_p_m_model <- lm(formula = total_energy ~ params + multiplies, data = power_data) # a_r = 0.9596
+t_p_m_model <- lm(formula = time ~ params + multiplies, data = power_data) # a_r = 0.8502
+summary(t_p_m_model)
+```
+```{r}
+#pairs(~ accuracy + total_energy + peak_power + time + params + multiplies, data = power_data)
+```
+```{r}
+fancy_scientific_mil <- function(l) {
+     l <- paste(round(l / 1e6, 1), "")
+     print(l)
+     parse(text=l)
+}
+
+library(ggplot2)
+lb1 <- paste("R^2 == ", round(0.8914,4))
+lb2 <- paste("p-value == ", round(0.00137,4))
+ggplot(power_data, aes(x = accuracy)) + geom_point(aes(y = total_energy, shape = model), size=4) +  stat_smooth(aes(x = accuracy, y = total_energy), method = "lm", level = 0.95) + annotate("text", x = 75, y = 370, label = lb1, size=5, parse=TRUE) + annotate("text", x = 75, y = 330, label = lb2, size=5, parse=TRUE) + ylab("Energy per Query (mJ)") + xlab("Accuracy (%)") + theme(axis.title = element_text(size = rel(1.8)), axis.text = element_text(size = rel(1.8)),legend.title=element_text(size=14),legend.text=element_text(size=14)) + scale_shape_manual(values = c(4,8,15,16,17,18,21))
+
+lb1 <- paste("R^2 == ", round(0.7472,4))
+lb2 <- paste("p-value == ", round(0.0121,4))
+ggplot(power_data, aes(x = params)) + geom_point(aes(y = total_energy, shape = model), size=4) +  stat_smooth(aes(x = params, y = total_energy), method = "lm", level = 0.95) + annotate("text", x = 6e+5, y = 410, label = lb1, size=5, parse=TRUE) + annotate("text", x = 6e+5, y = 365, label = lb2, size=5, parse=TRUE) + ylab("Energy per Query (mJ)") + xlab("Number of Parameters (millions)") + theme(axis.title = element_text(size = rel(1.8)), axis.text = element_text(size = rel(1.8)),legend.title=element_text(size=14),legend.text=element_text(size=14)) + scale_shape_manual(values = c(4,8,15,16,17,18,21)) + scale_x_continuous(labels=fancy_scientific_mil)
+
+lb1 <- paste("R^2 == ", round(0.9657,4))
+lb2 <- paste("p-value == ", round(7.486e-5,4))
+ggplot(power_data, aes(x = multiplies)) + geom_point(aes(y = total_energy, shape = model), size=4) +stat_smooth(aes(x = multiplies, y = total_energy), method = "lm", level = 0.95) + annotate("text", x = 4e+7, y = 410, label = lb1, size=5, parse=TRUE) + annotate("text", x = 4e+7, y = 370, label = lb2, size=5, parse=TRUE) + ylab("Energy per Query (mJ)") + xlab("Number of Multiplies (millions)") + theme(axis.title = element_text(size = rel(1.6)), axis.text = element_text(size = rel(1.6)),legend.title=element_text(size=14),legend.text=element_text(size=14)) + scale_shape_manual(values = c(4,8,15,16,17,18,21)) + scale_x_continuous(labels=fancy_scientific_mil)
+
+lb1 <- paste("R^2 == ", round(0.7198,4))
+lb2 <- paste("p-value == ", round(0.0158,4))
+ggplot(power_data, aes(x = params)) + geom_point(aes(y = time, shape = model), size=4) + stat_smooth(aes(x = params, y = time), method = "lm", level = 0.95) + annotate("text", x = 6e+5, y = 200, label = lb1, size=5, parse=TRUE) + annotate("text", x = 6e+5, y = 175, label = lb2, size=5, parse=TRUE) + ylab("Latency per Query (ms)") + xlab("Number of Parameters (millions)") + theme(axis.title = element_text(size = rel(1.6)), axis.text = element_text(size = rel(1.6)),legend.title=element_text(size=14),legend.text=element_text(size=14)) + scale_shape_manual(values = c(4,8,15,16,17,18,21)) + scale_x_continuous(labels=fancy_scientific_mil)
+
+lb1 <- paste("R^2 == ", round(0.8888,4))
+lb2 <- paste("p-value == ", round(0.00146,4))
+ggplot(power_data, aes(x = multiplies)) + geom_point(aes(y = time, shape = model), size=4) +  stat_smooth(aes(x = multiplies, y = time), method = "lm", level = 0.95) + annotate("text", x = 4e+7, y = 200, label = lb1, size=5, parse=TRUE) + annotate("text", x = 4e+7, y = 180, label = lb2, size=5, parse=TRUE) + ylab("Latency per Query (ms)") + xlab("Number of Multiplies (millions)") + theme(axis.title = element_text(size = rel(1.6)), axis.text = element_text(size = rel(1.6)),legend.title=element_text(size=14),legend.text=element_text(size=14)) + scale_shape_manual(values = c(4,8,15,16,17,18,21)) + scale_x_continuous(labels=fancy_scientific_mil)
+```

@@ -1,0 +1,111 @@
+cnn_trad_fpool3.onnx yes 0.906 58.4 221.2 4.1
+cnn_trad_fpool3.onnx no 0.829 57.8 218.6 4.1
+cnn_trad_fpool3.onnx up 0.915 62.4 237.9 4.1
+cnn_trad_fpool3.onnx down 0.921 57.5 219.2 4.1
+cnn_trad_fpool3.onnx left 0.903 60.0 228.0 4.1
+cnn_trad_fpool3.onnx right 0.873 58.7 219.8 4.1
+cnn_trad_fpool3.onnx on 0.927 55.5 209.0 4.1
+cnn_trad_fpool3.onnx off 0.908 59.1 225.8 4.1
+cnn_trad_fpool3.onnx stop 0.908 56.5 217.5 4.1
+cnn_trad_fpool3.onnx go 0.853 57.0 217.2 4.1
+model: cnn_trad_fpool3.onnx
+avg accuracy: 0.8943
+avg duration: 58.29
+avg consumption: 221.42
+peak watt: 4.1
+
+cnn_one_fstride4.onnx yes 0.844 10.5 27.7 2.9
+cnn_one_fstride4.onnx no 0.663 10.2 26.1 2.9
+cnn_one_fstride4.onnx up 0.654 11.0 27.7 2.9
+cnn_one_fstride4.onnx down 0.64 10.2 26.0 2.9
+cnn_one_fstride4.onnx left 0.573 11.2 28.7 2.9
+cnn_one_fstride4.onnx right 0.757 10.3 25.0 2.8
+cnn_one_fstride4.onnx on 0.768 9.7 25.3 2.8
+cnn_one_fstride4.onnx off 0.752 10.4 28.3 2.9
+cnn_one_fstride4.onnx stop 0.827 9.9 25.9 2.9
+cnn_one_fstride4.onnx go 0.55 10.5 28.8 3.0
+model: cnn_one_fstride4.onnx
+avg accuracy: 0.7028
+avg duration: 10.39
+avg consumption: 26.95
+peak watt: 3.0
+
+cnn_one_fstride8.onnx yes 0.73 10.9 26.0 2.9
+cnn_one_fstride8.onnx no 0.599 10.4 26.0 2.9
+cnn_one_fstride8.onnx up 0.537 11.2 31.2 2.9
+cnn_one_fstride8.onnx down 0.621 10.4 25.8 2.9
+cnn_one_fstride8.onnx left 0.603 11.1 28.8 2.9
+cnn_one_fstride8.onnx right 0.853 12.5 35.3 3.1
+cnn_one_fstride8.onnx on 0.793 10.2 25.0 2.9
+cnn_one_fstride8.onnx off 0.733 10.9 28.1 2.9
+cnn_one_fstride8.onnx stop 0.831 10.3 28.3 2.9
+cnn_one_fstride8.onnx go 0.49 10.3 25.1 2.9
+model: cnn_one_fstride8.onnx
+avg accuracy: 0.679
+avg duration: 10.82
+avg consumption: 27.96
+peak watt: 3.1
+
+cnn_tpool2.onnx yes 0.953 55.9 213.8 4.2
+cnn_tpool2.onnx no 0.893 51.8 195.5 4.1
+cnn_tpool2.onnx up 0.934 55.8 211.0 4.1
+cnn_tpool2.onnx down 0.901 51.4 194.9 4.1
+cnn_tpool2.onnx left 0.914 53.7 203.8 4.1
+cnn_tpool2.onnx right 0.923 52.1 195.2 4.1
+cnn_tpool2.onnx on 0.919 49.4 183.7 4.1
+cnn_tpool2.onnx off 0.908 53.0 199.6 4.1
+cnn_tpool2.onnx stop 0.964 50.6 192.4 4.1
+cnn_tpool2.onnx go 0.888 50.7 192.4 4.1
+model: cnn_tpool2.onnx
+avg accuracy: 0.9197
+avg duration: 52.44
+avg consumption: 198.23
+peak watt: 4.2
+
+cnn_tpool3.onnx yes 0.93 41.3 149.7 4.1
+cnn_tpool3.onnx no 0.913 40.1 146.6 4.0
+cnn_tpool3.onnx up 0.956 43.3 161.5 4.1
+cnn_tpool3.onnx down 0.838 40.3 145.9 4.1
+cnn_tpool3.onnx left 0.936 42.1 156.0 4.1
+cnn_tpool3.onnx right 0.907 41.1 150.1 4.1
+cnn_tpool3.onnx on 0.89 38.9 141.7 4.1
+cnn_tpool3.onnx off 0.905 41.3 150.4 4.0
+cnn_tpool3.onnx stop 0.964 39.4 143.4 4.0
+cnn_tpool3.onnx go 0.884 39.7 145.1 4.0
+model: cnn_tpool3.onnx
+avg accuracy: 0.9123
+avg duration: 40.75
+avg consumption: 149.04
+peak watt: 4.1
+
+google-speech-dataset-full.onnx yes 0.902 37.1 145.4 4.5
+google-speech-dataset-full.onnx no 0.77 36.4 145.5 4.5
+google-speech-dataset-full.onnx up 0.886 38.9 156.3 4.5
+google-speech-dataset-full.onnx down 0.83 36.6 146.3 4.5
+google-speech-dataset-full.onnx left 0.899 38.9 158.0 4.5
+google-speech-dataset-full.onnx right 0.927 37.3 150.3 4.5
+google-speech-dataset-full.onnx on 0.927 36.0 142.1 4.5
+google-speech-dataset-full.onnx off 0.893 38.7 154.3 4.5
+google-speech-dataset-full.onnx stop 0.908 36.4 148.0 4.5
+google-speech-dataset-full.onnx go 0.809 37.2 148.7 4.5
+model: google-speech-dataset-full.onnx
+avg accuracy: 0.8751
+avg duration: 37.35
+avg consumption: 149.49
+peak watt: 4.5
+
+google-speech-dataset-compact.onnx yes 0.887 24.9 75.7 3.4
+google-speech-dataset-compact.onnx no 0.615 28.4 87.4 3.6
+google-speech-dataset-compact.onnx up 0.783 26.0 78.6 3.4
+google-speech-dataset-compact.onnx down 0.696 24.9 76.3 3.4
+google-speech-dataset-compact.onnx left 0.745 25.5 78.5 3.4
+google-speech-dataset-compact.onnx right 0.865 24.6 75.3 3.3
+google-speech-dataset-compact.onnx on 0.809 24.2 73.5 3.4
+google-speech-dataset-compact.onnx off 0.786 25.4 76.0 3.4
+google-speech-dataset-compact.onnx stop 0.843 26.2 80.7 3.4
+google-speech-dataset-compact.onnx go 0.677 26.2 80.0 3.5
+model: google-speech-dataset-compact.onnx
+avg accuracy: 0.7706
+avg duration: 25.63
+avg consumption: 78.2
+peak watt: 3.6
