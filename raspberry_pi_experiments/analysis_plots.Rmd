@@ -9,9 +9,6 @@ library(ggplot2)
 
 ```{r}
 power_data <- read.table("observations_agg.csv",header=TRUE,sep=",")
-#power_data <- read.table(
-#  "/Users/wwang/repository/Watts-Up--logger/observations.csv",
-#  header=TRUE,sep=",")
 e_a_model <- lm(formula = total_energy ~ accuracy, data = power_data) # 0.00137 **
 e_p_model <- lm(formula = total_energy ~ params, data = power_data) # 0.0121 *
 e_m_model <- lm(formula = total_energy ~ multiplies, data = power_data) # 0.0000749 ***
