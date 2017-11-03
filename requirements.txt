@@ -1,6 +1,7 @@
 chainmap
 cherrypy>=11.0.0,<=11.99
 librosa>=0.5,<=0.5.99
+Flask>=0.12.1
 numpy>=1.12
 Pillow>=4.0.0,<=4.99
 PyAudio>=0.2

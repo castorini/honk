@@ -1,0 +1,112 @@
+cnn_one_fstride4.onnx yes 0.0 7.8 19.5 2.7
+cnn_one_fstride4.onnx no 0.0 7.7 19.7 2.7
+cnn_one_fstride4.onnx up 0.0 8.3 19.8 2.7
+cnn_one_fstride4.onnx down 0.0 7.8 19.5 2.7
+cnn_one_fstride4.onnx left 0.0 8.1 22.1 2.7
+cnn_one_fstride4.onnx right 0.0 7.9 19.5 2.7
+cnn_one_fstride4.onnx on 0.0 7.5 19.5 2.7
+cnn_one_fstride4.onnx off 0.0 8.0 19.5 2.7
+cnn_one_fstride4.onnx stop 0.0 7.6 19.7 2.7
+cnn_one_fstride4.onnx go 0.0 7.6 17.0 2.6
+model: cnn_one_fstride4.onnx
+avg accuracy: 0.0
+avg duration: 7.83
+avg consumption: 19.58
+peak watt: 2.7 
+
+cnn_one_fstride8.onnx yes 0.0 7.8 17.3 2.7
+cnn_one_fstride8.onnx no 0.0 7.7 19.7 2.7
+cnn_one_fstride8.onnx up 0.0 8.2 22.2 2.7
+cnn_one_fstride8.onnx down 0.0 7.7 19.4 2.7
+cnn_one_fstride8.onnx left 0.0 8.1 19.5 2.7
+cnn_one_fstride8.onnx right 0.0 7.8 19.8 2.7
+cnn_one_fstride8.onnx on 0.0 7.5 19.4 2.7
+cnn_one_fstride8.onnx off 0.0 7.9 19.4 2.7
+cnn_one_fstride8.onnx stop 0.0 7.6 19.3 2.7
+cnn_one_fstride8.onnx go 0.0 7.6 19.3 2.7
+model: cnn_one_fstride8.onnx
+avg accuracy: 0.0
+avg duration: 7.79
+avg consumption: 19.53
+peak watt: 2.7 
+
+cnn_tpool2.onnx yes 0.0 7.9 19.9 2.7
+cnn_tpool2.onnx no 0.0 7.8 19.4 2.7
+cnn_tpool2.onnx up 0.0 8.4 22.1 2.7
+cnn_tpool2.onnx down 0.0 7.8 19.2 2.6
+cnn_tpool2.onnx left 0.0 8.3 22.0 2.7
+cnn_tpool2.onnx right 0.0 8.0 19.4 2.7
+cnn_tpool2.onnx on 0.0 7.6 19.4 2.7
+cnn_tpool2.onnx off 0.0 8.1 19.7 2.7
+cnn_tpool2.onnx stop 0.0 7.7 19.4 2.7
+cnn_tpool2.onnx go 0.0 7.7 19.4 2.7
+model: cnn_tpool2.onnx
+avg accuracy: 0.0
+avg duration: 7.93
+avg consumption: 19.99
+peak watt: 2.7 
+
+cnn_tpool3.onnx yes 0.0 7.9 19.8 2.7
+cnn_tpool3.onnx no 0.0 7.8 19.5 2.7
+cnn_tpool3.onnx up 0.0 8.4 22.0 2.7
+cnn_tpool3.onnx down 0.0 7.8 19.5 2.7
+cnn_tpool3.onnx left 0.0 8.2 18.5 2.6
+cnn_tpool3.onnx right 0.0 7.9 19.4 2.7
+cnn_tpool3.onnx on 0.0 7.5 19.3 2.7
+cnn_tpool3.onnx off 0.0 8.1 22.2 2.7
+cnn_tpool3.onnx stop 0.0 7.7 19.5 2.7
+cnn_tpool3.onnx go 0.0 7.7 19.6 2.7
+model: cnn_tpool3.onnx
+avg accuracy: 0.0
+avg duration: 7.9
+avg consumption: 19.93
+peak watt: 2.7 
+
+cnn_trad_fpool3.onnx yes 0.0 8.1 19.9 2.7
+cnn_trad_fpool3.onnx no 0.0 7.9 19.3 2.7
+cnn_trad_fpool3.onnx up 0.0 8.3 19.8 2.7
+cnn_trad_fpool3.onnx down 0.0 7.8 19.4 2.7
+cnn_trad_fpool3.onnx left 0.0 8.2 19.4 2.7
+cnn_trad_fpool3.onnx right 0.0 8.3 22.7 2.8
+cnn_trad_fpool3.onnx on 0.0 7.8 20.2 2.8
+cnn_trad_fpool3.onnx off 0.0 8.5 22.7 2.8
+cnn_trad_fpool3.onnx stop 0.0 7.8 19.7 2.7
+cnn_trad_fpool3.onnx go 0.0 7.7 19.9 2.7
+model: cnn_trad_fpool3.onnx
+avg accuracy: 0.0
+avg duration: 8.04
+avg consumption: 20.3
+peak watt: 2.8 
+
+google-speech-dataset-full.onnx yes 0.0 8.4 23.0 2.8
+google-speech-dataset-full.onnx no 0.0 7.8 19.4 2.7
+google-speech-dataset-full.onnx up 0.0 8.4 22.2 2.7
+google-speech-dataset-full.onnx down 0.0 7.8 19.9 2.7
+google-speech-dataset-full.onnx left 0.0 8.2 19.6 2.7
+google-speech-dataset-full.onnx right 0.0 8.0 19.4 2.7
+google-speech-dataset-full.onnx on 0.0 7.6 17.1 2.7
+google-speech-dataset-full.onnx off 0.0 8.1 19.7 2.7
+google-speech-dataset-full.onnx stop 0.0 7.7 19.6 2.7
+google-speech-dataset-full.onnx go 0.0 7.7 19.6 2.7
+model: google-speech-dataset-full.onnx
+avg accuracy: 0.0
+avg duration: 7.97
+avg consumption: 19.95
+peak watt: 2.8 
+
+google-speech-dataset-compact.onnx yes 0.0 8.2 22.7 2.8
+google-speech-dataset-compact.onnx no 0.0 8.3 20.7 2.8
+google-speech-dataset-compact.onnx up 0.0 8.7 25.2 2.7
+google-speech-dataset-compact.onnx down 0.0 8.1 19.4 2.7
+google-speech-dataset-compact.onnx left 0.0 8.5 22.1 2.7
+google-speech-dataset-compact.onnx right 0.0 8.3 19.5 2.7
+google-speech-dataset-compact.onnx on 0.0 7.8 19.4 2.7
+google-speech-dataset-compact.onnx off 0.0 8.4 22.0 2.7
+google-speech-dataset-compact.onnx stop 0.0 7.9 19.7 2.7
+google-speech-dataset-compact.onnx go 0.0 8.0 19.5 2.7
+model: google-speech-dataset-compact.onnx
+avg accuracy: 0.0
+avg duration: 8.22
+avg consumption: 21.02
+peak watt: 2.8 
+
