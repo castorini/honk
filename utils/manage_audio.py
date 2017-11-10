@@ -209,42 +209,6 @@ def print_sound_level():
         for audio in generator:
             print("Sound level: {}".format(audio.amplitude_rms()), end="\r")
 
-def record_speech_sequentially(file_name_prefix="output", min_sound_lvl=0.01, speech_timeout_secs=1., i=0):
-    """Records audio in sequential audio files.
-
-    Args:
-        file_name_prefix: The prefix of the output filenames
-        min_sound_lvl: The minimum sound level as measured by root mean square
-        speech_timeout_secs: Timeout of audio after that duration of silence as measured by min_sound_lvl
-        i: The beginning index of sequence
-    """
-    while True:
-        input("Input any key to record: ")
-        with AudioSnippetGenerator() as generator:
-            timeout_len = int(speech_timeout_secs * generator.sr / generator.chunk_size)
-            active_count = timeout_len
-            curr_snippet = None
-            for audio in generator:
-                if curr_snippet:
-                    curr_snippet.append(audio)
-                else:
-                    curr_snippet = audio
-                if audio.amplitude_rms() < min_sound_lvl:
-                    active_count -= 1
-                else:
-                    active_count = timeout_len
-                print("Time left: {:<10}".format(active_count), end="\r")
-                if active_count == 0:
-                    output_name = "{}.{}.wav".format(file_name_prefix, i)
-                    i += 1
-                    with wave.open(output_name, "w") as f:
-                        f.setnchannels(1)
-                        f.setsampwidth(generator.audio.get_sample_size(generator.fmt))
-                        f.setframerate(generator.sr)
-                        f.writeframes(curr_snippet.byte_data)
-                    print("Saved to {}".format(output_name))
-                    break
-
 def generate_dir(directory):
     for filename in os.listdir(directory):
         fullpath = os.path.join(os.path.abspath(directory), filename)
@@ -290,7 +254,7 @@ def clean_dir(directory=".", cutoff_ms=1000):
 
 def main():
     parser = argparse.ArgumentParser()
-    commands = dict(record=record_speech_sequentially, trim=clean_dir, listen=print_sound_level)
+    commands = dict(trim=clean_dir, listen=print_sound_level)
     commands["generate-contrastive"] = generate_dir
     parser.add_argument("subcommand")
     def print_sub_commands():
@@ -299,31 +263,7 @@ def main():
         print_sub_commands()
         return
     subcommand = sys.argv[1]
-    if subcommand == "record":
-        parser.add_argument(
-            "--output-prefix",
-            type=str,
-            default="output",
-            help="Prefix of the output audio sequence")
-        parser.add_argument(
-            "--min-sound-lvl",
-            type=float,
-            default=0.01,
-            help="Minimum sound level at which audio is not considered silent")
-        parser.add_argument(
-            "--timeout-seconds",
-            type=float,
-            default=1.,
-            help="Duration of silence after which recording halts")
-        parser.add_argument(
-            "--output-begin-index",
-            type=int,
-            default=0,
-            help="Starting sequence number")
-        flags, _ = parser.parse_known_args()
-        record_speech_sequentially(file_name_prefix=flags.output_prefix, i=flags.output_begin_index, 
-            min_sound_lvl=flags.min_sound_lvl, speech_timeout_secs=flags.timeout_seconds)
-    elif subcommand == "generate-contrastive":
+    if subcommand == "generate-contrastive":
         parser.add_argument(
             "directory",
             type=str,

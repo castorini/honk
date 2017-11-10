@@ -116,18 +116,8 @@ def make_abspath(rel_path):
         rel_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), rel_path)
     return rel_path
 
-def start(config):
-    cherrypy.config.update({
-        "environment": "production",
-        "log.screen": True
-    })
-    cherrypy.config.update(config["server"])
-    rest_config = {"/": {
-        "request.dispatch": cherrypy.dispatch.MethodDispatcher()
-    }}
+def load_service(config):
     model_path = make_abspath(config["model_path"])
-    train_script = make_abspath(config["train_script"])
-    speech_dataset_path = make_abspath(config["speech_dataset_path"])
     commands = ["__silence__", "__unknown__"]
     commands.extend(config["commands"].split(","))
     
@@ -138,7 +128,20 @@ def start(config):
         lbl_service = TorchLabelService(model_path, labels=commands, no_cuda=config["model_options"]["no_cuda"])
     else:
         raise ValueError("Backend {} not supported!".format(backend))
+    return lbl_service
 
+def start(config):
+    cherrypy.config.update({
+        "environment": "production",
+        "log.screen": True
+    })
+    cherrypy.config.update(config["server"])
+    rest_config = {"/": {
+        "request.dispatch": cherrypy.dispatch.MethodDispatcher()
+    }}
+    train_script = make_abspath(config["train_script"])
+    speech_dataset_path = make_abspath(config["speech_dataset_path"])
+    lbl_service = load_service(config)
     train_service = TrainingService(train_script, speech_dataset_path, config["model_options"])
     cherrypy.tree.mount(ListenEndpoint(lbl_service), "/listen", rest_config)
     cherrypy.tree.mount(DataEndpoint(train_service), "/data", rest_config)
