@@ -115,18 +115,20 @@ There are command options available:
 ### Recording audio
 
 You may do the following to record sequential audio and save to the same format as that of speech command dataset:
-```bash
-python manage_audio.py record
 ```
-Input any key (return is fastest) to open the microphone. After one second of silence, recording automatically halts.
+python -m utils.record
+```
+Input return to record, up arrow to undo, and "q" to finish. After one second of silence, recording automatically halts.
 
 Several options are available:
 ```
---output-prefix: Prefix of the output audio sequence
---min-sound-lvl: Minimum sound level at which audio is not considered silent
---timeout-seconds: Duration of silence after which recording halts
 --output-begin-index: Starting sequence number
+--output-prefix: Prefix of the output audio sequence
+--post-process: How the audio samples should be post-processed. One or more of "trim" and "discard_true".
 ```
+Post-processing consists of trimming or discarding "useless" audio. Trimming is self-explanatory: the audio recordings are trimmed to the loudest window of *x* milliseconds, specified by `--cutoff-ms`. Discarding "useless" audio (`discard_true`) uses a pre-trained model to determine which samples are confusing, discarding correctly labeled ones. The pre-trained model and correct label are defined by `--config` and `--correct-label`, respectively.
+
+For example, consider `python -m utils.record --post-process trim discard_true --correct-label no --config config.json`. In this case, the utility records a sequence of speech snippets, trims them to one second, and finally discards those not labeled "no" by the model in `config.json`.
 
 ### Listening to sound level
 
