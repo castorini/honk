@@ -67,7 +67,7 @@ python -m utils.train --wanted_words yes no up down left right on off stop go --
 ```
 For more information about our deep residual models, please see our paper:
 
-+ Raphael Tang, Jimmy Lin. [Deep Residual Learning for Small-Footprint Keyword Spotting.](https://arxiv.org/abs/1710.10361) _arXiv:1710.10361_, October 2017.
++ Raphael Tang, Jimmy Lin. [Deep Residual Learning for Small-Footprint Keyword Spotting.](https://arxiv.org/abs/1710.10361)  _Proceedings of the 2018 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP 2018)_, April 2018, Calgary, Alberta, Canada.
 
 There are command options available:
 
