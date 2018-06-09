@@ -1,5 +1,5 @@
 # Windows Instruction for Running the Demo
-- tested on Windows 10
+- Tested on Windows 10 without cuda and `"no_cuda": true` in [config.json](config.json)
 ## Pre-requisites
 ### Python
 - Dowload python from [Annconda Python 3.6](https://www.anaconda.com/download/#download)
@@ -10,7 +10,7 @@
 - Start the installer and select Build Tools and install all the automatically selected ones
 
 ### Python OpenGL and OpenGL_accelerate
-- fetch the latest version og PyOpenGl and PyOpenGL_accelerate from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyopengl)
+- fetch the latest version of PyOpenGL and PyOpenGL_accelerate from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyopengl)
 - Tested with `PyOpenGL‑3.1.2‑cp36‑cp36m‑win_amd64.whl` and `PyOpenGL‑3.1.2‑cp36‑cp36m‑win_amd64.whl`
 
 ## Other dependencies and run instruction
