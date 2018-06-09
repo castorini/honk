@@ -1,4 +1,5 @@
 # Windows Instruction for Running the Demo
+- tested on Windows 10
 ## Pre-requisites
 ### Python
 - Dowload python from [Annconda Python 3.6](https://www.anaconda.com/download/#download)
