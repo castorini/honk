@@ -10,7 +10,7 @@
 - Start the installer and select Build Tools and install all the automatically selected ones
 
 ### Python OpenGL and OpenGL_accelerate
-- fetch the latest version of PyOpenGl and PyOpenGL_accelerate from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyopengl)
+- fetch the latest version of PyOpenGL and PyOpenGL_accelerate from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyopengl)
 - Tested with `PyOpenGL‑3.1.2‑cp36‑cp36m‑win_amd64.whl` and `PyOpenGL‑3.1.2‑cp36‑cp36m‑win_amd64.whl`
 
 ## Other dependencies and run instruction
