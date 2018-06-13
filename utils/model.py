@@ -274,9 +274,6 @@ class SpeechDataset(data.Dataset):
         else:
             bg_noise = np.zeros(in_len)
 
-        use_clean = (self.set_type != DatasetType.TRAIN)
-        if use_clean:
-            bg_noise = np.zeros(in_len)
         if silence:
             data = np.zeros(in_len, dtype=np.float32)
         else:
@@ -284,7 +281,7 @@ class SpeechDataset(data.Dataset):
             data = librosa.core.load(example, sr=16000)[0] if file_data is None else file_data
             self._file_cache[example] = data
         data = np.pad(data, (0, max(0, in_len - len(data))), "constant")
-        if not use_clean:
+        if self.set_type == DatasetType.TRAIN:
             data = self._timeshift_audio(data)
 
         if random.random() < self.noise_prob or silence:
@@ -354,7 +351,7 @@ class SpeechDataset(data.Dataset):
             a = b
 
         train_cfg = ChainMap(dict(bg_noise_files=bg_noise_files), config)
-        test_cfg = ChainMap(dict(noise_prob=0), config)
+        test_cfg = ChainMap(dict(bg_noise_files=bg_noise_files, noise_prob=0), config)
         datasets = (cls(sets[0], DatasetType.TRAIN, train_cfg), cls(sets[1], DatasetType.DEV, test_cfg),
                 cls(sets[2], DatasetType.TEST, test_cfg))
         return datasets
