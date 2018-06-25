@@ -38,8 +38,8 @@ class ConfigBuilder(object):
 
 def print_eval(name, scores, labels, loss, end="\n"):
     batch_size = labels.size(0)
-    accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).sum() / batch_size
-    loss = loss.cpu().data.numpy()[0]
+    accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).float().sum() / batch_size
+    loss = loss.item()
     print("{} accuracy: {:>5}, loss: {:<25}".format(name, accuracy, loss), end=end)
     return accuracy
 
@@ -131,7 +131,7 @@ def train(config):
                 scores = model(model_in)
                 labels = Variable(labels, requires_grad=False)
                 loss = criterion(scores, labels)
-                loss_numeric = loss.cpu().data.numpy()[0]
+                loss_numeric = loss.item()
                 accs.append(print_eval("dev", scores, labels, loss))
             avg_acc = np.mean(accs)
             print("final dev accuracy: {}".format(avg_acc))
