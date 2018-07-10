@@ -1,4 +1,6 @@
-![cover](https://user-images.githubusercontent.com/40801473/42504295-2d6eda38-8433-11e8-8619-939987cbc9ee.png)
+<p align="center">
+  <img width="400" height="185,005" src="https://user-images.githubusercontent.com/40801473/42514009-47a36df2-8450-11e8-9a19-23d33a33f672.png">
+</p>
 
 # Honk: CNNs for Keyword Spotting
 
