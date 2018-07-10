@@ -1,3 +1,5 @@
+![cover](https://user-images.githubusercontent.com/40801473/42504295-2d6eda38-8433-11e8-8619-939987cbc9ee.png)
+
 # Honk: CNNs for Keyword Spotting
 
 Honk is a PyTorch reimplementation of Google's TensorFlow convolutional neural networks for keyword spotting, which accompanies the recent release of their [Speech Commands Dataset](https://research.googleblog.com/2017/08/launching-speech-commands-dataset.html). For more details, please consult our writeup:
