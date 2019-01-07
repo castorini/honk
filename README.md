@@ -116,6 +116,10 @@ There are command options available:
 | `--unknown_prob`     | [0.0, 1.0] | 0.1  | the probability of picking an unknown word    |
 | `--wanted_words` | string1 string2 ... stringn  | command random  | the desired target words            |
 
+### Training model for honkling
+`--type json` to generate json format of weight files under model folder.
+`--data_folder` now takes in list of folders and data gets repeated to fill `--pos_key_size`. Default is 1000
+
 ### Recording audio
 
 You may do the following to record sequential audio and save to the same format as that of speech command dataset:

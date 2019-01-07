@@ -1,14 +1,15 @@
 from collections import ChainMap
 import argparse
+import datetime
 import os
 import random
-import sys
+import json
 
-from torch.autograd import Variable
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.utils.data as data
+from torch.autograd import Variable
 
 from . import model as mod
 
@@ -40,7 +41,7 @@ def print_eval(name, scores, labels, loss, end="\n"):
     batch_size = labels.size(0)
     accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).float().sum() / batch_size
     loss = loss.item()
-    print("{} accuracy: {:>5}, loss: {:<25}".format(name, accuracy, loss), end=end)
+    # print("{} accuracy: {:>5}, loss: {:<25}".format(name, accuracy, loss), end=end)
     return accuracy
 
 def set_seed(config):
@@ -87,7 +88,12 @@ def train(config):
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
         model.cuda()
-    optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"][0], nesterov=config["use_nesterov"], weight_decay=config["weight_decay"], momentum=config["momentum"])
+    optimizer = torch.optim.SGD(
+        model.parameters(),
+        lr=config["lr"][0],
+        nesterov=config["use_nesterov"],
+        weight_decay=config["weight_decay"],
+        momentum=config["momentum"])
     schedule_steps = config["schedule"]
     schedule_steps.append(np.inf)
     sched_idx = 0
@@ -100,7 +106,7 @@ def train(config):
     step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
-        for batch_idx, (model_in, labels) in enumerate(train_loader):
+        for _, (model_in, labels) in enumerate(train_loader):
             model.train()
             optimizer.zero_grad()
             if not config["no_cuda"]:
@@ -117,10 +123,12 @@ def train(config):
                 sched_idx += 1
                 print("changing learning rate to {}".format(config["lr"][sched_idx]))
                 optimizer = torch.optim.SGD(model.parameters(), lr=config["lr"][sched_idx],
-                    nesterov=config["use_nesterov"], momentum=config["momentum"], weight_decay=config["weight_decay"])
-            print_eval("train step #{}".format(step_no), scores, labels, loss)
+                                            nesterov=config["use_nesterov"], momentum=config["momentum"],
+                                            weight_decay=config["weight_decay"])
+            # print_eval("train step #{}".format(step_no), scores, labels, loss)
 
         if epoch_idx % config["dev_every"] == config["dev_every"] - 1:
+            print("progress - ", epoch_idx, "/", config["n_epochs"])
             model.eval()
             accs = []
             for model_in, labels in dev_loader:
@@ -131,7 +139,6 @@ def train(config):
                 scores = model(model_in)
                 labels = Variable(labels, requires_grad=False)
                 loss = criterion(scores, labels)
-                loss_numeric = loss.item()
                 accs.append(print_eval("dev", scores, labels, loss))
             avg_acc = np.mean(accs)
             print("final dev accuracy: {}".format(avg_acc))
@@ -139,23 +146,50 @@ def train(config):
                 print("saving best model...")
                 max_acc = avg_acc
                 model.save(config["output_file"])
+
+    generate_json(config, model)
+
     evaluate(config, model, test_loader)
 
+def generate_json(config, model):
+    weight_json = {}
+    for key, val in model.state_dict().items():
+        weight_json[key] = val.tolist()
+    file_name = config['model_name'] + '_' + datetime.datetime.now().strftime("%m-%d_%H:%M") + '.js'
+    file_path = 'model/' + file_name
+    with open(file_path, 'w') as file:
+        json.dump(weight_json, file, indent=4, sort_keys=True)
+
 def main():
-    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "model", "model.pt")
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", choices=[x.value for x in list(mod.ConfigType)], default="cnn-trad-pool2", type=str)
     config, _ = parser.parse_known_args()
+    model_file_name = datetime.datetime.now().strftime("%m-%d_%H:%M")+"_"+config.model+".pt"
+    output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "model", model_file_name)
 
-    global_config = dict(no_cuda=False, n_epochs=500, lr=[0.001], schedule=[np.inf], batch_size=64, dev_every=10, seed=0,
-        use_nesterov=False, input_file="", output_file=output_file, gpu_no=1, cache_size=32768, momentum=0.9, weight_decay=0.00001)
+    global_config = dict(
+        no_cuda=False,
+        n_epochs=500,
+        lr=[0.001],
+        schedule=[np.inf],
+        batch_size=64,
+        dev_every=10,
+        seed=0,
+        use_nesterov=False,
+        input_file="",
+        output_file=output_file,
+        gpu_no=1,
+        cache_size=32768,
+        momentum=0.9,
+        weight_decay=0.00001,
+        model_name=config.model)
     mod_cls = mod.find_model(config.model)
     builder = ConfigBuilder(
         mod.find_config(config.model),
         mod.SpeechDataset.default_config(),
         global_config)
     parser = builder.build_argparse()
-    parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
+    parser.add_argument("--mode", choices=["train", "eval", "json"], default="train", type=str)
     config = builder.config_from_argparse(parser)
     config["model_class"] = mod_cls
     set_seed(config)
@@ -163,6 +197,11 @@ def main():
         train(config)
     elif config["mode"] == "eval":
         evaluate(config)
+    elif config["type"] == "json":
+        print("generating json from " + config["input_file"])
+        model = config["model_class"](config)
+        model.load(config["input_file"])
+        generate_json(config, model)
 
 if __name__ == "__main__":
     main()
