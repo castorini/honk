@@ -160,10 +160,8 @@ def main():
     config["model_class"] = mod_cls
     set_seed(config)
     if config["type"] == "train":
-        print("train")
         train(config)
     elif config["type"] == "eval":
-        print("eval")
         evaluate(config)
 
 if __name__ == "__main__":
