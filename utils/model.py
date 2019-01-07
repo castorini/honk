@@ -339,14 +339,20 @@ class SpeechDataset(data.Dataset):
                 file_list = os.listdir(path_name)
 
                 size = config["pos_key_size"]
+                # if pos_key_size is greater than first set of target keyword data,
+                # then randomly select from the existing data to fill up pos_key_size
+                # TODO :: fix to handle multiple data folder
                 if folder_name in words:
                     if pos_key_size[folder_name] >= config["pos_key_size"]:
                         continue
-                    size -= pos_key_size[folder_name]
-                    file_list = file_list[:size]
-                    pos_key_size[folder_name] += size
 
-                    print(folder_name, len(file_list))
+                    missing_count = max(0, size - len(file_list))
+                    randomly_selected = list(np.random.choice(file_list, missing_count))
+
+                    print(folder_name, ', folder size - ', len(file_list), ', missing count - ', missing_count)
+                    file_list += randomly_selected
+
+                    pos_key_size[folder_name] += len(file_list)
 
                 for filename in file_list:
                     wav_name = os.path.join(path_name, filename)
