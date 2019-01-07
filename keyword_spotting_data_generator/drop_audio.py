@@ -1,9 +1,6 @@
-import librosa
 import os
-import pyaudio
 import subprocess
 import sys
-import wave
 from tqdm import tqdm
 
 if len(sys.argv) < 2:
@@ -12,14 +9,14 @@ if len(sys.argv) < 2:
 
 DIR_NAME = sys.argv[1]
 
-def play_audio(file_name) :
-    subprocess.check_output(["ffplay", "-nodisp", "-autoexit", file_name])
+def play_audio(file):
+    subprocess.check_output(["ffplay", "-nodisp", "-autoexit", file])
 
-file_list = os.listdir(DIR_NAME)
-total_count = len(file_list)
+FILE_LIST = os.listdir(DIR_NAME)
+TOTAL_COUNT = len(FILE_LIST)
 
-delete_count = 0
-for file_name in tqdm(file_list):
+DELETE_COUNT = 0
+for file_name in tqdm(FILE_LIST):
     keep = ''
     path = os.path.join(DIR_NAME, file_name)
     print(path)
@@ -33,13 +30,13 @@ for file_name in tqdm(file_list):
 
     if keep == "d":
         print("deleting audio ...")
-        delete_count += 1;
+        DELETE_COUNT += 1
         os.remove(path)
 
-remaining_count = total_count - delete_count
+REMAINING_COUNT = TOTAL_COUNT - DELETE_COUNT
 
-print("deleted : " + str(delete_count))
-print("false positive : " + str(round(100*delete_count/total_count)) + " %")
-print("\nremaining : " + str(remaining_count))
-print("true positive : " + str(round(100*remaining_count/total_count)) + " %")
-print("\ntotal : " + str(total_count))
+print("deleted : " + str(DELETE_COUNT))
+print("false positive : " + str(round(100*DELETE_COUNT/TOTAL_COUNT)) + " %")
+print("\nremaining : " + str(REMAINING_COUNT))
+print("true positive : " + str(round(100*REMAINING_COUNT/TOTAL_COUNT)) + " %")
+print("\ntotal : " + str(TOTAL_COUNT))
