@@ -77,6 +77,7 @@ There are command options available:
 
 | option         | input format | default | description |
 |----------------|--------------|---------|-------------|
+| `--audio_preprocess_type`   | {MFCCs, PCEN}       | PCEN     | type of audio preprocess to use            |
 | `--batch_size`   | [1, n)       | 100     | the mini-batch size to use            |
 | `--cache_size`   | [0, inf)       | 32768     | number of items in audio cache, consumes around 32 KB * n   |
 | `--conv1_pool`   | [1, inf) [1, inf) | 2 2     | the width and height of the pool filter       |

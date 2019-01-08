@@ -7,6 +7,7 @@ import wave
 
 import librosa
 import numpy as np
+import pcen
 import pyaudio
 
 def set_speech_format(f):
@@ -14,12 +15,36 @@ def set_speech_format(f):
     f.setsampwidth(2)
     f.setframerate(16000)
 
-def preprocess_audio(data, n_mels, dct_filters):
-    data = librosa.feature.melspectrogram(data, sr=16000, n_mels=n_mels, hop_length=160, n_fft=480, fmin=20, fmax=4000)
-    data[data > 0] = np.log(data[data > 0])
-    data = [np.matmul(dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
-    data = np.array(data, order="F").squeeze(2).astype(np.float32)
-    return data
+class AudioPreprocessor(object):
+    def __init__(self, sr=16000, n_dct_filters=40, n_mels=40, f_max=4000, f_min=20, n_fft=480, hop_ms=10):
+        super().__init__()
+        self.n_mels = n_mels
+        self.dct_filters = librosa.filters.dct(n_dct_filters, n_mels)
+        self.sr = sr
+        self.f_max = f_max if f_max is not None else sr // 2
+        self.f_min = f_min
+        self.n_fft = n_fft
+        self.hop_length = sr //1000 * hop_ms
+        self.pcen_transform = pcen.StreamingPCENTransform(n_mels=n_mels, n_fft=n_fft, hop_length=self.hop_length, trainable=True)
+
+    def get_MFCCs(self, data):
+        data = librosa.feature.melspectrogram(
+            data,
+            sr=self.sr,
+            n_mels=self.n_mels,
+            hop_length=self.hop_length,
+            n_fft=self.n_fft,
+            fmin=self.f_min,
+            fmax=self.f_max)
+        data[data > 0] = np.log(data[data > 0])
+        data = [np.matmul(self.dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
+        data = np.array(data, order="F").reshape(1, 101, 40).astype(np.float32)
+        return data
+
+    def get_PCEN(self, data):
+        data = self.pcen_transform(data)
+        self.pcen_transform.reset()
+        return data
 
 class AudioSnippet(object):
     _dct_filters = librosa.filters.dct(40, 40)
@@ -186,7 +211,7 @@ class AudioSnippetGenerator(object):
 
     def __enter__(self):
         self.audio = pyaudio.PyAudio()
-        self.stream = self.audio.open(format=self.fmt, channels=self.channels, rate=self.sr, input=True, 
+        self.stream = self.audio.open(format=self.fmt, channels=self.channels, rate=self.sr, input=True,
           frames_per_buffer=self.chunk_size)
         return self
 
@@ -226,7 +251,7 @@ def generate_dir(directory):
             pass
 
 def clean_dir(directory=".", cutoff_ms=1000):
-    """Trims all audio in directory to the loudest window of length cutoff_ms. 1 second is consistent 
+    """Trims all audio in directory to the loudest window of length cutoff_ms. 1 second is consistent
     with the speech command dataset.
 
     Args:
