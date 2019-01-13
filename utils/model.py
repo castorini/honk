@@ -247,7 +247,7 @@ class SpeechDataset(data.Dataset):
         config["test_pct"] = 10
         config["wanted_words"] = ["command", "random"]
         config["data_folder"] = "/data/speech_dataset"
-        config["audio_preprocess_type"] = "PCEN"
+        config["audio_preprocess_type"] = "MFCCs"
         return config
 
     def collate_fn(self, data):
@@ -365,7 +365,7 @@ class SpeechDataset(data.Dataset):
             a = b
 
         train_cfg = ChainMap(dict(bg_noise_files=bg_noise_files), config)
-        test_cfg = ChainMap(dict(bg_noise_files=bg_noise_files, noise_prob=0.9), config)
+        test_cfg = ChainMap(dict(bg_noise_files=bg_noise_files, noise_prob=0), config)
         datasets = (cls(sets[0], DatasetType.TRAIN, train_cfg), cls(sets[1], DatasetType.DEV, test_cfg),
                 cls(sets[2], DatasetType.TEST, test_cfg))
         return datasets
