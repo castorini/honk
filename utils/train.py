@@ -155,13 +155,13 @@ def main():
         mod.SpeechDataset.default_config(),
         global_config)
     parser = builder.build_argparse()
-    parser.add_argument("--mode", choices=["train", "eval"], default="train", type=str)
+    parser.add_argument("--type", choices=["train", "eval"], default="train", type=str)
     config = builder.config_from_argparse(parser)
     config["model_class"] = mod_cls
     set_seed(config)
-    if config["mode"] == "train":
+    if config["type"] == "train":
         train(config)
-    elif config["mode"] == "eval":
+    elif config["type"] == "eval":
         evaluate(config)
 
 if __name__ == "__main__":
