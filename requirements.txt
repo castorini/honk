@@ -10,4 +10,4 @@ PyOpenGL_accelerate
 pyttsx3==2.6
 requests>=2.18,<=2.99
 SpeechRecognition==3.7.1
-
+git+https://github.com/daemon/pytorch-pcen
