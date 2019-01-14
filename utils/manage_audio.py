@@ -24,10 +24,10 @@ class AudioPreprocessor(object):
         self.f_max = f_max if f_max is not None else sr // 2
         self.f_min = f_min
         self.n_fft = n_fft
-        self.hop_length = sr //1000 * hop_ms
+        self.hop_length = sr // 1000 * hop_ms
         self.pcen_transform = pcen.StreamingPCENTransform(n_mels=n_mels, n_fft=n_fft, hop_length=self.hop_length, trainable=True)
 
-    def get_MFCCs(self, data):
+    def compute_mfccs(self, data):
         data = librosa.feature.melspectrogram(
             data,
             sr=self.sr,
@@ -41,7 +41,7 @@ class AudioPreprocessor(object):
         data = np.array(data, order="F").reshape(1, 101, 40).astype(np.float32)
         return data
 
-    def get_PCEN(self, data):
+    def compute_pcen(self, data):
         data = self.pcen_transform(data)
         self.pcen_transform.reset()
         return data
