@@ -2,8 +2,8 @@ local*config.json
 *.pt
 
 # Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
+**/__pycache__/
+**/*.py[cod]
 *$py.class
 
 # C extensions
@@ -104,4 +104,11 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# keyword generator
+keyword_spotting_data_generator/data
+
 .DS_STORE
+training_data/
+model/
+data.zip
+models.zip
