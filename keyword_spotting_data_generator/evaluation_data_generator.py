@@ -11,7 +11,7 @@ from url_file_reader import FileReader
 from youtube_crawler import YoutubeCrawler
 from evaluation_data_csv_writer import CsvWriter
 
-API_KEY = "AIzaSyDyZMEDTMIb_RmdPjN8wpkXXuBCnHGFBXA"
+API_KEY = "<API_KEY>"
 SAMPLE_RATE = 16000
 
 def main():
