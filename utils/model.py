@@ -14,7 +14,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data as data
 
-from .manage_audio import preprocess_audio
+from .manage_audio import AudioPreprocessor
 
 class SimpleCache(dict):
     def __init__(self, limit):
@@ -91,10 +91,10 @@ class SpeechResModel(SerializableModule):
         self.n_layers = n_layers = config["n_layers"]
         dilation = config["use_dilation"]
         if dilation:
-            self.convs = [nn.Conv2d(n_maps, n_maps, (3, 3), padding=int(2**(i // 3)), dilation=int(2**(i // 3)), 
+            self.convs = [nn.Conv2d(n_maps, n_maps, (3, 3), padding=int(2**(i // 3)), dilation=int(2**(i // 3)),
                 bias=False) for i in range(n_layers)]
         else:
-            self.convs = [nn.Conv2d(n_maps, n_maps, (3, 3), padding=1, dilation=1, 
+            self.convs = [nn.Conv2d(n_maps, n_maps, (3, 3), padding=1, dilation=1,
                 bias=False) for _ in range(n_layers)]
         for i, conv in enumerate(self.convs):
             self.add_module("bn{}".format(i + 1), nn.BatchNorm2d(n_maps, affine=False))
@@ -159,7 +159,7 @@ class SpeechModel(SerializableModule):
             conv_net_size = x.view(1, -1).size(1)
             last_size = conv_net_size
         if not tf_variant:
-            self.lin = nn.Linear(conv_net_size, 32) 
+            self.lin = nn.Linear(conv_net_size, 32)
 
         if "dnn1_size" in config:
             dnn1_size = config["dnn1_size"]
@@ -198,7 +198,7 @@ class SpeechModel(SerializableModule):
             x = self.dnn1(x)
             if not self.tf_variant:
                 x = F.relu(x)
-            x = self.dropout(x)        
+            x = self.dropout(x)
         if hasattr(self, "dnn2"):
             x = self.dnn2(x)
             x = self.dropout(x)
@@ -222,15 +222,14 @@ class SpeechDataset(data.Dataset):
         self.unknown_prob = config["unknown_prob"]
         self.silence_prob = config["silence_prob"]
         self.noise_prob = config["noise_prob"]
-        self.n_dct = config["n_dct_filters"]
         self.input_length = config["input_length"]
         self.timeshift_ms = config["timeshift_ms"]
-        self.filters = librosa.filters.dct(config["n_dct_filters"], config["n_mels"])
-        self.n_mels = config["n_mels"]
         self._audio_cache = SimpleCache(config["cache_size"])
         self._file_cache = SimpleCache(config["cache_size"])
         n_unk = len(list(filter(lambda x: x == 1, self.audio_labels)))
         self.n_silence = int(self.silence_prob * (len(self.audio_labels) - n_unk))
+        self.audio_processor = AudioPreprocessor(n_mels=config["n_mels"], n_dct_filters=config["n_dct_filters"], hop_ms=10)
+        self.audio_preprocess_type = config["audio_preprocess_type"]
 
     @staticmethod
     def default_config():
@@ -248,7 +247,22 @@ class SpeechDataset(data.Dataset):
         config["test_pct"] = 10
         config["wanted_words"] = ["command", "random"]
         config["data_folder"] = "/data/speech_dataset"
+        config["audio_preprocess_type"] = "MFCCs"
         return config
+
+    def collate_fn(self, data):
+        x = None
+        y = []
+        for audio_data, label in data:
+            if self.audio_preprocess_type == "MFCCs":
+                audio_tensor = torch.from_numpy(self.audio_processor.compute_mfccs(audio_data))
+                x = audio_tensor if x is None else torch.cat((x, audio_tensor), 0)
+            elif self.audio_preprocess_type == "PCEN":
+                audio_tensor = torch.from_numpy(np.expand_dims(audio_data, axis=0))
+                audio_tensor = self.audio_processor.compute_pcen(audio_tensor)
+                x = audio_tensor if x is None else torch.cat((x, audio_tensor), 0)
+            y.append(label)
+        return x, torch.tensor(y)
 
     def _timeshift_audio(self, data):
         shift = (16000 * self.timeshift_ms) // 1000
@@ -258,7 +272,7 @@ class SpeechDataset(data.Dataset):
         data = np.pad(data, (a, b), "constant")
         return data[:len(data) - a] if a else data[b:]
 
-    def preprocess(self, example, silence=False):
+    def load_audio(self, example, silence=False):
         if silence:
             example = "__silence__"
         if random.random() < 0.7:
@@ -287,7 +301,7 @@ class SpeechDataset(data.Dataset):
         if random.random() < self.noise_prob or silence:
             a = random.random() * 0.1
             data = np.clip(a * bg_noise + data, -1, 1)
-        data = torch.from_numpy(preprocess_audio(data, self.n_mels, self.filters))
+
         self._audio_cache[example] = data
         return data
 
@@ -358,8 +372,8 @@ class SpeechDataset(data.Dataset):
 
     def __getitem__(self, index):
         if index >= len(self.audio_labels):
-            return self.preprocess(None, silence=True), 0
-        return self.preprocess(self.audio_files[index]), self.audio_labels[index]
+            return self.load_audio(None, silence=True), 0
+        return self.load_audio(self.audio_files[index]), self.audio_labels[index]
 
     def __len__(self):
         return len(self.audio_labels) + self.n_silence

@@ -1,8 +1,10 @@
 # keyword_spotting_data_generator
 
-https://github.com/readbeyond/aeneas
+## Preparation:
 
-https://github.com/readbeyond/aeneas/issues/189
+1. Install [Aeneas](https://github.com/readbeyond/aeneas#system-requirements-supported-platforms-and-installation). If
+it complains about `/usr/bin/ld: cannot find -lespeak`, this [page](https://github.com/readbeyond/aeneas/issues/189) may help.
+2. [Obtain a Google API key](https://support.google.com/googleapi/answer/6158862?hl=en), and set `API_KEY = google_api_key` in `search.py`
 
 
 ## Usage :

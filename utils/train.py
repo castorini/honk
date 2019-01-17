@@ -11,6 +11,7 @@ import torch.nn as nn
 import torch.utils.data as data
 
 from . import model as mod
+from .manage_audio import AudioPreprocessor
 
 class ConfigBuilder(object):
     def __init__(self, *default_configs):
@@ -94,9 +95,21 @@ def train(config):
     criterion = nn.CrossEntropyLoss()
     max_acc = 0
 
-    train_loader = data.DataLoader(train_set, batch_size=config["batch_size"], shuffle=True, drop_last=True)
-    dev_loader = data.DataLoader(dev_set, batch_size=min(len(dev_set), 16), shuffle=True)
-    test_loader = data.DataLoader(test_set, batch_size=min(len(test_set), 16), shuffle=True)
+    train_loader = data.DataLoader(
+        train_set,
+        batch_size=config["batch_size"],
+        shuffle=True, drop_last=True,
+        collate_fn=train_set.collate_fn)
+    dev_loader = data.DataLoader(
+        dev_set,
+        batch_size=min(len(dev_set), 16),
+        shuffle=True,
+        collate_fn=dev_set.collate_fn)
+    test_loader = data.DataLoader(
+        test_set,
+        batch_size=min(len(test_set), 16),
+        shuffle=True,
+        collate_fn=test_set.collate_fn)
     step_no = 0
 
     for epoch_idx in range(config["n_epochs"]):
