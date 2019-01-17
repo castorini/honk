@@ -31,32 +31,6 @@ class YoutubeSearcher(UrlFetcher):
         try:
             next_token = search_response["nextPageToken"]
             return(next_token, videos)
-        except Exception as expetion:
-            cp.print_error(exception)
-            next_token = "last_page"
-            return(next_token, videos)
-
-    def search_videos(self, query, max_results=50, token=None):
-        youtube = build("youtube", "v3", developerKey=self.api_key)
-        search_response = youtube.search().list(
-            q=query,
-            type="video",
-            pageToken=token,
-            order="relevance",
-            part="id,snippet",
-            maxResults=max_results,
-            location=None,
-            locationRadius=None
-        ).execute()
-
-        videos = []
-
-        for search_result in search_response.get("items", []):
-            if search_result["id"]["kind"] == "youtube#video":
-                videos.append(search_result)
-        try:
-            next_token = search_response["nextPageToken"]
-            return(next_token, videos)
         except Exception as exception:
             cp.print_error(exception)
             next_token = "last_page"

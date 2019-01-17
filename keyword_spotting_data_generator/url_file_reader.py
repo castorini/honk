@@ -1,4 +1,3 @@
-import color_print as cp
 from url_fetcher import UrlFetcher
 
 class FileReader(UrlFetcher):

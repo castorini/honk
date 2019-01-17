@@ -1,5 +1,3 @@
-import csv
-
 class CsvWriter():
     def __init__(self, keyword):
         self.keyword = keyword

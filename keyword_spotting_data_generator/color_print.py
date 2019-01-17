@@ -19,6 +19,11 @@ def print_progress(*msgs):
     print("[ PROGRESS ] :: ", *msgs)
     print(TEXT_COLOUR['ENDC'])
 
+def print_instruction(*msgs):
+    print(TEXT_COLOUR['BOLD'])
+    print(*msgs)
+    print(TEXT_COLOUR['ENDC'])
+
 def print_warning(*msgs):
     print(TEXT_COLOUR['WARNING'])
     print("[ WARNING ] :: ", *msgs)

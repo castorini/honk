@@ -1,5 +1,7 @@
 import argparse
+from pytube import YouTube as PyTube
 import color_print as cp
+import utils
 from youtube_searcher import YoutubeSearcher
 
 API_KEY = "AIzaSyDyZMEDTMIb_RmdPjN8wpkXXuBCnHGFBXA"
@@ -26,12 +28,47 @@ def main():
         help="number of url to collect")
 
     args = parser.parse_args()
-    cp.print_progress("keyword is ", args.keyword)
+    keyword = args.keyword
+    cp.print_progress("keyword is ", keyword)
 
-    url_fetcher = YoutubeSearcher(API_KEY, args.keyword)
+    url_fetcher = YoutubeSearcher(API_KEY, keyword)
+    urls = []
+
+    while len(urls) < args.size:
+        url = url_fetcher.next()[0]
+
+        if not url:
+            cp.print_warning("there are no more urls to process")
+
+        try:
+            video = PyTube(utils.get_youtube_url(url))
+        except Exception as exception:
+            cp.print_error("failed to generate PyTube representation for vidoe ", url)
+            continue
+
+        caption = video.captions.get_by_language_code('en')
+        if not caption:
+            cp.print_warning("no caption available for video - ", url)
+            continue
+
+        srt_captions = caption.generate_srt_captions().split('\n\n')
+
+        keyword_exist = False
+        for captions in srt_captions:
+            if keyword not in captions and keyword + "s" not in captions and keyword + "es" not in captions:
+                keyword_exist = True
+                break
+
+        if not keyword_exist:
+            cp.print_warning("keywords never appear in the video - ", url)
+            continue
+
+        urls.append(url)
+        cp.print_progress(len(urls), " / ", args.size, " - ", url)
+
     with open(args.file_name, 'w') as output_file:
-        for _ in range(args.size):
-            output_file.write(url_fetcher.next()[0]+"\n")
+        for url in urls:
+            output_file.write(url+"\n")
 
 if __name__ == "__main__":
     main()

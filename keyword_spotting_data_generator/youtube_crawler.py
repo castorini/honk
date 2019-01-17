@@ -1,9 +1,8 @@
 import os
-import librosa
 import subprocess
-import utils
-import color_print as cp
+import librosa
 from pytube import YouTube as PyTube
+import utils
 
 FFMPEG_TEMPLATE = "ffmpeg -i {0}.mp4 -codec:a pcm_s16le -ac 1 {0}.wav"
 
@@ -13,18 +12,18 @@ class YoutubeCrawler():
         self.video = PyTube(utils.get_youtube_url(url))
 
     def get_audio(self):
-        file_name = self.url.replace('_', '-')
-        self.video.streams.first().download(filename=file_name)
+        temp_file_name = "temp_" + self.url.replace('_', '-')
+        self.video.streams.first().download(filename=temp_file_name)
 
-        temp_file_name = "temp_" + file_name
         if not os.path.isfile(temp_file_name + ".mp4"):
-            cp.print_warning("crawled file is not in format of mp4")
-            return
+            raise Exception("crawled file is not in format of mp4")
 
         cmd = FFMPEG_TEMPLATE.format(temp_file_name).split()
         subprocess.check_output(cmd)
 
+        audio_data = librosa.core.load(temp_file_name+".wav", 16000)[0]
+
         os.remove(temp_file_name + ".mp4")
         os.remove(temp_file_name + ".wav")
 
-        return librosa.core.load(temp_file_name+".wav", 16000)[0]
+        return audio_data

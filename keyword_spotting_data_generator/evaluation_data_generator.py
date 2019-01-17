@@ -1,15 +1,18 @@
 import argparse
-import color_print as cp
 import re
 import string
-import utils
+import time
+import sounddevice as sd
 from pytube import YouTube as PyTube
+import color_print as cp
+import utils
 from youtube_searcher import YoutubeSearcher
 from url_file_reader import FileReader
 from youtube_crawler import YoutubeCrawler
 from evaluation_data_csv_writer import CsvWriter
 
 API_KEY = "AIzaSyDyZMEDTMIb_RmdPjN8wpkXXuBCnHGFBXA"
+SAMPLE_RATE = 16000
 
 def main():
     parser = argparse.ArgumentParser()
@@ -39,6 +42,7 @@ def main():
 
     args = parser.parse_args()
     keyword = args.keyword
+    sd.default.samplerate = SAMPLE_RATE
     cp.print_progress("keyword is ", keyword)
 
     if args.url_file:
@@ -78,9 +82,6 @@ def main():
 
         translator = str.maketrans('', '', string.punctuation) # to remove punctuation
         srt_tag_re = re.compile(r"<.*?>|\(.*?\)|\[.*?\]")
-        srt_time_re = re.compile(r"(\d+):(\d+):(\d+),(\d+)\s-->\s(\d+):(\d+):(\d+),(\d+)")
-
-        aligner_config = "task_language=eng|is_text_type=plain|os_task_file_format=json"
 
         keyword_exist = False
         for captions in srt_captions:
@@ -92,7 +93,13 @@ def main():
             cp.print_warning("keywords never appear in the video - ", url)
             continue
 
-        audio_data = YoutubeCrawler(url)
+        crawler = YoutubeCrawler(url)
+        try:
+            audio_data = crawler.get_audio()
+        except Exception as exception:
+            cp.print_warning(exception)
+            continue
+
         collected_data = []
 
         for captions in srt_captions:
@@ -108,23 +115,27 @@ def main():
 
             # clean up punctuation
             cc_text = cc_text.translate(translator)
-            cc_text = cc_text.lower()
+            cc_text = cc_text.lower().strip()
             words = cc_text.strip().split()
 
-            # filter srt that contains target keyword
+            # skip videos without target keyword audio
             if keyword not in words and keyword + "s" not in words and keyword + "es" not in words:
                 continue
 
+            # occurance in audio
+            start_ms, end_ms = utils.parse_srt_time(cc_time)
+            cp.print_instruction("How many time was the keyword spoken?\n", "[ " + cc_text + " ]")
+            time.sleep(0.5)
+            sd.play(audio_data[start_ms:end_ms], blocking=True)
+            sd.stop()
+            audio_count = int(input())
+
+            # occurance in captions
             srt_count = 0
             for word in words:
                 if keyword == word or keyword + "s" == word or keyword + "es" == word:
                     srt_count += 1
 
-            # TODO::play audio
-
-            audio_count = int(input("How many time was target keyword appeared in the audio?\n"))
-
-            start_ms, end_ms = utils.parse_srt_time(cc_time)
             collected_data.append([url, start_ms, end_ms, srt_count, audio_count])
 
         csv_writer.write(collected_data)
