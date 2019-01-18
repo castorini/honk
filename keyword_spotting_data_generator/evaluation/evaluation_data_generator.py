@@ -11,7 +11,7 @@ from youtube_crawler import YoutubeCrawler
 from url_file_reader import FileReader
 from evaluation_data_csv_writer import CsvWriter
 
-API_KEY = "<API_KEY>"
+API_KEY = "<AIzaSyDyZMEDTMIb_RmdPjN8wpkXXuBCnHGFBXA>"
 SAMPLE_RATE = 16000
 
 def main():
@@ -55,6 +55,9 @@ def main():
         url_fetcher = YoutubeSearcher(API_KEY, keyword)
 
     csv_writer = CsvWriter(keyword)
+
+    total_cc_count = 0
+    total_audio_count = 0
 
     for i in range(args.size):
         url = url_fetcher.next()[0]
@@ -101,6 +104,8 @@ def main():
             continue
 
         collected_data = []
+        video_cc_count = 0
+        video_audio_count = 0
 
         for captions in srt_captions:
             cc_split = captions.split('\n')
@@ -124,22 +129,41 @@ def main():
 
             # occurance in audio
             start_ms, end_ms = utils.parse_srt_time(cc_time)
-            cp.print_instruction("How many time was the keyword spoken?\n", "[ " + cc_text + " ]")
-            time.sleep(0.5)
-            sd.play(audio_data[start_ms:end_ms], blocking=True)
-            sd.stop()
-            audio_count = int(input())
+            cp.print_instruction("How many time was the keyword spoken? (\"r\" to replay audio)\n", "[ " + cc_text + " ]")
+
+            while True:
+                try:
+                    time.sleep(0.5)
+                    sd.play(audio_data[start_ms:end_ms], blocking=True)
+                    sd.stop()
+                    user_input = input()
+                    audio_count = int(user_input)
+                except ValueError:
+                    if user_input != "r":
+                        cp.print_error("Invalid Input. Expect Integer")
+                    continue
+                else:
+                    break
 
             # occurance in captions
-            srt_count = 0
+            cc_count = 0
             for word in words:
                 if keyword == word or keyword + "s" == word or keyword + "es" == word:
-                    srt_count += 1
+                    cc_count += 1
 
-            collected_data.append([url, start_ms, end_ms, srt_count, audio_count])
+            collected_data.append([url, start_ms, end_ms, cc_count, audio_count])
+
+            video_cc_count += cc_count
+            video_audio_count += audio_count
+
+        print(url, "- cc_count : ", video_cc_count, ", audio_count : ", video_audio_count)
+
+        total_cc_count += video_cc_count
+        total_audio_count += video_audio_count
 
         csv_writer.write(collected_data)
 
+    print("total cc_count : ", total_cc_count, ", total audio_count : ", total_audio_count)
     cp.print_progress("collected data sotred in ", keyword + ".csv")
 
 if __name__ == "__main__":
