@@ -4,7 +4,7 @@ import color_print as cp
 from youtube_searcher import YoutubeSearcher
 import utils as utils
 
-API_KEY = "AIzaSyDyZMEDTMIb_RmdPjN8wpkXXuBCnHGFBXA"
+API_KEY = "< API_KEY >"
 
 def main():
     parser = argparse.ArgumentParser()
