@@ -1,8 +1,8 @@
 import argparse
 from pytube import YouTube as PyTube
 import color_print as cp
-import utils
 from youtube_searcher import YoutubeSearcher
+import utils as utils
 
 API_KEY = "<API_KEY>"
 

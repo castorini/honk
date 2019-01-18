@@ -5,10 +5,10 @@ import time
 import sounddevice as sd
 from pytube import YouTube as PyTube
 import color_print as cp
-import utils
+import utils as utils
 from youtube_searcher import YoutubeSearcher
-from url_file_reader import FileReader
 from youtube_crawler import YoutubeCrawler
+from url_file_reader import FileReader
 from evaluation_data_csv_writer import CsvWriter
 
 API_KEY = "<API_KEY>"
