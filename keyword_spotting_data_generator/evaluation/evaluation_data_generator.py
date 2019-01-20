@@ -3,42 +3,55 @@ import re
 import string
 import time
 import sounddevice as sd
+
 from pytube import YouTube as PyTube
+
 import color_print as cp
 import utils as utils
-from youtube_searcher import YoutubeSearcher
-from youtube_crawler import YoutubeCrawler
-from url_file_reader import FileReader
-from evaluation_data_csv_writer import CsvWriter
 
-API_KEY = "< API_KEY >"
+from evaluation_data_csv_writer import CsvWriter
+from url_file_reader import FileReader
+from youtube_crawler import YoutubeCrawler
+from youtube_searcher import YoutubeSearcher
+
 SAMPLE_RATE = 16000
 
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "-k",
         "--keyword",
         type=str,
         required=True,
         help="target keyword to generate data for")
 
     parser.add_argument(
+        "-f",
         "--url_file",
         type=str,
         help="file containing urls of the video")
 
     parser.add_argument(
+        "-s",
         "--size",
         type=int,
         default=100,
         help="number of videos to consider")
 
     parser.add_argument(
+        "-l",
         "--video_length",
         type=int,
         default=3600,
         help="length of maximum length for a video (s)")
+
+    parser.add_argument(
+        "-a",
+        "--api_key",
+        type=str,
+        required=True,
+        help="API key for youtube data v3 API")
 
     args = parser.parse_args()
     keyword = args.keyword
@@ -52,7 +65,7 @@ def main():
     else:
         # fetch using keywords
         print('fetching urls by searching youtube with keywords : ', keyword)
-        url_fetcher = YoutubeSearcher(API_KEY, keyword)
+        url_fetcher = YoutubeSearcher(args.api_key, keyword)
 
     csv_writer = CsvWriter(keyword)
 

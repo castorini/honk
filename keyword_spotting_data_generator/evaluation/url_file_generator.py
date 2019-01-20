@@ -1,31 +1,41 @@
 import argparse
+
 from pytube import YouTube as PyTube
+
 import color_print as cp
-from youtube_searcher import YoutubeSearcher
 import utils as utils
 
-API_KEY = "< API_KEY >"
+from youtube_searcher import YoutubeSearcher
 
 def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        "-k",
         "--keyword",
         type=str,
         required=True,
         help="target keyword to generate data for")
 
     parser.add_argument(
+        "-s",
         "--size",
         type=int,
         default=100,
         help="number of url to collect")
 
+    parser.add_argument(
+        "-a",
+        "--api_key",
+        type=str,
+        required=True,
+        help="API key for youtube data v3 API")
+
     args = parser.parse_args()
     keyword = args.keyword
     cp.print_progress("keyword is ", keyword)
 
-    url_fetcher = YoutubeSearcher(API_KEY, keyword)
+    url_fetcher = YoutubeSearcher(args.api_key, keyword)
     urls = []
 
     while len(urls) < args.size:

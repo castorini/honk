@@ -28,6 +28,7 @@ python3 drop_audio.py < folder_name >
 
 ## < Improvements >
 ___
+- filtering non-english videos
 - ffmpeg handling more dynamic vidoe types : mov,mp4,m4a,3gp,3g2,mj2
 - if video contains any of target words, generate a block
 - dynamic handling of long videos (currently simple filter)
@@ -47,14 +48,14 @@ for given keyword or list of url, `evaluation_data_generator.py` generates csv w
 - audio_count - how many time keyword appeared in the audio (user input)
 
 ```
-python url_file_generator.py --keyword < keywords to search > --file_name < output file name > --size < number of urls >
+python url_file_generator.py -a < youtube data v3 API key > -k < keywords to search > -s < number of urls >
 ```
 
 ##### URL file
 In order to ease distribution of video list which we use, `url_file_generator.py` script can be used to generate .txt file with urls.
 
 ```
-python evaluation_data_generator.py --keyword < keywords to search > --size < number of urls > --video_length < length of maximum length for a video (s) >
+python evaluation_data_generator.py -a < youtube data v3 API key > -k < keywords to search > -s < number of urls > -l < length of maximum length for a video (s) >
 ```
 
 if url_file is not specified, it will search youtube on the fly.
