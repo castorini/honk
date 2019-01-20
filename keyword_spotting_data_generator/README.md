@@ -54,7 +54,7 @@ python url_file_generator.py --keyword < keywords to search > --file_name < outp
 In order to ease distribution of video list which we use, `url_file_generator.py` script can be used to generate .txt file with urls.
 
 ```
-python evaluation_data_generator.py --keyword < keywords to search > --url_file < url file name > --size < number of urls > --video_length < length of maximum length for a video (s) >
+python evaluation_data_generator.py --keyword < keywords to search > --size < number of urls > --video_length < length of maximum length for a video (s) >
 ```
 
 if url_file is not specified, it will search youtube on the fly.

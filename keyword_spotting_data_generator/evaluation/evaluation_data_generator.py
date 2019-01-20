@@ -81,7 +81,11 @@ def main():
             cp.print_warning("no caption available for video - ", url)
             continue
 
-        srt_captions = caption.generate_srt_captions().split('\n\n')
+        try:
+            srt_captions = caption.generate_srt_captions().split('\n\n')
+        except Exception as exception:
+            cp.print_error("failed to retrieve for vidoe - ", url)
+            continue
 
         translator = str.maketrans('', '', string.punctuation) # to remove punctuation
         srt_tag_re = re.compile(r"<.*?>|\(.*?\)|\[.*?\]")
@@ -120,7 +124,7 @@ def main():
 
             # clean up punctuation
             cc_text = cc_text.translate(translator)
-            cc_text = cc_text.lower().strip()
+            cc_text = cc_text.lower().strip().replace(',', '')
             words = cc_text.strip().split()
 
             # skip videos without target keyword audio
@@ -151,7 +155,7 @@ def main():
                 if keyword == word or keyword + "s" == word or keyword + "es" == word:
                     cc_count += 1
 
-            collected_data.append([url, start_ms, end_ms, cc_count, audio_count])
+            collected_data.append([url, start_ms, end_ms, cc_text, cc_count, audio_count])
 
             video_cc_count += cc_count
             video_audio_count += audio_count

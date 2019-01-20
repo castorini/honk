@@ -11,6 +11,9 @@ class YoutubeSearcher(UrlFetcher):
         self.batch_size = batch_size
 
     def search_videos(self, query, max_results=50, token=None):
+        if token == "last_page":
+            cp.print_warning("No more search results available for ", query)
+            return (None, [])
         youtube = build("youtube", "v3", developerKey=self.api_key)
         search_response = youtube.search().list(
             q=query,
@@ -28,13 +31,12 @@ class YoutubeSearcher(UrlFetcher):
         for search_result in search_response.get("items", []):
             if search_result["id"]["kind"] == "youtube#video":
                 videos.append(search_result)
-        try:
+
+        if "nextPageToken" in search_response:
             next_token = search_response["nextPageToken"]
-            return(next_token, videos)
-        except Exception as exception:
-            cp.print_error(exception)
+        else:
             next_token = "last_page"
-            return(next_token, videos)
+        return (next_token, videos)
 
     def fetch_next_batch(self):
         results = self.search_videos(self.keyword, max_results=self.batch_size, token=self.token)
