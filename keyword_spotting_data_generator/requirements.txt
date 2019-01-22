@@ -4,3 +4,4 @@ librosa
 oauth2client
 pytube
 requests
+sounddevice
