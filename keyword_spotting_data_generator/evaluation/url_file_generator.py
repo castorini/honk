@@ -63,7 +63,7 @@ def main():
 
         keyword_exist = False
         for captions in srt_captions:
-            if keyword in captions and keyword + "s" in captions and keyword + "es" in captions:
+            if keyword in captions or keyword + "s" in captions or keyword + "es" in captions:
                 keyword_exist = True
                 break
 
