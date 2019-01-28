@@ -32,7 +32,7 @@ def main():
         help="API key for youtube data v3 API")
 
     args = parser.parse_args()
-    keyword = args.keyword
+    keyword = args.keyword.lower()
     cp.print_progress("keyword is ", keyword)
 
     url_fetcher = YoutubeSearcher(args.api_key, keyword)
@@ -56,7 +56,7 @@ def main():
             continue
 
         try:
-            srt_captions = caption.generate_srt_captions().split('\n\n')
+            srt_captions = caption.generate_srt_captions().lower().split('\n\n')
         except Exception as exception:
             cp.print_error("failed to retrieve for vidoe - ", url)
             continue

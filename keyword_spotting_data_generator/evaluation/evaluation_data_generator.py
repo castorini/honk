@@ -54,7 +54,7 @@ def main():
         help="API key for youtube data v3 API")
 
     args = parser.parse_args()
-    keyword = args.keyword
+    keyword = args.keyword.lower()
     sd.default.samplerate = SAMPLE_RATE
     cp.print_progress("keyword is ", keyword)
 
