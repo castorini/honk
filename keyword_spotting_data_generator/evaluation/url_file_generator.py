@@ -63,7 +63,7 @@ def main():
 
         keyword_exist = False
         for captions in srt_captions:
-            if keyword not in captions and keyword + "s" not in captions and keyword + "es" not in captions:
+            if keyword in captions or keyword + "s" in captions or keyword + "es" in captions:
                 keyword_exist = True
                 break
 
@@ -76,7 +76,7 @@ def main():
 
     cp.print_warning(len(urls), "urls are collected for ", keyword)
 
-    with open(keyword + "_url_" + args.size +".txt", 'w') as output_file:        
+    with open(keyword + "_url_" + args.size +".txt", 'w') as output_file:
         for url in urls:
             output_file.write(url+"\n")
 
