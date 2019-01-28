@@ -1,4 +1,5 @@
 import argparse
+import inflect
 
 from pytube import YouTube as PyTube
 
@@ -38,6 +39,8 @@ def main():
     url_fetcher = YoutubeSearcher(args.api_key, keyword)
     urls = []
 
+    plural = inflect.engine()
+
     while len(urls) < args.size:
         url = url_fetcher.next()[0]
 
@@ -63,7 +66,7 @@ def main():
 
         keyword_exist = False
         for captions in srt_captions:
-            if keyword in captions or keyword + "s" in captions or keyword + "es" in captions:
+            if keyword in captions or plural.plural(keyword) in captions:
                 keyword_exist = True
                 break
 
