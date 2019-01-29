@@ -1,4 +1,5 @@
 import argparse
+import inflect
 import re
 import string
 import time
@@ -58,6 +59,8 @@ def main():
     sd.default.samplerate = SAMPLE_RATE
     cp.print_progress("keyword is ", keyword)
 
+    plural = inflect.engine()
+
     if args.url_file:
         # read in from the file
         print('fetching urls from the given file : ', args.url_file)
@@ -105,7 +108,7 @@ def main():
 
         keyword_exist = False
         for captions in srt_captions:
-            if keyword not in captions and keyword + "s" not in captions and keyword + "es" not in captions:
+            if keyword in captions or plural.plural(keyword) in captions:
                 keyword_exist = True
                 break
 
@@ -141,7 +144,7 @@ def main():
             words = cc_text.strip().split()
 
             # skip videos without target keyword audio
-            if keyword not in words and keyword + "s" not in words and keyword + "es" not in words:
+            if keyword not in words and plural.plural(keyword) not in words:
                 continue
 
             # occurance in audio
