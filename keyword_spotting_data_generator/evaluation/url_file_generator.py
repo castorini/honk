@@ -1,4 +1,5 @@
 import argparse
+import inflect
 
 from pytube import YouTube as PyTube
 
@@ -32,11 +33,13 @@ def main():
         help="API key for youtube data v3 API")
 
     args = parser.parse_args()
-    keyword = args.keyword
+    keyword = args.keyword.lower()
     cp.print_progress("keyword is ", keyword)
 
     url_fetcher = YoutubeSearcher(args.api_key, keyword)
     urls = []
+
+    plural = inflect.engine()
 
     while len(urls) < args.size:
         url = url_fetcher.next()[0]
@@ -56,14 +59,14 @@ def main():
             continue
 
         try:
-            srt_captions = caption.generate_srt_captions().split('\n\n')
+            srt_captions = caption.generate_srt_captions().lower().split('\n\n')
         except Exception as exception:
             cp.print_error("failed to retrieve for vidoe - ", url)
             continue
 
         keyword_exist = False
         for captions in srt_captions:
-            if keyword not in captions and keyword + "s" not in captions and keyword + "es" not in captions:
+            if keyword in captions or plural.plural(keyword) in captions:
                 keyword_exist = True
                 break
 
@@ -76,7 +79,7 @@ def main():
 
     cp.print_warning(len(urls), "urls are collected for ", keyword)
 
-    with open(keyword + "_url_" + args.size +".txt", 'w') as output_file:        
+    with open(keyword + "_url_" + args.size +".txt", 'w') as output_file:
         for url in urls:
             output_file.write(url+"\n")
 

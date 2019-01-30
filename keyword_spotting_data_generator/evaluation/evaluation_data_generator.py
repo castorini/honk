@@ -1,4 +1,5 @@
 import argparse
+import inflect
 import re
 import string
 import time
@@ -53,10 +54,24 @@ def main():
         required=True,
         help="API key for youtube data v3 API")
 
+    parser.add_argument(
+        "-c",
+        "--continue_from",
+        type=str,
+        help="url to start from in the given url file")
+
+    parser.add_argument(
+        "-o",
+        "--output_file",
+        type=str,
+        help="csv file to append output to")
+
     args = parser.parse_args()
-    keyword = args.keyword
+    keyword = args.keyword.lower()
     sd.default.samplerate = SAMPLE_RATE
     cp.print_progress("keyword is ", keyword)
+
+    plural = inflect.engine()
 
     if args.url_file:
         # read in from the file
@@ -67,13 +82,21 @@ def main():
         print('fetching urls by searching youtube with keywords : ', keyword)
         url_fetcher = YoutubeSearcher(args.api_key, keyword)
 
-    csv_writer = CsvWriter(keyword)
+    csv_writer = CsvWriter(keyword, args.output_file)
 
     total_cc_count = 0
     total_audio_count = 0
 
+    continuing = args.continue_from != None
+
     for i in range(args.size):
         url = url_fetcher.next()[0]
+
+        if continuing:
+            if url != args.continue_from:
+                continue
+            else:
+                continuing = False
 
         if not url:
             cp.print_warning("there are no more urls to process")
@@ -105,7 +128,7 @@ def main():
 
         keyword_exist = False
         for captions in srt_captions:
-            if keyword not in captions and keyword + "s" not in captions and keyword + "es" not in captions:
+            if keyword in captions or plural.plural(keyword) in captions:
                 keyword_exist = True
                 break
 
@@ -113,8 +136,8 @@ def main():
             cp.print_warning("keywords never appear in the video - ", url)
             continue
 
-        crawler = YoutubeCrawler(url)
         try:
+            crawler = YoutubeCrawler(url)
             audio_data = crawler.get_audio()
         except Exception as exception:
             cp.print_warning(exception)
@@ -141,7 +164,7 @@ def main():
             words = cc_text.strip().split()
 
             # skip videos without target keyword audio
-            if keyword not in words and keyword + "s" not in words and keyword + "es" not in words:
+            if keyword not in words and plural.plural(keyword) not in words:
                 continue
 
             # occurance in audio
