@@ -94,6 +94,12 @@ def main():
     for i in range(args.size):
         url = url_fetcher.next()[0]
 
+        if continuing:
+            if url != args.continue_from:
+                continue
+            else:
+                continuing = False
+
         if not url:
             cp.print_warning("there are no more urls to process")
 
