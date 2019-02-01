@@ -89,25 +89,16 @@ def main():
 
     continuing = args.continue_from != None
 
-    urls = []
+    url_set = set()
 
     for i in range(args.size):
-        url = url_fetcher.next()[0]
-
-        if continuing:
-            if url != args.continue_from:
-                continue
-            else:
-                continuing = False
+        url = url_fetcher.next()
 
         if not url:
             cp.print_warning("there are no more urls to process")
+            break
 
-        if url in urls:
-            cp.print_warning("video is already processed", url)
-            continue
-
-        urls.append(url)
+        url = url[0]
 
         if continuing:
             if url != args.continue_from:
@@ -117,12 +108,23 @@ def main():
 
         cp.print_progress(i + 1, " / ", args.size, " - ", url)
 
+        if url in url_set:
+            cp.print_warning("video is already processed", url)
+            continue
+
+        url_set.add(url)
+
+        if continuing:
+            if url != args.continue_from:
+                continue
+            else:
+                continuing = False
+
         try:
             video = PyTube(utils.get_youtube_url(url))
         except Exception as exception:
             cp.print_error("failed to generate PyTube representation for vidoe ", url)
             continue
-
         if int(video.length) > args.video_length:
             continue
 

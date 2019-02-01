@@ -8,8 +8,9 @@ class UrlFetcher():
     def next(self, size=1):
         while len(self.video_ids) < size:
             batch = self.fetch_next_batch()
-            if batch:
-                self.video_ids += batch
+            if not batch:
+                break
+            self.video_ids += batch
 
         video_ids = self.video_ids[:size]
         self.video_ids = self.video_ids[size:]
