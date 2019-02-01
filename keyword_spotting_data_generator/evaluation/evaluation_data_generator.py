@@ -89,17 +89,25 @@ def main():
 
     continuing = args.continue_from != None
 
+    urls = []
+
     for i in range(args.size):
         url = url_fetcher.next()[0]
+
+        if not url:
+            cp.print_warning("there are no more urls to process")
+
+        if url in urls:
+            cp.print_warning("video is already processed", url)
+            continue
+
+        urls.append(url)
 
         if continuing:
             if url != args.continue_from:
                 continue
             else:
                 continuing = False
-
-        if not url:
-            cp.print_warning("there are no more urls to process")
 
         cp.print_progress(i + 1, " / ", args.size, " - ", url)
 
