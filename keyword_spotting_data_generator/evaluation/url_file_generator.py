@@ -47,6 +47,10 @@ def main():
         if not url:
             cp.print_warning("there are no more urls to process")
 
+        if url in urls:
+            cp.print_warning("video is already added", url)
+            continue
+
         try:
             video = PyTube(utils.get_youtube_url(url))
         except Exception as exception:
