@@ -1,7 +1,10 @@
 class CsvWriter():
-    def __init__(self, keyword):
+    def __init__(self, keyword, file_name=None):
         self.keyword = keyword
-        self.file = open(keyword+".csv", 'w')
+        if file_name:
+            self.file = open(file_name, 'a+')
+        else:
+            self.file = open(keyword+".csv", 'w')
 
     def write(self, rows):
         for row in rows:

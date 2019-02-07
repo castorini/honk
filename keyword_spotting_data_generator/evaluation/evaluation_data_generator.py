@@ -54,6 +54,18 @@ def main():
         required=True,
         help="API key for youtube data v3 API")
 
+    parser.add_argument(
+        "-c",
+        "--continue_from",
+        type=str,
+        help="url to start from in the given url file")
+
+    parser.add_argument(
+        "-o",
+        "--output_file",
+        type=str,
+        help="csv file to append output to")
+
     args = parser.parse_args()
     keyword = args.keyword.lower()
     sd.default.samplerate = SAMPLE_RATE
@@ -70,25 +82,49 @@ def main():
         print('fetching urls by searching youtube with keywords : ', keyword)
         url_fetcher = YoutubeSearcher(args.api_key, keyword)
 
-    csv_writer = CsvWriter(keyword)
+    csv_writer = CsvWriter(keyword, args.output_file)
 
     total_cc_count = 0
     total_audio_count = 0
 
+    continuing = args.continue_from != None
+
+    url_set = set()
+
     for i in range(args.size):
-        url = url_fetcher.next()[0]
+        url = url_fetcher.next()
 
         if not url:
             cp.print_warning("there are no more urls to process")
+            break
+
+        url = url[0]
+
+        if continuing:
+            if url != args.continue_from:
+                continue
+            else:
+                continuing = False
 
         cp.print_progress(i + 1, " / ", args.size, " - ", url)
+
+        if url in url_set:
+            cp.print_warning("video is already processed", url)
+            continue
+
+        url_set.add(url)
+
+        if continuing:
+            if url != args.continue_from:
+                continue
+            else:
+                continuing = False
 
         try:
             video = PyTube(utils.get_youtube_url(url))
         except Exception as exception:
             cp.print_error("failed to generate PyTube representation for vidoe ", url)
             continue
-
         if int(video.length) > args.video_length:
             continue
 
@@ -116,8 +152,8 @@ def main():
             cp.print_warning("keywords never appear in the video - ", url)
             continue
 
-        crawler = YoutubeCrawler(url)
         try:
+            crawler = YoutubeCrawler(url)
             audio_data = crawler.get_audio()
         except Exception as exception:
             cp.print_warning(exception)
