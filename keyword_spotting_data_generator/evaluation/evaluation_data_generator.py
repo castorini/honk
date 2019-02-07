@@ -126,7 +126,6 @@ def main():
             cp.print_error("failed to generate PyTube representation for video ", url)
             cp.print_error(exception)
             continue
-
         if int(video.length) > args.video_length:
             continue
 

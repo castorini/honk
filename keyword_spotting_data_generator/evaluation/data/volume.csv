@@ -1,0 +1,1804 @@
+qJwecTgce6c,142096,212528,in this lesson we’re going to learn about another important geometry quantity called volume,1,1
+qJwecTgce6c,212528,285600,specifically we’re going to learn what volume is and what kind of units we use to measure volume,2,2
+qJwecTgce6c,285600,352832,and how we can calculate the volumes of a few simple geometric shapes,1,1
+qJwecTgce6c,352832,434992,the first thing you need to know is that volume is a quantity that all 3dimensional objects have,1,1
+qJwecTgce6c,1409472,1486304,and to measure a 3dimensional object like this we use the 3dimensional quantity called volume,1,1
+qJwecTgce6c,1486304,1579664,volume tells us how much 3dimensional space  an object occupies,1,1
+qJwecTgce6c,1579664,1627952,alright but how much volume does this cube have,1,1
+qJwecTgce6c,1720784,1818944,we say that its volume is exactly one “cubic centimeter”,1,2
+qJwecTgce6c,1818944,1899792,so “square units” are used to measure area and “cubic units” are used to measure volume,1,1
+qJwecTgce6c,2530672,2605376,see how area and square units are related to volume and cubic units,1,1
+qJwecTgce6c,2734752,2824384,well you can use cubic units to measure the volume of any 3d shape not just cubes,1,1
+qJwecTgce6c,3004704,3070048,you can use a bunch of small cubes to approximate the volume of the sphere,1,1
+qJwecTgce6c,3186672,3280432,and the smaller the cubes you use the closer their combined volume will match the volume of the sphere,2,2
+qJwecTgce6c,3280432,3357376,okay so volume is a 3d quantity for measuring 3d objects,1,1
+qJwecTgce6c,3397376,3488880,i want to point out that 3d objects also have a type of area that you don’t want to confuse with volume,1,1
+qJwecTgce6c,3616656,3749520,well in a similar way 3d objects have both a 3d quantity called volume and a 2d quantity called called “surface area”,1,1
+qJwecTgce6c,4064816,4119504,and to help you see the difference between surface area and volume,1,1
+qJwecTgce6c,4178992,4243024,if you unfold the box you can see the 2d area that surrounds the volume,1,1
+qJwecTgce6c,4243024,4329968,while the volume itself if the amount of 3d space occupied by the ice inside the box,1,1
+qJwecTgce6c,4329968,4406032,alright so now that you understand what volume is and you won’t confuse it with surface area,1,1
+qJwecTgce6c,4406032,4490192,we’re going to spend the rest of the video learning how to calculate the volumes of some basic geometric shapes,1,1
+qJwecTgce6c,5927360,6025920,okay so the good news is that there’s a general formula for calculating the volume of these types of 3d shape,1,1
+qJwecTgce6c,6223728,6293120,so let’s start with this rectangular prism and calculate its volume,1,1
+qJwecTgce6c,6584384,6678816,now… to find the volume we just need to multiply that area by the length that the base was extended,1,1
+qJwecTgce6c,6835936,6913568,so this rectangular prism has a volume of 120 cubic centimeters,1,1
+qJwecTgce6c,6913568,6974384,okay let’s try to find the volume of the triangular prism now,1,1
+qJwecTgce6c,7498832,7582608,now all we have to do to find the volume is multiply that area by the length that it was extended,1,1
+qJwecTgce6c,7691840,7728320,that’s the volume of this prism,1,1
+qJwecTgce6c,7728320,7791360,alright are you ready to try finding the volume of the cylinder now,1,1
+qJwecTgce6c,8198560,8256720,now that we know the area of the circle to find the volume of the cylinder,1,1
+qJwecTgce6c,8464240,8546416,so the volume of this cylinder is 1256 cubic meters,1,1
+qJwecTgce6c,8546416,8599232,so do you see how to find the volume of 3d shapes like these,1,1
+qJwecTgce6c,8670720,8779040,you just find the area of that shape and then you multiply it by the length that it was extended and that gives you the volume,1,1
+qJwecTgce6c,8937920,9047360,“man… now that i know how to accurately calculate volumes playtime is way more fun”,1,1
+qJwecTgce6c,9488336,9566768,since the formulas for finding the volumes of spheres and cones are more complicated to explain,1,1
+qJwecTgce6c,9694016,9740688,to find the volume of a sphere you use the formula,1,1
+qJwecTgce6c,9740688,9812192,volume equals fourthirds times pi times radius cubed,1,1
+qJwecTgce6c,9812192,9855408,and to find the volume of a cone you use the formula,1,1
+qJwecTgce6c,9855408,9931968,volume equals onethird times height times pi times radius squared,1,1
+qJwecTgce6c,10028000,10086160,fortunately that’s the only dimension we need to find its volume,1,1
+qJwecTgce6c,10086160,10190464,our formula says that the volume of a sphere is equal to 43 x pi x r3,1,1
+qJwecTgce6c,10573808,10653296,which gives us a volume of 3349 centimeters cubed,1,1
+qJwecTgce6c,10683168,10746400,to use our formula to find the volume of a cone we need to know two things,1,1
+qJwecTgce6c,11537344,11572544,which is the volume of the cone,1,1
+qJwecTgce6c,11572544,11618192,alright… so now you know a lot about volume,1,1
+qJwecTgce6c,11667264,11716544,and you know that we measure volume with cubic units,1,1
+qJwecTgce6c,11716544,11778512,you also learned how to calculate the volume of some basic 3d shapes,1,1
+beSs8R3AASQ,90240,158400,chapter 13 for ruby volume 6 now,1,1
+beSs8R3AASQ,269744,354240,that ruby volume 6 has concluded with,1,1
+beSs8R3AASQ,435360,516000,but this has been an incredible volume i,1,1
+beSs8R3AASQ,516000,586560,step of the way i think volume 6 closed,1,2
+beSs8R3AASQ,551504,632160,two volumes three and four is one of if,1,2
+beSs8R3AASQ,586560,650880,not the best volume of ruby thus far,1,1
+beSs8R3AASQ,731040,795824,be going to atlas next volume we still,1,1
+beSs8R3AASQ,971504,1008944,get through before the volume is,1,1
+beSs8R3AASQ,1042064,1100640,like i said once this goes up the volume,1,1
+beSs8R3AASQ,3123520,3196480,volume six chapter twelve seeing red i,1,1
+beSs8R3AASQ,22382080,22435360,with every volume that ends its a,1,1
+beSs8R3AASQ,22469440,22525600,forward effing utley to volume 7 to,1,1
+qI9Z1wpwG-A,3863040,3942240,a major plot point volume one heroes win,1,3
+qI9Z1wpwG-A,3917280,3965280,volume two heroes when falling for,1,3
+qI9Z1wpwG-A,3965280,4013760,volume six heroes win,1,1
+qI9Z1wpwG-A,4596480,4669920,for the earlier volumes a time where,1,1
+qI9Z1wpwG-A,5138880,5224320,disgrace i mean just go back to volume 2,1,1
+qI9Z1wpwG-A,7849600,7906720,volume two what happened to having,1,1
+JeBokBu7Lck,0,116640,how is the volume controlled through,1,1
+JeBokBu7Lck,289904,377280,the volume from my laptop and also my av,1,1
+JeBokBu7Lck,377280,447840,and lower volume before it is sent to my,1,2
+JeBokBu7Lck,405600,479840,receiver is the volume being controlled,1,1
+JeBokBu7Lck,523680,595680,is the volume also controlled digitally,1,1
+JeBokBu7Lck,3321104,3432640,instructions for your volume go through,1,1
+JeBokBu7Lck,3611184,3694224,where the volume is actually changing,1,1
+JeBokBu7Lck,3897744,4023040,change the volume okay so thats pretty,1,1
+JeBokBu7Lck,4440000,4518704,we can change volume without actually,1,1
+JeBokBu7Lck,4639664,4711184,volume control is and there its,1,2
+JeBokBu7Lck,4677104,4765280,changing the volume and thats how your,1,1
+JeBokBu7Lck,4765280,4901760,control the volume through hdmi using,1,1
+y3TjAHV7esk,4160,207840,let us work this out the first thing we do in order to work on volumes we need write,1,1
+y3TjAHV7esk,228640,260640,what is a volume again,1,2
+y3TjAHV7esk,260640,350560,volume is the amount of space occupied by a solid so we are looking in here how many,1,0
+y3TjAHV7esk,425600,537424,out at the volume of space inside this particular shape equal let us write down that formula,1,1
+y3TjAHV7esk,537424,730384,so a volume of a cylinder is pi r squared x height or length so lets,1,1
+y3TjAHV7esk,941264,1005744,come up with the final volume,1,1
+y3TjAHV7esk,1005744,1194400,so volume v pi x radius i said was 3 and that is going to be 3 squared x the height,1,1
+y3TjAHV7esk,1194400,1437280,or the length which is 9m simplify volume equals pi x 9 x 9 9 x 9 is 81,1,2
+y3TjAHV7esk,1437280,1579680,volume the complete volume inside that space are this cylinder in total is 81 x pi or 81,2,1
+1jrzAAxfmA4,624944,709920,of a low volume workout which means that,1,1
+1jrzAAxfmA4,11150560,11196640,isnt enough volume for you youre,1,1
+rOs3acfnLww,0,105600,volume volume is the measure of the,2,2
+rOs3acfnLww,217440,316800,need to measure the volume of both,1,2
+rOs3acfnLww,257744,373904,objects to find the volume of the filter,1,2
+rOs3acfnLww,316800,478080,we use the formula volume equals length,1,1
+rOs3acfnLww,669600,841440,centimeters our calculated volume is 125,1,1
+rOs3acfnLww,947824,1048784,result we need to find the volume of the,1,1
+rOs3acfnLww,1048784,1150544,volume of an irregular solid fill up a,1,1
+rOs3acfnLww,1453440,1548960,also the volume of the rock everything,1,1
+rOs3acfnLww,1548960,1625760,a measurable volume if you were to enter,1,1
+rOs3acfnLww,1646384,1701904,thats your volume,1,1
+HR_ifI3aXl4,472304,555824,shape and i need that that volume back,1,1
+HR_ifI3aXl4,658560,724320,that volume where it just like sits up,1,1
+HR_ifI3aXl4,2785920,2863680,that volume back in so i have move,1,1
+HR_ifI3aXl4,3671040,3766560,still want to keep my volume like i said,1,1
+HR_ifI3aXl4,5552960,5615360,adds like that much volume back to you,1,1
+HR_ifI3aXl4,6786240,6899040,has a lot more volume as you can see and,1,1
+HR_ifI3aXl4,7654080,7753920,straight and boring it had no volume to,1,1
+Ph9t-JDDtWY,41280,119520,volume six from october 27th when it,1,2
+Ph9t-JDDtWY,73920,143040,first aired to today january 26th volume,1,1
+Ph9t-JDDtWY,762240,858720,going to be wearing in volume 7 now,1,1
+Ph9t-JDDtWY,11448800,11517440,going to play a role in future volumes,1,1
+Ph9t-JDDtWY,12753920,12840320,that we saw at the beginning of volume,1,1
+Ph9t-JDDtWY,13514240,13654880,see that in volume 7 and im im looking,1,2
+Ph9t-JDDtWY,13592960,13730720,forward to volume 7 so much after this,1,2
+Ph9t-JDDtWY,13654880,13782560,but as a finale for volume 6 i gotta say,1,1
+Ph9t-JDDtWY,13782560,13874240,volume 6 has been extremely strong so,1,1
+Ph9t-JDDtWY,14292320,14365280,finales that weve had for volume 4 i,1,2
+Ph9t-JDDtWY,14330720,14407040,really liked the naca lavvy volume 5,1,1
+Ph9t-JDDtWY,14428160,14516960,well as the attack on haven and volume 3,1,2
+Ph9t-JDDtWY,14478080,14550080,especially like the volumes in my,1,1
+Ph9t-JDDtWY,14550080,14675360,and yes this volume did have the fight,1,1
+Ph9t-JDDtWY,15126560,15195680,it has in previous volumes and yes i,1,1
+Ph9t-JDDtWY,16040960,16154240,volume 5 the episodes for volume 5 14 of,2,2
+Ph9t-JDDtWY,16291040,16393760,long this volume we had one episode that,1,1
+Ph9t-JDDtWY,16501760,16569424,a stronger volume and i do prefer a,1,2
+Ph9t-JDDtWY,16530080,16653424,stronger volume versus longer content,1,1
+Ph9t-JDDtWY,18686880,18784320,have done cordovan spit in this volume a,1,1
+Ph9t-JDDtWY,18833760,18915360,a volume but i feel that the fennec true,1,1
+Ph9t-JDDtWY,18877440,18959520,finale of the volume was last episode,1,1
+Ph9t-JDDtWY,18993600,19100160,volume 7 we have so many major players,1,1
+Ph9t-JDDtWY,19699680,19818720,charge herself volume 7 i have really,1,1
+Ph9t-JDDtWY,20164320,20233440,in volume 7 i have really high hopes for,1,2
+Ph9t-JDDtWY,20204640,20270880,it because volume 6 has picked it up,1,3
+Ph9t-JDDtWY,20233440,20312160,from volume 5 im hoping volume 7 takes,2,2
+Ph9t-JDDtWY,20364000,20432160,the same level as the rest of volume 6,1,1
+Ph9t-JDDtWY,20979840,21064320,thought of this episode the volume in,1,1
+Ph9t-JDDtWY,21107520,21180960,volume 6 what were the high points what,1,1
+gNg77aqxiF8,1740000,1896960,the same volume and how do i do that,1,1
+gNg77aqxiF8,1823344,1974240,first we will calculate the total volume,1,1
+gNg77aqxiF8,2016480,2132160,volume volume dad ive heard about,2,3
+gNg77aqxiF8,2089904,2162240,volume before but i dont really,1,1
+gNg77aqxiF8,2162240,2316000,jc volume is the space occupied by an,1,1
+gNg77aqxiF8,2670400,2753280,volume of the pastry box and how do we,1,2
+gNg77aqxiF8,2724640,2823520,calculate volume,1,1
+gNg77aqxiF8,3413280,3577920,centimeter the volume of the dice will,1,1
+gNg77aqxiF8,3775840,3880960,dad we will now find out the volume of,1,1
+gNg77aqxiF8,3880960,4012960,volume of this dice ok dad but how relax,1,1
+gNg77aqxiF8,5316800,5409440,120 dies but dad what will be the volume,1,1
+gNg77aqxiF8,5473760,5577600,to find out the volume of the box we,1,2
+gNg77aqxiF8,5536320,5631840,simply have to multiply the volume of a,1,1
+gNg77aqxiF8,5823360,5991360,right dad exactly so the volume of a,1,1
+gNg77aqxiF8,5991360,6134400,dad and the volume of 30 such pasty,1,1
+gNg77aqxiF8,6238224,6355360,jaesi to find out the volume of any cube,1,1
+gNg77aqxiF8,6443184,6578064,remember that the basic unit of volume,1,2
+gNg77aqxiF8,6500800,6686544,is a cubic centimeter that is the volume,1,2
+gNg77aqxiF8,6831024,6973920,volume of 1 dice to find the volume of,2,2
+gNg77aqxiF8,7021104,7157920,lets find each ones volume sure dad,1,1
+gNg77aqxiF8,7299040,7485760,ones volume okay that box once length,1,1
+gNg77aqxiF8,7539504,7668144,centimeters so the volume is the volume,2,2
+gNg77aqxiF8,7852800,7963840,now you find out the volume of the,1,1
+gNg77aqxiF8,8073920,8190560,volume is equal to 30 centimeters,1,1
+gNg77aqxiF8,8401280,8525120,the 30 pastry boxes oh yeah the volume,1,1
+gNg77aqxiF8,8484800,8597920,of the second box is equal to the volume,1,1
+gNg77aqxiF8,8779520,8881280,taught me the concept of volume lets,1,2
+gNg77aqxiF8,8831360,8933600,revise what i learned today volume is,1,1
+gNg77aqxiF8,8933600,9026240,basic unit of volume is one cubic,1,1
+gNg77aqxiF8,9142880,9259520,volume of solid shapes like cubes or,1,2
+gNg77aqxiF8,9195200,9316160,cuboids to find the volume of a cube or,1,1
+gNg77aqxiF8,9383360,9478880,volume of an object is easy when we know,1,1
+r7BCe4fh6a0,280144,356464,session is all about the volume i,1,1
+r7BCe4fh6a0,2381280,2421600,conclusion to this little volume phase,1,1
+T_ZSLBeIBbE,324960,397280,of like the backlog of ruby like volumes,1,1
+LZxXUb9iAZc,156480,198400,to find the volume of a cube,1,1
+LZxXUb9iAZc,584320,755200,when finding volume don’t forget to mention the unit is a cube with three dimensions,1,1
+LZxXUb9iAZc,779200,889600,to get a rectangular prism’s volume right length x width x height,1,1
+LZxXUb9iAZc,889600,988800,cubic units label three dimensions when we answer any volume questions,1,1
+LZxXUb9iAZc,1217600,1390400,when finding volume don’t forget to mention the unit is a cube with 3 dimensions,1,1
+LZxXUb9iAZc,1390400,1480000,a solid shape made of more than one prism has a volume you can find with this wisdom,1,1
+LZxXUb9iAZc,1480000,1568000,think of each shape separately and find the volume of each individually,1,1
+LZxXUb9iAZc,1571200,1659200,then add the volumes nine and one we get ten cubic units and this problem’s done,1,1
+LZxXUb9iAZc,1668800,1843200,when finding volume don’t forget to mention the unit is a cube with three dimensions,1,1
+LZxXUb9iAZc,1846400,2025600,when finding volume don’t forget to mention the unit is a cube with three dimensions,1,1
+WPyNjbI4_G8,56160,158864,this is a video on volume as always,1,1
+WPyNjbI4_G8,680160,775200,have come up on volume so lets start,1,1
+WPyNjbI4_G8,775200,912000,volume well ill just draw a quick shape,1,1
+WPyNjbI4_G8,1163024,1250400,perfectly flat and volume then is the,1,1
+WPyNjbI4_G8,1250400,1440480,a 3d shape takes up so volume is the,1,1
+WPyNjbI4_G8,1479360,1553760,know is volume is the amount of space a,1,1
+WPyNjbI4_G8,1553760,1602240,of volume we need to know these well it,1,1
+WPyNjbI4_G8,1602240,1670880,there are many units of volume sometimes,1,1
+WPyNjbI4_G8,1800960,1860000,volume would be millimeters cubed,1,1
+WPyNjbI4_G8,1907024,1990544,volume centimeters cube so some of the,1,2
+WPyNjbI4_G8,1951664,2033264,common units of volume are millimeters,1,1
+WPyNjbI4_G8,2033264,2123344,sometimes straight volume measures like,1,1
+WPyNjbI4_G8,2214064,2308160,terms of volume well it gives you this,1,1
+WPyNjbI4_G8,2308160,2417104,volume of a prism is the area of the,1,1
+WPyNjbI4_G8,2797264,2871680,so to work out the volume of any prism,1,1
+WPyNjbI4_G8,2948000,3032480,shape is that would give you the volume,1,1
+WPyNjbI4_G8,2987200,3073264,okay using that knowledge of what volume,1,2
+WPyNjbI4_G8,3032480,3102544,is the units of volume and the formula,1,1
+WPyNjbI4_G8,3102544,3174544,to move on to some simple volume,1,1
+WPyNjbI4_G8,3303664,3414064,question would be whats the volume of,1,1
+WPyNjbI4_G8,3414064,3507664,from the formula book that the volume of,1,1
+WPyNjbI4_G8,3965584,4027024,work out the volume the volume would,2,2
+WPyNjbI4_G8,4146544,4255840,areas centimeter squared volume is,1,1
+WPyNjbI4_G8,4909584,5158224,volume you simply do 45 multiplied by 11,1,1
+WPyNjbI4_G8,6017760,6114224,centimeters squared so whats the volume,1,2
+WPyNjbI4_G8,6074400,6144624,the volume therefore is the,1,1
+WPyNjbI4_G8,6547520,6632480,to work out its volume we work out the,1,1
+WPyNjbI4_G8,7106720,7206560,volume you multiply that crosssectional,1,1
+WPyNjbI4_G8,7462880,7532000,the volume there,1,2
+WPyNjbI4_G8,7487680,7585280,okay so weve worked out the volume of,1,1
+WPyNjbI4_G8,8112320,8232800,the volume questions in the higher unit,1,1
+WPyNjbI4_G8,8352320,8420960,the book you will have the volume of a,1,1
+WPyNjbI4_G8,8420960,8503040,perfectly round football and the volume,1,1
+WPyNjbI4_G8,8705760,8846880,volume of a cone and is 13 times pi,1,1
+WPyNjbI4_G8,9130560,9187200,could work out the volumes of each of,1,1
+WPyNjbI4_G8,10121264,10210080,meters cubed the volume of the cone here,1,1
+WPyNjbI4_G8,10210080,10272000,for the volume of the cone so ive just,1,1
+WPyNjbI4_G8,11229440,11309440,questions that have come up on volume,1,1
+XjTwEizRL50,28320,91200,finished watching volume 6 chapter 13,1,2
+XjTwEizRL50,60960,136304,the final episode of your before volume,1,2
+XjTwEizRL50,91200,161280,6 its crazy how quick this volume flew,1,1
+XjTwEizRL50,791504,841920,gonna be doing like a whole volume 6,1,1
+XjTwEizRL50,924480,974384,about the volume a bit but specifically,1,1
+XjTwEizRL50,974384,1037760,gonna be like a whole recap of volume 6,1,1
+XjTwEizRL50,2687520,2735520,volume has had a gen lock add honestly,1,1
+XjTwEizRL50,3303344,3375344,little bit in volume 6 for example her,1,1
+XjTwEizRL50,3456000,3502080,of it was pink but in volume 6 the,1,1
+XjTwEizRL50,7158224,7219184,cool stuff in this volume and its kind,1,1
+XjTwEizRL50,7323840,7384800,stuff this volume because this whole,1,1
+XjTwEizRL50,7339184,7430400,volume hes been a bit useless honestly,1,1
+XjTwEizRL50,7667520,7731840,the volume 3 crow who was the badass,1,1
+XjTwEizRL50,8771520,8820480,earlier chapters of this volume like,1,1
+XjTwEizRL50,17327360,17426704,were on the volume 7 coming up so you,1,1
+XjTwEizRL50,23612320,23645920,callback to volume for chapter one with,1,1
+XjTwEizRL50,23734240,23794720,out again like they did in volume four,1,1
+XjTwEizRL50,24079360,24133120,happened to the volume five seen guys,1,1
+XjTwEizRL50,24244960,24306400,happened there and volume six but i,1,1
+XjTwEizRL50,24318400,24358720,inson maybe well get in volume seven or,1,1
+XjTwEizRL50,24803680,24862240,volume i think this was definitely maybe,1,2
+XjTwEizRL50,24836320,24897280,the best volume in the entire show,1,1
+XjTwEizRL50,25015840,25105120,obviously this volume was a very high,1,2
+XjTwEizRL50,25068640,25179040,light volume for ozpin and neo fans so,1,1
+XjTwEizRL50,25179040,25244800,this is my favorite volume is biased for,1,1
+XjTwEizRL50,25266880,25332160,favorite volume i really dont know i,1,1
+XjTwEizRL50,25332160,25378240,volume one was my favorite just because,1,1
+XjTwEizRL50,25378240,25448800,it was like the og volume and its just,1,1
+XjTwEizRL50,25591840,25653280,but because of neo returning volume,1,2
+XjTwEizRL50,25626400,25689280,because of austin backstory in volume 5,1,1
+XjTwEizRL50,25708000,25762720,favorite volume even though it did have,1,1
+xMz9WFvox9g,4817920,4856160,it looks like it has a larger volume,1,1
+xMz9WFvox9g,4880800,4935360,and remember volume is just how much space something takes up,1,1
+xMz9WFvox9g,5281280,5330560,can define a unit volume or unit cube,1,1
+xMz9WFvox9g,5690960,5720960,and so to measure volume we could say well,1,1
+xMz9WFvox9g,6357920,6411520,or you could have 8 units cubed volume,1,1
+xMz9WFvox9g,7455360,7521920,especially in three dimensions when we call it volume,1,1
+I30-_4GcBnA,4589600,4670240,volume for one she has bad one she has,1,1
+I30-_4GcBnA,10878720,10940640,ruby im gonna direct four volumes if,1,1
+I30-_4GcBnA,16524944,16611344,first couple volumes like this because,1,1
+I30-_4GcBnA,18042240,18097440,involved in a ruby but in this volume,1,1
+I30-_4GcBnA,21731840,21822560,looks like volume three years and,1,2
+I30-_4GcBnA,21794240,21858080,everyone has like their volume volume,2,2
+I30-_4GcBnA,30560624,30622080,because the volume is over but we are,1,1
+I30-_4GcBnA,35358400,35459680,volume 7 it would be really interesting,1,1
+I30-_4GcBnA,35638720,35708800,during volume 7 because i guarantee you,1,1
+I30-_4GcBnA,39362880,39420000,last volume and then it didnt happen,1,1
+I30-_4GcBnA,43367040,43441904,less like around 14 volume something,1,1
+I30-_4GcBnA,44754720,44845440,show goes on for another ten volumes or,1,2
+I30-_4GcBnA,44845440,44934240,five years theyll do seven volumes,1,1
+I30-_4GcBnA,44934240,45026880,do a new volume they start a new volume,2,2
+I30-_4GcBnA,46476800,46552640,them an entire volume they went to,1,1
+I30-_4GcBnA,46868960,46934720,what if theres gonna be 20 volumes i,1,1
+HlXSF1hhdb8,276320,344160,terrifying true scary stories volume,1,1
+RSoxZdzZv5s,123360,191504,now the finale of volume 6 thanks to,1,1
+RSoxZdzZv5s,496800,556800,to the volume 6 review as a whole it,1,1
+RSoxZdzZv5s,1370400,1446240,volume 6 episode 30 the episode starts,1,1
+RSoxZdzZv5s,8694224,8768640,scene in volume 6 and this one scene is,1,1
+RSoxZdzZv5s,9395520,9465120,her in volume 7 so they are teasing her,1,1
+RSoxZdzZv5s,9465120,9549120,even once during volume 6 but this is,1,1
+RSoxZdzZv5s,10217264,10293104,reason this is the worst scene in volume,1,1
+RSoxZdzZv5s,11151840,11227680,a season since the end of volume 2 with,1,1
+RSoxZdzZv5s,14164480,14243680,finally end the final review of volume 6,1,1
+hUVAKqDbO50,39054400,39140800,episode 1 of season 7 chapter of volume,1,1
+cWUDxEahf-o,128160,189120,latest chapters of volume 6 spoilers man,1,1
+cWUDxEahf-o,423360,502560,more robust adaptation of ruby volumes 1,1,2
+cWUDxEahf-o,470864,535680,and volume 2 as opposed to the rough,1,1
+cWUDxEahf-o,592320,651824,of volumes 1  2 while simultaneously,1,1
+cWUDxEahf-o,673920,713264,volumes of the show being kicked off,1,1
+cWUDxEahf-o,995040,1058880,cover the first five episodes of volume,1,1
+cWUDxEahf-o,1587360,1657904,havent been this nervous since volume 5,1,1
+cWUDxEahf-o,1657904,1748144,been any episodes this volume that have,1,1
+cWUDxEahf-o,1778384,1836000,with volume 3 finale vol 4 with the,1,2
+cWUDxEahf-o,2182560,2260320,but for the last two volumes right she,1,1
+cWUDxEahf-o,3908640,3968640,last few chapters of the volume so im,1,1
+cWUDxEahf-o,3968640,4035344,off the volume this has been a fantastic,1,2
+cWUDxEahf-o,3986880,4080000,volume thus far adams in the mix blake,1,1
+cWUDxEahf-o,4473120,4572480,volume 6 chapter 11 the lady in the shoe,1,1
+cWUDxEahf-o,5490240,5559360,volume like volume 6 what are they gonna,2,2
+cWUDxEahf-o,5559360,5631360,the teases in the lead up to volume 7 i,1,1
+cWUDxEahf-o,20578240,20673920,the opening scene reminded me of volume,1,1
+cWUDxEahf-o,21785280,21850560,friend of the volume without a doubt,1,1
+cWUDxEahf-o,21850560,21920160,the of the volume for sure the,1,1
+Hf59PtI4LCs,1600,56000,volume of a sphere,1,0
+Hf59PtI4LCs,1896000,1980800,to find the volume of a sphere divide the sphere into equal sized pyramids with same base and height,1,0
+Hf59PtI4LCs,2662400,2736000,volume of a pyramid is equal to 1 upon 3 into area of base into height,1,0
+Hf59PtI4LCs,4224000,4240000,volume of the first pyramid is equal to 1 upon 3 into a1 into r,1,0
+Hf59PtI4LCs,4241600,4308800,volume of the second pyramid is equal to 1 upon 3 into a2 into r,1,0
+Hf59PtI4LCs,4320000,4376000,volume of the last pyramid is equal to 1 upon 3 into an into r,1,0
+Hf59PtI4LCs,4398400,4472000,volume of sphere is equal to total volume of all pyramids,2,0
+Hf59PtI4LCs,5108800,5168000,volume of sphere is equal to 4 upon 3 into pi into r cube,1,0
+OOHQNaSebKo,1353120,1444320,volumes i think in total right now a,1,2
+OOHQNaSebKo,1400640,1457264,volume 89 is gonna be released soon i,1,1
+OOHQNaSebKo,1532640,1599840,talking about the volume covers just in,1,1
+OOHQNaSebKo,1632000,1696784,the volume itself like what the chapters,1,2
+OOHQNaSebKo,1663200,1724144,are in there but just the volume covers,1,1
+OOHQNaSebKo,2924160,2994720,of you know volumes of bleach here and,1,1
+OOHQNaSebKo,3103680,3162720,one piece volume 84 so you got you know,1,1
+OOHQNaSebKo,3228960,3304784,compare that to a kubo volume and,1,1
+OOHQNaSebKo,3315824,3383344,i think the bleach volumes look really,1,1
+OOHQNaSebKo,4517760,4577760,volume of one piece i had to include,1,1
+OOHQNaSebKo,4604160,4713120,the early volumes of one piece oda does,1,1
+OOHQNaSebKo,5566560,5650560,the first volume itself its nothing,1,1
+OOHQNaSebKo,6150704,6238880,you know so that thats the first volume,1,1
+OOHQNaSebKo,6287040,6371520,volume cover of the early series alright,1,1
+OOHQNaSebKo,6463664,6534224,this is the first volume that is,1,1
+OOHQNaSebKo,6571184,6648000,this era you know we have volume four,1,1
+OOHQNaSebKo,6977280,7021440,this is the volume where sanji gets,1,1
+OOHQNaSebKo,7338224,7418400,is volume 22 and 21 this is the only,1,1
+OOHQNaSebKo,7718880,7848000,so this is volume 21 22 and if you put,1,1
+OOHQNaSebKo,8565600,8629920,has like the most volumes because its,1,1
+OOHQNaSebKo,8933760,9015840,volume 14 this is a pretty good one i,1,1
+OOHQNaSebKo,9425760,9499680,start to see a volume cover taking up,1,1
+OOHQNaSebKo,9611040,9656640,even one of the more recent volume,1,1
+OOHQNaSebKo,9656640,9715200,on with the volume covers right now you,1,1
+OOHQNaSebKo,9761760,9843360,here with big mom this is volume 87 and,1,1
+OOHQNaSebKo,10343520,10418400,i wanted to focus on volume 20 is cool,1,1
+OOHQNaSebKo,10418400,10502400,alright so volume 20 this is the height,1,1
+OOHQNaSebKo,12651360,12702240,whole a this is the last volume of the,1,1
+OOHQNaSebKo,13102080,13192320,okay so skipping a little bit to volume,1,1
+OOHQNaSebKo,13572960,13632000,favorites this is volume 44 and going,1,1
+OOHQNaSebKo,13632000,13735680,damn sure this is the first volume where,1,1
+OOHQNaSebKo,14283840,14354880,actually have to vern i have two volumes,1,1
+OOHQNaSebKo,14391344,14454240,piece by individual volume i bought this,1,1
+OOHQNaSebKo,14641920,14705760,point of the first volume of thriller,1,1
+OOHQNaSebKo,16534544,16599344,mind basically 50 51 volumes in we,1,1
+OOHQNaSebKo,16683344,16762544,pirates 51 volumes way to go over thats,1,1
+OOHQNaSebKo,16852304,16963680,is volume 53 this is amazon lily alright,1,1
+OOHQNaSebKo,17210864,17282400,will follow up in the next volume this,1,1
+OOHQNaSebKo,20644640,20761920,which is the first volume after the time,1,1
+OOHQNaSebKo,20797920,20931360,this whole time so volume 1 again just,1,2
+OOHQNaSebKo,22409760,22477440,i just love this and if i had volume 89,1,2
+OOHQNaSebKo,22441904,22522064,which isnt out yet but if i had volume,1,1
+OOHQNaSebKo,22651680,22688144,actually it started in volume before,1,1
+OOHQNaSebKo,22963200,23036144,volumes um there was an interview with,1,1
+OOHQNaSebKo,23375520,23437904,what were already at volume like 91,1,1
+OOHQNaSebKo,23471984,23530544,volumes thats still like over a year,1,1
+OOHQNaSebKo,23603040,23694720,know volume 101 or 102 you have to look,1,1
+OOHQNaSebKo,23719200,23797440,that so i dont know volume 120 i think,1,1
+OOHQNaSebKo,25336320,25417440,volumes when he says that i take that to,1,1
+OOHQNaSebKo,25417440,25501440,volumes to a hundred and forty volumes,2,2
+OOHQNaSebKo,25619520,25684800,like volume 102 thatll be the end like,1,1
+dujEcT2NU6A,108800,160000,volume of a cylinder,1,0
+dujEcT2NU6A,1132800,1264000,volume of an object is the amount of space occupied by it,1,0
+dujEcT2NU6A,1756800,1814400,let us perform an activity to find volume of a cylinder,1,0
+dujEcT2NU6A,2139200,2164800,finding volume of a cylinder,1,0
+dujEcT2NU6A,2640000,2720000,therefore volume of a cylinder is equal to area of circle into height,1,0
+3xblvhSSYmU,179840,272960,here with episode number 12 or volume 6,1,1
+3xblvhSSYmU,272960,365584,penultimate episode of volume 6 which is,1,1
+3xblvhSSYmU,1861760,1964000,for the rest of this volume otherwise it,1,1
+3xblvhSSYmU,1964000,2057104,this volume might be building just,1,3
+3xblvhSSYmU,1987024,2119520,something towards volume volume 7 saying,2,2
+3xblvhSSYmU,2887040,2987360,i feel out of the past six volumes this,1,1
+3xblvhSSYmU,9198080,9305440,absolutely superb this volume ive heard,1,1
+3xblvhSSYmU,24443840,24544160,were gonna get something like a volume,1,1
+3xblvhSSYmU,24688160,24731360,were gonna end the volume on a,1,1
+3xblvhSSYmU,27256624,27324304,great moment from ruby this volume like,1,1
+3xblvhSSYmU,27551824,27646864,ante for ruby this volume and im,1,1
+3xblvhSSYmU,29439840,29484960,volumes have indicated something its,1,1
+3xblvhSSYmU,31580304,31653744,last week this has been a few volumes in,1,1
+3xblvhSSYmU,31793904,31906704,off volume 6 especially with this grim,1,1
+3xblvhSSYmU,31906704,31989744,into volume 7 what was with with what,1,1
+S059wSUucRU,1579520,1683360,ripple says x rp s average daily volume,1,1
+S059wSUucRU,1683360,1763024,four and so were starting to see volume,1,1
+S059wSUucRU,2433280,2503840,the total xrp volume so a lot of people,1,1
+S059wSUucRU,2632480,2706880,percent of the total xrp volume if they,1,1
+S059wSUucRU,2706880,2809120,affecting the sales volume nevertheless,1,2
+S059wSUucRU,2745760,2828800,it could mean the volume of total xrp so,1,1
+S059wSUucRU,2984320,3077440,total xrp volume as as a digital asset,1,1
+S059wSUucRU,3462400,3532000,of the total xrp volume traded globally,1,1
+S059wSUucRU,5581104,5672800,volume of x rp is going to way exceed,1,1
+S059wSUucRU,5872960,5944464,for drumming up more volume and,1,1
+_aDEdgDagFE,67680,171840,ruby with volume 6 chapter 6 titled,1,1
+_aDEdgDagFE,171840,260160,minute chapter so the volume so far like,1,1
+_aDEdgDagFE,260160,326880,of chapters of volume 6 which is,1,1
+_aDEdgDagFE,3835344,3898704,1 of this volume but like a lot of the,1,1
+WP0FhsquNGU,221584,303680,volume pedal and we put the largest,1,1
+WP0FhsquNGU,418880,490400,have your volume at minimum and show you,1,1
+WP0FhsquNGU,458720,519680,the tuner so as you increase the volume,1,2
+WP0FhsquNGU,490400,551840,it shows you a graphic volume display,1,1
+WP0FhsquNGU,616160,691040,treadle is or you can have the volume,1,1
+WP0FhsquNGU,877264,928640,with whats cool its an active volume,1,1
+WP0FhsquNGU,1113440,1172000,you put our volume knob and run it all,1,1
+WP0FhsquNGU,1202240,1271360,volume control and use it as a master,1,1
+WP0FhsquNGU,1223840,1301600,volume has 9 to 18 volts in headroom,1,1
+btyrbQmDu4E,278400,366240,the volume of the ball gives you the,1,1
+btyrbQmDu4E,853440,934064,volume of the ball gives you the surface,1,1
+btyrbQmDu4E,1066400,1147200,calculating the volume of the ball of,1,1
+btyrbQmDu4E,1510544,1611840,calculate the volume of an object well,1,2
+btyrbQmDu4E,1552320,1654544,the volume well i want to see triple,1,1
+btyrbQmDu4E,2206240,2305584,dimensions the volume of a ball is a,1,1
+btyrbQmDu4E,7297280,7460480,um so what do we have the volume was,1,1
+btyrbQmDu4E,8164320,8349584,volume of each rhyme of the volume of,2,2
+btyrbQmDu4E,8607840,8717120,what you get so far is that the volume,1,1
+btyrbQmDu4E,8820000,8921264,im telling you is that the volume of a,1,1
+btyrbQmDu4E,8975520,9091680,r squared the volume of a ball in r3 is,1,1
+btyrbQmDu4E,9351840,9451680,the derivative of volume is this surface,1,1
+btyrbQmDu4E,9494384,9571184,showed the two volume scales that are to,1,1
+btyrbQmDu4E,9571184,9677264,of calculating that volume in terms of,1,1
+btyrbQmDu4E,10053760,10163200,volume of the bar and that is the end,1,1
+btyrbQmDu4E,11728480,11849600,important because the volume is,1,1
+btyrbQmDu4E,19741120,19893920,weve shown that the volume is scales as,1,1
+btyrbQmDu4E,20036480,20222240,that the volume is precisely r over n,1,1
+btyrbQmDu4E,20222240,20317760,so the the volume is r over n times the,1,1
+btyrbQmDu4E,21077600,21269120,the volume is our to the mc the area,1,1
+btyrbQmDu4E,21353120,21501280,derivative of the volume volume prime is,2,2
+btyrbQmDu4E,21501280,21609904,volume of the unit ball which does not,1,1
+btyrbQmDu4E,21730384,21885440,the relative of the volume of the ball,1,1
+btyrbQmDu4E,22006384,22082704,we calculate the you know the volume of,1,1
+i9UUx76DmTE,617760,696480,ready about surface area and volume so,1,1
+i9UUx76DmTE,1032480,1125120,area and volume isnt it so surface area,1,2
+i9UUx76DmTE,1079520,1175840,and volume ah i have in brought some,1,1
+i9UUx76DmTE,2066080,2151520,sections for surface area and volume one,1,1
+i9UUx76DmTE,2263824,2356000,area and volume ok lets start,1,1
+i9UUx76DmTE,2609920,2730880,if the volume of the small cone is 127 1,1,2
+i9UUx76DmTE,2676640,2788960,by 27th of the volume of the given could,1,1
+i9UUx76DmTE,7416144,7509280,written volume of the smaller cone this,1,2
+i9UUx76DmTE,7457424,7575504,cone is 1 by 27 of the volume of the,1,1
+i9UUx76DmTE,7606704,7758544,that volume of smaller is equal to 1 by,1,2
+i9UUx76DmTE,7688464,7822384,27 of volume total isnt it volume of,2,2
+i9UUx76DmTE,7822384,7881424,this volume total to this denominator,1,1
+i9UUx76DmTE,7881424,8007664,down here that i will be getting volume,1,2
+i9UUx76DmTE,7938544,8075824,of smaller cone divided by a volume of,1,1
+i9UUx76DmTE,8075824,8170864,this employs volume of small one that is,1,1
+i9UUx76DmTE,11780464,11865920,thats nice again very simple volume of,1,2
+i9UUx76DmTE,11830384,11911520,frustum i am writing down volume of,1,1
+i9UUx76DmTE,12614224,12723024,the next volume of rustom is given that,1,1
+i9UUx76DmTE,18991360,19130064,now this volume of cylinder volume of,2,3
+i9UUx76DmTE,19055680,19178864,cylinder is equal to ten times volume of,1,1
+i9UUx76DmTE,19178864,19285600,volume of cylinder is equal to ten ten,1,2
+i9UUx76DmTE,19245280,19315360,times volume of cone so now i just need,1,1
+i9UUx76DmTE,20037440,20143984,just i will try to find out the volume,1,1
+i9UUx76DmTE,20143984,20276944,writing here volume of cylinder volume,2,2
+i9UUx76DmTE,20343680,20480944,to 10 times into volume of cone is 1 by,1,1
+i9UUx76DmTE,20606704,20706544,only cone ice cream has a volume of,1,1
+i9UUx76DmTE,24578400,24686864,cylinder means volume of the cylinder,1,2
+i9UUx76DmTE,24633440,24726720,volume of cylinder is and this rises,1,2
+i9UUx76DmTE,24686864,24774080,because of this sphere so volume of this,1,2
+i9UUx76DmTE,24726720,24827520,cylinder is equal to volume of sphere,1,1
+i9UUx76DmTE,24827520,24919680,so now i guess volume of cylinder is,1,2
+i9UUx76DmTE,24894240,24967680,equal to volume of sphere you understood,1,1
+i9UUx76DmTE,25257600,25387680,write it down volume of cylinder so ill,1,2
+i9UUx76DmTE,25327680,25436160,write volume of cylinder that is equal,1,1
+i9UUx76DmTE,25723040,25843840,but 32 by nine is equal to volume of,1,2
+i9UUx76DmTE,25768624,25906864,sphere okay volume of sphere is 2 by 3,1,1
+i9UUx76DmTE,33814880,33961280,volume of the cylinder so total surface,1,1
+i9UUx76DmTE,38372160,38459520,taken the volume its a square six a,1,1
+i9UUx76DmTE,39010080,39091680,volume at 6 pm,1,1
+6e-xshNS3yQ,304304,367360,today were introducing the new volume,1,2
+6e-xshNS3yQ,340464,419680,pedal for the ernie ball and volume,1,2
+6e-xshNS3yQ,367360,444624,pedal tuner takin our iconic volume,1,1
+6e-xshNS3yQ,809440,916800,here here youve got just your volume,1,1
+8ksV119rHXg,172304,234720,that pomp or more volume in their hair,1,1
+8ksV119rHXg,282240,354720,way on how you can achieve more volume,1,1
+8ksV119rHXg,556800,610560,lot of volume so to achieve max volume,2,2
+8ksV119rHXg,757440,816944,when youre going for high volume you,1,1
+8ksV119rHXg,2102400,2153280,you volume youre going to,1,1
+8ksV119rHXg,2388000,2469600,of that volume that we are looking for,1,1
+8ksV119rHXg,2514240,2577600,looking really adding the volume youre,1,1
+8ksV119rHXg,3256800,3332640,volume enough bounce and its basically,1,1
+8ksV119rHXg,3502880,3571680,hairstyles with volume you want a,1,1
+8ksV119rHXg,3657120,3738720,if youre going for volume so a dry and,1,1
+8ksV119rHXg,4294560,4348320,high volume youre going to want,1,1
+6aNDzSqM98Y,61600,188144,and im here for ruby volume 6 chapter,1,1
+EyCu5kMGWQ0,2211680,2264000,a volume knob we actually have a volume,2,2
+EyCu5kMGWQ0,2604800,2664800,right now i hit the volume knob ive got,1,1
+EyCu5kMGWQ0,2780960,2835680,the volume knob and looking at that,1,1
+EyCu5kMGWQ0,3361280,3422720,a volume knob here tuning up here and,1,1
+EyCu5kMGWQ0,9112000,9179184,adjust the volume knob while driving,1,1
+e7-am8JtREI,223520,278080,we are looking for the volume of pyramid,1,1
+e7-am8JtREI,278080,383680,now remember the definition for volume volume is the amount space occupied within the solid,2,2
+e7-am8JtREI,514240,623360,can see so all unit meters obvuse the final answer for volume in meter cube,1,1
+e7-am8JtREI,1160640,1262880,up with a grand total volume for this vivid orange pyramid so let us get started by writing,1,1
+e7-am8JtREI,1262880,1303360,up the formula for volumes,1,1
+e7-am8JtREI,1303360,1496000,so volume of a pyramid is a 13 x the area of,1,1
+e7-am8JtREI,2668784,2709920,skull of this volume for this pyramid,1,1
+aTR46NKwnr8,339184,424624,volume to be able to do this on the,1,1
+wAkbCGNbvw8,29169440,29233264,just like the longest video weve ever posted you made it all the way to the end of volume,1,1
+E5OOMbz5jZk,480,84960,okay in this video i want to do a volume,1,1
+E5OOMbz5jZk,3248784,3310224,set up to calculate the volume so,1,1
+E5OOMbz5jZk,3278080,3347680,remember volume should always be,1,1
+E5OOMbz5jZk,4205920,4330704,4 pi over 21 that will be our volume of,1,1
+pOGVngLsaX4,294720,382400,going to focus on volumes doctor volumes,2,2
+pOGVngLsaX4,1556640,1699664,volumes from so lets focus on this one,1,2
+pOGVngLsaX4,1618544,1758720,first so the  fee or   volume its a,1,2
+pOGVngLsaX4,1699664,1804784,bind mount of a volume so youre buying,1,1
+pOGVngLsaX4,3049600,3115360,thats the volume flag that what i was,1,1
+pOGVngLsaX4,9712800,9807360,demonstrate is creating volume so these,1,1
+pOGVngLsaX4,10234560,10334880,v and were going to create a volume,1,2
+pOGVngLsaX4,10296320,10378080,docker volume so were not doing a bind,1,2
+pOGVngLsaX4,10932960,11008320,were just creating involve a volume a,1,2
+pOGVngLsaX4,10960320,11042400,dock a volume called data explain what,1,1
+pOGVngLsaX4,11701440,11827200,containers that share this data volume,1,1
+pOGVngLsaX4,11889600,12010560,that ill show is docker volume ls so it,1,2
+pOGVngLsaX4,11974560,12047520,actually created a docker volume called,1,1
+pOGVngLsaX4,12245280,12321120,weve created a docker volume and weve,1,1
+pOGVngLsaX4,12351840,12460800,docker volume such as if i did the,1,2
+pOGVngLsaX4,12388800,12505920,docket volume   help we can see that,1,2
+pOGVngLsaX4,12460800,12543840,we can create a volume we can inspect we,1,2
+pOGVngLsaX4,12505920,12593280,can list and we can remove volumes now,1,1
+pOGVngLsaX4,12672000,12744480,storage so the container from the volume,1,2
+pOGVngLsaX4,12706560,12753424,we can share this volume amongst,1,1
+pOGVngLsaX4,12895520,12954064,volume to this container put some bits,1,1
+pOGVngLsaX4,12991520,13077920,going to delete the volume create a new,1,1
+pOGVngLsaX4,13026064,13142224,container and attach this volume to the,1,1
+pOGVngLsaX4,13502560,13656304,directory this is the volume and also,1,1
+pOGVngLsaX4,14021104,14107984,docker volume is still intact docker,1,2
+pOGVngLsaX4,14071984,14179984,volume ls we can see that we still have,1,1
+pOGVngLsaX4,14251984,14345600,data volume and still use the the files,1,1
+pOGVngLsaX4,14961600,15069120,name of test3 the volume that we are,1,2
+pOGVngLsaX4,15028320,15114720,using is the data volume now because the,1,2
+pOGVngLsaX4,15069120,15145920,data volume exists we obviously dont,1,1
+pOGVngLsaX4,15145920,15264000,attach that existing volume were going,1,1
+pOGVngLsaX4,15635040,15709920,decoupled from the from the volumes and,1,1
+pOGVngLsaX4,15731040,15804960,attached the volumes that weve attached,1,1
+pOGVngLsaX4,15804960,15912960,attach that volume to the new container,1,1
+pOGVngLsaX4,16113120,16281120,volume ls lets remove this volume our,2,3
+pOGVngLsaX4,16187520,16315680,docket volume our m of data now im,1,2
+pOGVngLsaX4,16281120,16369920,going to show you another volume command,1,1
+pOGVngLsaX4,16369920,16448160,help were going to do this volumes from,1,1
+pOGVngLsaX4,16448160,16608944,so this volumes from command will allow,1,2
+pOGVngLsaX4,16535520,16662720,us to mount the volumes from a specified,1,1
+pOGVngLsaX4,17218080,17352960,have no containers here docker volumes,1,2
+pOGVngLsaX4,17276960,17425440,or volume minus ls or ls we have no,1,2
+pOGVngLsaX4,17352960,17467680,volumes so lets do a docker run  i t,1,1
+pOGVngLsaX4,17545920,17662080,were going to create a volume called,1,1
+pOGVngLsaX4,17771520,17911040,another volume were going to do  v,1,1
+pOGVngLsaX4,18158400,18247680,master weve got two volumes that were,1,1
+pOGVngLsaX4,18279840,18361920,backup and slash logs these volumes they,1,1
+pOGVngLsaX4,18398880,18483360,be created as docker volumes and were,1,1
+pOGVngLsaX4,19429920,19506704,clear the screen to a docket volume,1,2
+pOGVngLsaX4,19466864,19549920,again just to list these volumes so,1,2
+pOGVngLsaX4,19506704,19604624,weve created these volumes as we,1,1
+pOGVngLsaX4,19604624,19679360,container lets use the volumes from,1,1
+pOGVngLsaX4,19679360,19814864,mount all of these volumes in one so by,1,1
+pOGVngLsaX4,19977120,20099040,volumes  from were going to give the,1,1
+pOGVngLsaX4,20140304,20273760,volumes from so this is master and again,1,1
+pOGVngLsaX4,20374384,20489120,volumes  from we give the master,1,1
+pOGVngLsaX4,20531040,20627520,mount all the volumes from this master,1,1
+pOGVngLsaX4,21740800,21810400,do a volume because there is another,1,1
+pOGVngLsaX4,21849760,21981760,the volume lets do a curve volume ls,2,2
+pOGVngLsaX4,21981760,22095520,its docker volume,1,2
+pOGVngLsaX4,22095520,22204000,just going to do the backup volume for,1,1
+pOGVngLsaX4,22250880,22345600,information about the the docker volume,1,1
+pOGVngLsaX4,22433920,22492800,different volumes if theyre if you have,1,1
+pOGVngLsaX4,22492800,22573120,volumes and so forth so you can have,1,1
+pOGVngLsaX4,23576160,23694240,volumes and mount points or by mounting,1,1
+Ynp6rG45RZA,24000,102720,convert between metric units of volume,1,1
+Ynp6rG45RZA,102720,182864,units that you can use to measure volume,1,1
+Ynp6rG45RZA,1577760,1663200,what is the maximum volume of liquid in,1,1
+Ynp6rG45RZA,1717904,1784144,top were saying maximum volume here,1,1
+Ynp6rG45RZA,1930080,2042240,to start by calculating the volume by,1,1
+Ynp6rG45RZA,2259200,2363344,step by step lets get the volume first,1,2
+Ynp6rG45RZA,2301920,2425600,so volume is going to be a length five,1,1
+Ynp6rG45RZA,3379520,3473600,volume of water in liters can it hold it,1,1
+Ynp6rG45RZA,3758720,3852304,volume of the pool by doing length times,1,1
+Ynp6rG45RZA,4825280,5011360,volume ill do 15 point 0 decimeters,1,1
+Ynp6rG45RZA,5966720,6063200,calculate volume of this by doing length,1,1
+Ynp6rG45RZA,6258080,6365920,start off by getting the volume in cubic,1,1
+Ynp6rG45RZA,7509920,7563664,and volume so if youre confused you,1,1
+Ynp6rG45RZA,8279344,8352320,two categories of metric volume units,1,1
+Ynp6rG45RZA,8436320,8492800,the volume by just doing length times,1,1
+Ynp6rG45RZA,8576960,8644160,volume and then do a little conversion,1,1
+Ynp6rG45RZA,8644160,8728160,useful to find the volume of a cylinder,1,1
+Ynp6rG45RZA,8770400,8883520,the volume of a sphere its going to be,1,1
+qHuDN-I9apg,20640,129584,about the flow volume loops the flow,1,2
+qHuDN-I9apg,69104,193920,volume loop basically plots the airflow,1,1
+qHuDN-I9apg,193920,316320,inspiration against the lung volume on,1,1
+qHuDN-I9apg,757440,861120,volume loop this isnt the case the,1,1
+qHuDN-I9apg,1156320,1286240,volume loops are kind of very easy so,1,1
+qHuDN-I9apg,1411680,1471680,from your residual volume to your total,1,1
+qHuDN-I9apg,1656480,1745760,volume so this is what a normal flow,1,2
+qHuDN-I9apg,1712160,1797120,volume loop looks like its pretty,1,1
+qHuDN-I9apg,2136960,2208480,and your residual volume will increase,1,1
+qHuDN-I9apg,2208480,2288640,increase in the tlc and residual volume,1,1
+qHuDN-I9apg,2374560,2537760,so the flow volume loop would look like,1,1
+qHuDN-I9apg,3288960,3434400,the residual volume decreases and the,1,1
+qHuDN-I9apg,3466064,3565440,smaller version of normal low volume,1,1
+qHuDN-I9apg,3667680,3798560,version of the you know low volume loop,1,1
+qHuDN-I9apg,3848640,3934560,lung disease the flow volume blue shifts,1,1
+qHuDN-I9apg,4047344,4155824,mnemonic flow volume loop if the loop,1,1
+qHuDN-I9apg,4184160,4258560,flow volume blue shifts towards the left,1,1
+qHuDN-I9apg,6050400,6158400,this will look like on the flow volume,1,1
+qHuDN-I9apg,6250560,6361440,part of the low volume loop so this is,1,1
+qHuDN-I9apg,7672480,7781280,on the flow volume loop is um there,1,1
+qHuDN-I9apg,7852960,7947040,the flow volume loop so this will,1,1
+qHuDN-I9apg,8233920,8366384,your flow volume loop looks like this,1,1
+qHuDN-I9apg,8418224,8519520,volume liam this would mean that there,1,1
+qHuDN-I9apg,9286080,9396000,flow volume loop and viceversa in,1,1
+qHuDN-I9apg,9429600,9484304,volume loop so that makes it pretty easy,1,1
+qHuDN-I9apg,9603840,9677264,volume loop shifts towards the right in,1,1
+qHuDN-I9apg,9677264,9744800,volume loop shifts towards the left,1,1
+qHuDN-I9apg,9830880,9902880,flow volume loop and in intrathoracic,1,1
+qHuDN-I9apg,9902880,10003200,expiratory part of the flow volume loop,1,1
+qHuDN-I9apg,10596480,10669920,know flow volume loops and which is,1,1
+bF7CEbAKJbo,35040,101744,training volume were going to talk,1,1
+bF7CEbAKJbo,311024,400304,topic of training volume from the,1,1
+bF7CEbAKJbo,617760,706560,book is a graph on training volume now i,1,1
+bF7CEbAKJbo,968624,1048784,of training volume which is going to get,1,1
+bF7CEbAKJbo,1541264,1648320,volume then you overdo it and you reach,1,1
+bF7CEbAKJbo,2134560,2205104,that by increasing volume instead of,1,1
+bF7CEbAKJbo,2430240,2528160,potentially increase the volume of work,1,1
+bF7CEbAKJbo,2571824,2645280,do more volume with this pretty crappy,1,1
+bF7CEbAKJbo,2916960,2974080,volumes and seeing great results okay i,1,1
+bF7CEbAKJbo,3003824,3071040,volume okay just makes no sense they can,1,1
+bF7CEbAKJbo,3071040,3129600,talked a little bit about volume and,1,1
+bF7CEbAKJbo,3157920,3213120,amount of volume you should be doing but,1,1
+bF7CEbAKJbo,5851680,5926560,more volumes all together see more gains,1,1
+bF7CEbAKJbo,6009600,6084480,on your volume youre going to overdo it,1,1
+bF7CEbAKJbo,6158880,6260320,how how do i approach training volume,1,1
+bF7CEbAKJbo,6393760,6476800,amount of volume week to bump up the,1,1
+bF7CEbAKJbo,6440800,6509904,volume a little bit more week three even,1,1
+bF7CEbAKJbo,6509904,6584320,bring the volume right back down and you,1,1
+bF7CEbAKJbo,6605424,6666384,increase trading volume okay how you can,1,1
+Nvp_HUj3lG4,0,72000,this is overcomplicated lifehacks volume,1,1
+I3vYW5SUp3Y,349904,402240,here is to find the volume and remember,1,2
+I3vYW5SUp3Y,376800,449280,the definition for volume is the amount,1,1
+I3vYW5SUp3Y,449280,503520,the volume so were looking for this,1,2
+I3vYW5SUp3Y,473280,547200,volume of this kind of like upside down,1,1
+I3vYW5SUp3Y,696000,762240,remember with volumes first we find the,1,1
+I3vYW5SUp3Y,2576160,2643840,the volume now lets go back to what we,1,1
+I3vYW5SUp3Y,7602240,7677120,work out the volume and in order to work,1,1
+I3vYW5SUp3Y,7637760,7717920,out the volume its obviously face times,1,1
+I3vYW5SUp3Y,8126240,8240480,so total volume of that whole shape is,1,1
+I3vYW5SUp3Y,8845280,8978720,grand total of the volume of all of this,1,1
+RlQPPQ3Zpm8,275520,378240,consists of the volume on the x axis and,1,1
+RlQPPQ3Zpm8,378240,457904,were looking at the pressure and volume,1,1
+RlQPPQ3Zpm8,840944,953264,not changing however the volume is,1,1
+RlQPPQ3Zpm8,1465904,1539360,volumetric means that the volume remains,1,1
+RlQPPQ3Zpm8,1539360,1607024,that the volume is not changing its,1,1
+RlQPPQ3Zpm8,2431200,2525104,volume and its relaxing so volume is,2,2
+RlQPPQ3Zpm8,2752784,2828480,pressure volume loop curve when we,1,1
+RlQPPQ3Zpm8,2913104,3005280,stroke volume and end systolic volume,2,2
+RlQPPQ3Zpm8,3109440,3245744,increased stroke volume decreases but in,1,2
+RlQPPQ3Zpm8,3173264,3275824,systolic volume is increased examples of,1,1
+RlQPPQ3Zpm8,3629264,3678240,volume that means that there is more,1,1
+RlQPPQ3Zpm8,3767520,3870240,the stroke volume and there remains a,1,1
+RlQPPQ3Zpm8,3976784,4091040,similar to the pressure volume its tall,1,1
+RlQPPQ3Zpm8,4184160,4274880,volume increases because basically you,1,1
+RlQPPQ3Zpm8,4363184,4429920,systolic volume is going to decrease,1,1
+RlQPPQ3Zpm8,4772144,4878704,leads to increased stroke volume now,1,1
+RlQPPQ3Zpm8,4938704,5022224,volume loop is going to be on the right,1,1
+zBBYOc7M02o,357600,429120,and that whole question of volume i know,1,1
+zBBYOc7M02o,568800,645600,volume and mrv maximum recoverable and,1,1
+zBBYOc7M02o,1265280,1374240,about volume landmarks for muscle growth,1,1
+zBBYOc7M02o,7458384,7543824,maximum recoverable volume the most,1,2
+zBBYOc7M02o,7505424,7600944,training volume number of sats proxied,1,1
+zBBYOc7M02o,8552000,8636960,high enough volumes to even put in the,1,1
+zBBYOc7M02o,10041920,10104320,volume its different for every body,1,1
+zBBYOc7M02o,10586720,10656800,much volume as you can handle anything,1,1
+zBBYOc7M02o,10834384,10914064,volume the smallest amount of training,1,1
+zBBYOc7M02o,11140144,11224144,your minimum effective volume is going,1,1
+zBBYOc7M02o,11645600,11709920,effective volume the least amount you,1,1
+zBBYOc7M02o,11747344,11818880,volume above which we dont want to,1,1
+zBBYOc7M02o,12109264,12183680,minimum effective volume and knowing,1,2
+zBBYOc7M02o,12140944,12204304,your maximum recovery volume finding,1,1
+zBBYOc7M02o,12554880,12625920,your minimum effective volume how much,1,1
+zBBYOc7M02o,12625920,12704640,maximum recoverable volume above which,1,1
+zBBYOc7M02o,12909120,13015200,your maximum adaptive volume the volume,2,2
+zBBYOc7M02o,13176000,13257120,effective volume is a little bit of a,1,1
+zBBYOc7M02o,13257120,13355040,volume is this whole band how come its,1,1
+zBBYOc7M02o,13605120,13663200,to get better for us on the volume,1,1
+zBBYOc7M02o,13952160,14015520,hypertrophy is a volume its the most,1,1
+zBBYOc7M02o,14092800,14168160,exception volume is so important thats,1,1
+zBBYOc7M02o,14278080,14365440,volume is 10 sets per week for chest and,1,1
+zBBYOc7M02o,14365440,14461440,volume is 20 sets per week do we just go,1,1
+zBBYOc7M02o,14830224,14898384,remember volume is a cue driver of,1,2
+zBBYOc7M02o,14859520,14928640,hypertrophy and adding volume is a key,1,1
+zBBYOc7M02o,14928640,14995344,volume literally adding more and more,1,1
+zBBYOc7M02o,15202224,15273264,minimum effective volume im easy,1,1
+zBBYOc7M02o,16461760,16512624,volume is going to be your maximum,1,2
+zBBYOc7M02o,16487680,16540944,adaptive volume the one you get the most,1,1
+zBBYOc7M02o,16717264,16765264,volume is close to between ten and,1,1
+zBBYOc7M02o,16965760,17032624,your nav maximum adaptive volume is,1,1
+zBBYOc7M02o,17068624,17142544,per week your maximum adaptive volume by,1,1
+zBBYOc7M02o,17356624,17437760,using those volume landmarks your mev,1,2
+zBBYOc7M02o,17399360,17469440,minimum effective volume your mrv,1,2
+zBBYOc7M02o,17437760,17504000,maximum recoverable volume and your ma v,1,2
+zBBYOc7M02o,17469440,17530864,maximum adaptive volume thats how you,1,1
+zBBYOc7M02o,17734864,17819840,volume every now and again what youre,1,1
+zBBYOc7M02o,18503360,18563840,high volume training resynthesize to,1,1
+zBBYOc7M02o,18872000,18944464,we need to know our maintenance volume,1,1
+zBBYOc7M02o,19048624,19124944,similar volume to the minimum effective,1,2
+zBBYOc7M02o,19082704,19164784,volume for more advanced athletes its,1,1
+zBBYOc7M02o,19353920,19422544,their minimum effective volume might be,1,1
+zBBYOc7M02o,19591520,19651040,that maintenance volume the smallest,1,2
+zBBYOc7M02o,19627040,19692784,amount of volume it takes for you to,1,1
+zBBYOc7M02o,19752304,19807520,volumes maintain muscularity better than,1,2
+zBBYOc7M02o,19784464,19834864,light weights with those same low volume,1,1
+zBBYOc7M02o,20042224,20136784,maintenance volume is somewhere around 6,1,1
+zBBYOc7M02o,20564944,20624944,this kind of training is a solo volume,1,1
+zBBYOc7M02o,20654224,20719520,desire that dry for high volume crazy,1,1
+zBBYOc7M02o,21230720,21305600,cargo volume and then between those last,1,2
+zBBYOc7M02o,21260480,21356000,two maximum adaptive volume we have a,1,1
+Tf1aWan0of4,427520,499200,and i got some questions about volume how to maximize the volume of your hair,2,1
+Tf1aWan0of4,621760,696640,i actually have a good amount of volume today as you can see im also going to briefly explain how i created this style,1,0
+Tf1aWan0of4,1109760,1212800,if you have fine hair and you like to maximize your volume please share your tips in the comments,1,0
+Tf1aWan0of4,2553920,2589440,volume  density  diametre,1,0
+Tf1aWan0of4,2954240,3036160,but of course you can play around with the thickness of your hair to create more volume otherwise this video would be pointless,1,0
+Tf1aWan0of4,3905280,3977600,so avoid those processes if you really want to maximize your volume,1,0
+Tf1aWan0of4,6303680,6418560,separates my hair strands from each other and increases the overall volume of my hair,1,0
+Tf1aWan0of4,6418560,6480640,thats why normally when you make an afro you have maximum volume,1,0
+Tf1aWan0of4,6631360,6663360,this increases volume,1,0
+Tf1aWan0of4,6754880,6813120,you really separate the curls when you take out the twists to increase your volume,1,0
+Tf1aWan0of4,6856000,6888000,my hair has more and more volume,1,0
+Tf1aWan0of4,6976000,7052800,and then they gradually separate and i get more volume throughout the week,1,0
+Tf1aWan0of4,7052800,7145920,so ive just taken out my twists but i really tried to create as much volume as possible,1,0
+Tf1aWan0of4,7266560,7313920,volume or definition,1,0
+Tf1aWan0of4,7403200,7525440,you always lose a bit of volume because you are clumping your hair together,1,0
+Tf1aWan0of4,7761600,7849280,if you want more volume choose styles like afros,1,0
+Tf1aWan0of4,7911680,7957760,the more you separate your hair strands the more volume youll have,1,0
+Tf1aWan0of4,8140160,8210560,the more you let your hair shrink the more volume youll have,1,0
+Tf1aWan0of4,8260800,8321280,the more my hair is stretched the less volume i have,1,0
+Tf1aWan0of4,8354560,8430400,you have to know what you prefer hair with shrinkage and lots of volume,1,0
+Tf1aWan0of4,8438400,8526720,or more stretched hair with a bit less volume and maybe a bit more definition,1,0
+Tf1aWan0of4,9057600,9144640,the weight of your products can weigh down your hair and make you lose volume,1,0
+Tf1aWan0of4,9490240,9557120,your hair will be lighter and have more volume,1,0
+Tf1aWan0of4,10080640,10127680,how to create volume and thickness,1,0
+Tf1aWan0of4,10166400,10221440,and let me know in the comments what you do to maximize your volume,1,0
+QJcAJHFqXZg,152160,215504,video we talked about lung volumes and,1,1
+QJcAJHFqXZg,252000,341280,previously lung volumes in capacity is,1,1
+QJcAJHFqXZg,544800,652320,deep breath in and hold it the volume of,1,1
+QJcAJHFqXZg,1148160,1257120,residual volume is the amount of gas,1,1
+QJcAJHFqXZg,1394880,1528784,in the lungs is the residual volume,1,1
+QJcAJHFqXZg,1593904,1722240,residual volume equals total lung,1,2
+QJcAJHFqXZg,1653120,1776480,capacity tidal volume is the amount of,1,1
+QJcAJHFqXZg,1889760,1963024,thats your tidal volume it is seven to,1,1
+QJcAJHFqXZg,1963024,2053904,the inspiratory reserve volume is the,1,1
+QJcAJHFqXZg,2248000,2338720,thats your inspiratory reserve volume,1,1
+QJcAJHFqXZg,2338720,2442400,capacity the expiratory reserve volume,1,1
+QJcAJHFqXZg,2642560,2786080,ori reserve volume normally its 20 of,1,2
+QJcAJHFqXZg,2709760,2836480,total lung capacity tidal volume plus,1,2
+QJcAJHFqXZg,2786080,2912160,inspiratory reserve volume plus expert,1,2
+QJcAJHFqXZg,2836480,2912160,ory reserve volume equals vital capacity,1,1
+QJcAJHFqXZg,3643680,3754240,therefore it includes the tidal volume,1,2
+QJcAJHFqXZg,3686080,3783520,and the inspiratory reserve volume for,1,1
+QJcAJHFqXZg,4055200,4207360,spirometry because the residual volume,1,1
+QJcAJHFqXZg,4207360,4276480,residual volume is measured indirectly,1,1
+QJcAJHFqXZg,4345120,4442880,residual volume includes expert or,1,3
+QJcAJHFqXZg,4398880,4486720,ereserve volume and the residual volume,2,2
+CNkP4rycLbI,73104,154224,about surface area to volume ratios and,1,1
+CNkP4rycLbI,327360,430560,concept surface area to volume ratio to,1,1
+CNkP4rycLbI,1474080,1560480,smallest cubes volume while it reached,1,2
+CNkP4rycLbI,1505760,1596480,only 19 of the largest cubes volume,1,1
+CNkP4rycLbI,2650720,2759200,and into the cubes volume the smallest,1,2
+CNkP4rycLbI,2689584,2807680,cube has the smallest volume at 0001,1,1
+CNkP4rycLbI,2807680,2906064,has the largest volume 1000 centimeters,1,1
+CNkP4rycLbI,2906064,2992480,ratio of surface area to volume a ratio,1,1
+CNkP4rycLbI,3072160,3183024,divided by its volume so in our tiny,1,1
+CNkP4rycLbI,3183024,3273744,the side the surface area to volume,1,1
+CNkP4rycLbI,3509920,3607344,volume and conversely the larger r cube,1,1
+CNkP4rycLbI,3607344,3688000,to volume in other words the larger,1,1
+CNkP4rycLbI,3688000,3796000,has relative to its volume and thats,1,1
+CNkP4rycLbI,4088304,4170400,entire volume of the cell just pretend,1,1
+CNkP4rycLbI,4655840,4774880,a very high surface area to volume ratio,1,1
+CNkP4rycLbI,5196320,5277440,enormous volume and this makes it very,1,1
+CNkP4rycLbI,6038240,6129440,volume ratio so its very easy for the,1,2
+CNkP4rycLbI,6088640,6160960,vinegar to reach the entire volume of,1,1
+CNkP4rycLbI,6221120,6305120,high surface area to volume ratio are,1,1
+CNkP4rycLbI,6523040,6603664,high surface area to volume ratio so you,1,1
+CNkP4rycLbI,7345760,7418224,surface area to volume ratio that means,1,1
+CNkP4rycLbI,7629920,7694224,volume ratio this made it easier for,1,1
+CNkP4rycLbI,7791664,7885280,area to volume considerations you know,1,1
+CNkP4rycLbI,8111840,8200160,my volume the same holy cow that means,1,1
+CNkP4rycLbI,8200160,8299504,decreasing my surface area to volume,1,1
+CNkP4rycLbI,8514080,8608160,surface increases surface area to volume,1,1
+CNkP4rycLbI,8708960,8743984,increasing the surface area to volume,1,1
+CNkP4rycLbI,8903664,8996464,important surface area to volume ratios,1,1
+CNkP4rycLbI,8996464,9077104,area to volume makes diffusion easier,1,1
+CNkP4rycLbI,9201904,9276784,area to volume base diffusion harder,1,1
+CNkP4rycLbI,9462544,9522544,about surface area and volume its going,1,1
+RPpih8rD-5k,54704,114720,volume and in this particular problem,1,1
+RPpih8rD-5k,252944,332160,the x axis and then to find the volume,1,1
+RPpih8rD-5k,2336160,2422080,integral is going to be v for volume is,1,1
+RPpih8rD-5k,3675840,3736800,want to find volume its not very,1,1
+RPpih8rD-5k,5028960,5132160,sidebyside to approximate the volume,1,1
+RPpih8rD-5k,6351360,6408960,in here because our formula for volume,1,1
+RPpih8rD-5k,6461280,6548160,volume will be the integral of pi times,1,1
+RPpih8rD-5k,7022400,7081440,solve this integral so well get volume,1,1
+RPpih8rD-5k,7411200,7532480,volume equals pi times when we plug in 5,1,1
+RPpih8rD-5k,8146400,8261760,which is 8 of course so volume is equal,1,1
+RPpih8rD-5k,8261760,8357760,answer 8 pi is the volume of this solid,1,1
+zqCkb80o_wY,648624,740320,volume of given cylinder and spear by,1,1
+zqCkb80o_wY,5664480,5788800,092 to 5 centimeters volume of the,1,1
+zqCkb80o_wY,7089440,7221440,volume of the cylinder v is equal to pi,1,1
+OulmwTYTauI,0,75840,to use kubernetes volumes you really,1,2
+OulmwTYTauI,33600,105104,have to understand a persistent volume,1,2
+OulmwTYTauI,75840,131024,and persistent volume claims and the,1,1
+OulmwTYTauI,231360,293280,volume mounts which will list the mounts,1,1
+OulmwTYTauI,322560,401744,volume claim or just a claim so well,1,1
+OulmwTYTauI,401744,462720,your volume outs and your volumes under,2,3
+OulmwTYTauI,441120,520800,volumes youre going to have your,1,2
+OulmwTYTauI,462720,552000,persistent volume claim and under volume,2,2
+OulmwTYTauI,552000,635040,this persistent volume claim is really,1,1
+OulmwTYTauI,762720,835184,volume claim in other words the pod,1,1
+OulmwTYTauI,942720,1026720,using the claim as a volume and notice,1,1
+OulmwTYTauI,1155840,1225904,large you want the volume to be its,1,1
+OulmwTYTauI,1298400,1354080,volume which well talk about in a,1,1
+OulmwTYTauI,1372784,1463520,persistent volume claim is listed as the,1,1
+OulmwTYTauI,1535520,1622880,stable label on the volumes which well,1,1
+OulmwTYTauI,1812000,1901760,that the volume can be mounted as,1,1
+OulmwTYTauI,2165120,2273120,called a persistent volume and dynamic,1,1
+OulmwTYTauI,2292800,2373440,the volume is going to connect over to,1,2
+OulmwTYTauI,2335040,2413760,persistent volume claim the persistent,1,2
+OulmwTYTauI,2373440,2439200,volume claim is either going to connect,1,1
+OulmwTYTauI,2413760,2482880,over to a persistent volume which you,1,1
+OulmwTYTauI,2919680,3015200,together once bound persistent volume,1,1
+OulmwTYTauI,3351200,3459040,copy this volume section into it and,1,1
+OulmwTYTauI,3592160,3667520,single persistent volume but if you have,1,2
+OulmwTYTauI,3628160,3717920,multiple persistent volumes how do you,1,1
+OulmwTYTauI,3776000,3847520,a persistent volume but one of the,1,1
+OulmwTYTauI,3940640,4037600,persistent volume claim needs to have an,1,1
+OulmwTYTauI,4100960,4198880,here okay so what is a persistent volume,1,1
+OulmwTYTauI,4630400,4695200,volumes section of kubernetes website,1,2
+OulmwTYTauI,4658704,4736480,the persistent volume subsystem provides,1,2
+OulmwTYTauI,4695200,4762400,an api and the persistent volume is a,1,1
+OulmwTYTauI,4796000,4884800,we saw before they are volume plugins,1,1
+OulmwTYTauI,5009120,5093584,persistent volumes and lets your users,1,1
+OulmwTYTauI,5204960,5307664,a persistent volume you can see it has,1,1
+OulmwTYTauI,5419040,5502080,persistent volume reclaim policy which,1,1
+OulmwTYTauI,5502080,5587520,volume after it has been released of its,1,1
+OulmwTYTauI,5965280,6027664,volume what about storage class how,1,1
+OulmwTYTauI,6273920,6354560,youll see instead persistent volumes in,1,1
+OulmwTYTauI,6721760,6789920,a persistent volume it provides all the,1,1
+OulmwTYTauI,7154720,7212800,example im weve got the volume mounts,1,1
+OulmwTYTauI,7522880,7592960,deployment you see the volumes listing,1,2
+OulmwTYTauI,7561760,7637120,the persistent volume claims by their,1,1
+OulmwTYTauI,7712960,7778704,pv sees what are persistent volumes and,1,1
+qc4R-ozZWWs,203504,269280,talking about the rise of low volume,1,1
+qc4R-ozZWWs,984480,1033904,the low volume symbols out there that i,1,1
+qc4R-ozZWWs,2375200,2437584,were the first low volume symbols out,1,1
+qc4R-ozZWWs,3029920,3103824,released a brand new line of low volume,1,1
+qc4R-ozZWWs,5215840,5274400,still quiet theyre still low volume but,1,1
+qc4R-ozZWWs,7300960,7362400,volume cymbals but theyre incredibly,1,1
+qc4R-ozZWWs,8057920,8121760,new line of low volume cymbals now their,1,1
+qc4R-ozZWWs,8121760,8170224,taking these low volume cymbals and,1,1
+qc4R-ozZWWs,9231344,9294224,of low volume cymbals with mesh heads,1,1
+qc4R-ozZWWs,9528944,9592800,mesh heads and low volume cymbals for,1,1
+qc4R-ozZWWs,9775680,9844144,to see their really weird low volume,1,1
+qc4R-ozZWWs,11195680,11246560,volume cymbals so if youve got to have,1,1
+qc4R-ozZWWs,11449600,11505760,low volume cymbals this company stands,1,1
+qc4R-ozZWWs,12371184,12418720,companies that make low volume cymbals,1,1
+qc4R-ozZWWs,12475840,12534880,start making low volume cymbals they,1,1
+qc4R-ozZWWs,12754400,12813920,true low volume symbols theyre not,1,1
+qc4R-ozZWWs,13350080,13420160,volume but it still retains all of the,1,1
+qc4R-ozZWWs,13490720,13549760,sounding like the low volume symbols and,1,1
+qc4R-ozZWWs,13549760,13617440,regular symbols and low volume so its,1,1
+qc4R-ozZWWs,13757600,13811840,volume symbol round up video hope you,1,1
+CYaADg5NfEw,35040,105104,looking at surface area to volume ratio,1,1
+CYaADg5NfEw,105104,183360,and how to calculate it then volume and,1,1
+CYaADg5NfEw,281744,337440,area to volume ratio is important and,1,1
+CYaADg5NfEw,1069440,1202400,that is exposed to other things volume,1,1
+CYaADg5NfEw,1386720,1503360,volume of a cube is the size cubed,1,1
+CYaADg5NfEw,1712640,1789904,and volume and then we can put them into,1,1
+CYaADg5NfEw,2199680,2303040,centimeters cubed now as far as volume,1,1
+CYaADg5NfEw,2534880,2706240,so in our surface area to volume ratio,1,1
+CYaADg5NfEw,2706240,2820960,volume of one okay so this is the basic,1,1
+CYaADg5NfEw,3094400,3209760,to work out the volume we times the,1,1
+CYaADg5NfEw,3289760,3456000,making our surface area to volume ratio,1,1
+CYaADg5NfEw,3847680,4057760,makes 54 centimeters cubed our volume is,1,1
+CYaADg5NfEw,4156304,4276160,volume ratio of this cube is going to be,1,1
+CYaADg5NfEw,4372640,4459520,to work out volume and how to put that,1,1
+CYaADg5NfEw,4401920,4499360,into a surface area to volume ratio okay,1,1
+CYaADg5NfEw,4668800,4741280,volume ratio decreases okay so now that,1,1
+CYaADg5NfEw,4741280,4786400,volume ratio is and how to calculate it,1,1
+CYaADg5NfEw,4786400,4863680,so remember i said that the volume is,1,1
+CYaADg5NfEw,5138240,5217920,smaller the surface area to volume ratio,1,1
+CYaADg5NfEw,5346080,5429600,volume more actual things that need,1,1
+CYaADg5NfEw,5751680,5841920,to volume ratio another place that,1,2
+CYaADg5NfEw,5803360,5889440,surface area to volume ratio comes up in,1,1
+CYaADg5NfEw,6808800,6899040,fairly small volume inside those discs,1,1
+CYaADg5NfEw,7115520,7181760,theres not a lot of volume between that,1,1
+CYaADg5NfEw,7236480,7294080,to volume ratio comes up and this is,1,1
+CYaADg5NfEw,7445280,7534080,surface area for a fixed volume the,1,1
+CYaADg5NfEw,7692480,7765440,the volume the same so therefore theres,1,1
+CYaADg5NfEw,8013600,8089760,an object weve talked about the volume,1,1
+CYaADg5NfEw,8176320,8265584,area to volume ratio how to calculate it,1,1
+CYaADg5NfEw,8308800,8389920,volume ratio gets smaller and the,1,1
+CYaADg5NfEw,8582880,8684144,volume ratio within organelles such as,1,1
+CYaADg5NfEw,8770560,8865600,area to volume ratio that is done by,1,1
+VB7vI9OT-WQ,24480,101280,kubernetes volumes for lots of really,1,1
+VB7vI9OT-WQ,141584,206400,problem does occur burn eddies volume,1,1
+VB7vI9OT-WQ,635360,730064,and although we are calling it a volume,1,1
+VB7vI9OT-WQ,958560,1036784,ephemeral unless you create a volume so,1,1
+VB7vI9OT-WQ,1036784,1123664,volumes and were going to start with,1,2
+VB7vI9OT-WQ,1077120,1159664,the empty volume empty der as its called,1,1
+VB7vI9OT-WQ,1249904,1320960,the contents that you want in a volume,1,1
+VB7vI9OT-WQ,1667520,1747664,definitions youll have a volumes,1,1
+VB7vI9OT-WQ,1828320,1892144,volume amounts now the mounts will do,1,1
+VB7vI9OT-WQ,1946384,2012144,whatever volumes are listed here and,1,1
+VB7vI9OT-WQ,2354400,2423024,cloud volumes and by cloud volumes im,2,2
+VB7vI9OT-WQ,2423024,2494544,similar volume with cloud volumes youre,2,2
+VB7vI9OT-WQ,2645744,2712480,theres the pod heres the volume mounts,1,1
+VB7vI9OT-WQ,2786880,2861264,block search the volume id and the fs,1,1
+VB7vI9OT-WQ,2957104,3037440,meaning you need to know the volume id,1,1
+VB7vI9OT-WQ,3163184,3243344,called a persistent volume claim or pvc,1,1
+VB7vI9OT-WQ,3333584,3427184,connect a volume over nfs at the pod,1,1
+VB7vI9OT-WQ,3471344,3558224,that the volume is still available its,1,1
+VB7vI9OT-WQ,3673920,3747824,persistent volume climb so even their,1,1
+VB7vI9OT-WQ,3782400,3895664,persistent volume climb so what is that,1,1
+VB7vI9OT-WQ,4040960,4114080,backend storage volumes now the,1,1
+VB7vI9OT-WQ,4156304,4236000,subtraction and still get to the volume,1,1
+VB7vI9OT-WQ,4281120,4354560,for federation where your volumes can,1,1
+VB7vI9OT-WQ,4416480,4524800,now those are the main kubernetes volume,1,1
+j9xtdm-GQ4Y,31612640,31703360,way through volume 2 were right for you,1,2
+j9xtdm-GQ4Y,31653920,31738880,you watch the volume 2 thats dumb sorry,1,1
+Jgz4gRz4I3o,59024,111360,learn about is the finite volume method,1,1
+Jgz4gRz4I3o,111360,143360,volume approach im not sure why but,1,1
+Jgz4gRz4I3o,378560,564800,method over here and the finite volume,1,1
+Jgz4gRz4I3o,1267200,1366080,in the finite volume method instead of,1,1
+Jgz4gRz4I3o,1408320,1520144,the finite volume approach is we,1,1
+Jgz4gRz4I3o,2004000,2089904,volume approach and the second thing,1,1
+Jgz4gRz4I3o,2136960,2209440,of the finite volume approach like why,1,1
+Jgz4gRz4I3o,2889104,2975520,the finite volume approach its not as,1,1
+Jgz4gRz4I3o,3509744,3568784,derivation and the finite volume,1,1
+Jgz4gRz4I3o,4429920,4572480,volume approach we are going to chop out,1,1
+Jgz4gRz4I3o,4491840,4659360,the entire volume right here around this,1,1
+Jgz4gRz4I3o,14068960,14121760,volume method as opposed to the finite,1,1
+Jgz4gRz4I3o,14121760,14224000,actually using a set volume and were,1,1
+Jgz4gRz4I3o,14224000,14300304,out of this of this volume we showed a,1,1
+hC6zx9WAiC4,14400,66240,lets think a little bit about the volume of a cone,1,1
+hC6zx9WAiC4,593600,655040,to think about when we want to know what the volume of a cone,1,1
+hC6zx9WAiC4,1103040,1157600,and the formula for the volume of a cone and its,1,1
+hC6zx9WAiC4,1157600,1204960,interesting because its close to the formula for the volume,1,1
+hC6zx9WAiC4,1671360,1735360,that would give you the volume of an entire cylinder that,1,1
+hC6zx9WAiC4,1765440,1826112,so this would give you this entire volume,1,1
+hC6zx9WAiC4,1971360,2007360,h or h times pi r squared its the volume,1,1
+hC6zx9WAiC4,2208000,2265760,is 13 the volume of this cylinder that is essentially,1,1
+hC6zx9WAiC4,2513280,2567520,for me the volume of a cylinder is very intuitive,1,1
+hC6zx9WAiC4,2659360,2703360,and so the volume of a cone is just 13 of that,1,1
+hC6zx9WAiC4,2703360,2761360,its just 13 the volume of the bounding cylinder,1,1
+hC6zx9WAiC4,3466560,3550080,the volume which is 131 cubic centimeters,1,1
+KGdR5kay5ZE,8984320,9083200,volume and bass in the year so pretty,1,1
+uLUpB2JcrIs,89120,163984,all about volume pots and exactly how,1,1
+uLUpB2JcrIs,215840,293584,exactly how the volume pot works well,1,1
+uLUpB2JcrIs,355024,442400,volume pot and why does it operate the,1,2
+uLUpB2JcrIs,394864,468800,way it does so to understand a volume,1,1
+uLUpB2JcrIs,2676000,2765280,turn a pot into a volume pot we have to,1,1
+uLUpB2JcrIs,2815200,2911200,that your volume pot we always ground,1,1
+uLUpB2JcrIs,3123840,3196320,the way open weve got full volume,1,1
+uLUpB2JcrIs,3259200,3341280,got all volume or output of those,1,2
+uLUpB2JcrIs,3293280,3381920,pickups coming out of that volume pot,1,1
+uLUpB2JcrIs,3965280,4040000,volume pot in reality youre never,1,1
+uLUpB2JcrIs,4007520,4079520,really turning up or down the volume,1,1
+uLUpB2JcrIs,4211520,4274704,all it takes to make a volume pot and,1,1
+uLUpB2JcrIs,4745584,4813760,they are in a volume pot i appreciate,1,1
+7iPytsz_o4U,174720,247680,volume to hair volume is just so,2,2
+7iPytsz_o4U,486720,574080,volume does is you look area you look,1,1
+7iPytsz_o4U,1205760,1280640,volume to the hair all i use is a,1,1
+7iPytsz_o4U,1947520,2047840,with incredible volume so pretty awesome,1,1
+7iPytsz_o4U,2576784,2656960,that volume so say the hair on this side,1,1
+7iPytsz_o4U,3364960,3422560,round brush the bigger the volume and,1,1
+7iPytsz_o4U,3483040,3560304,volume at the root if you use this big,1,1
+7iPytsz_o4U,4405120,4498240,volume you dont need to like whine the,1,1
+7iPytsz_o4U,5668480,5752000,volume is to not blow dry with the part,1,1
+7iPytsz_o4U,5808640,5883840,never going to get as much volume so,1,1
+7iPytsz_o4U,8886880,9006384,trick to get the best volume but i just,1,1
+7iPytsz_o4U,9244464,9327040,worry so much about the volume on this,1,1
+7iPytsz_o4U,9355344,9412464,that the only way you can add volume to,1,1
+7iPytsz_o4U,9561264,9636160,the volume on the hair down here all we,1,1
+7iPytsz_o4U,10558560,10616960,gotten a lot more volume,1,1
+7iPytsz_o4U,11413440,11494560,to add volume we want no weight to the,1,1
+7iPytsz_o4U,11704800,11781120,voom of volume so im going to go in,1,1
+7iPytsz_o4U,12787680,12849600,little volume to your hair and you will,1,1
+-ZDt4ax8U-A,58864,164000,finding volume or measuring volume and,2,3
+-ZDt4ax8U-A,112160,200000,to find volume we use graduated,1,1
+-ZDt4ax8U-A,246560,365584,a beaker has volume marks on it but its,1,1
+-ZDt4ax8U-A,365584,481744,a volume correctly we need to use a,1,1
+-ZDt4ax8U-A,505744,618064,finding volume and a graduated cylinder,1,1
+BTyQj39ZbMs,206400,276464,learn how to calculate pressure volume,1,2
+BTyQj39ZbMs,229440,308464,work pressure volume work is done,1,2
+BTyQj39ZbMs,276464,373904,whenever you have a volume change,1,1
+BTyQj39ZbMs,373904,431520,if you have an increase in volume thats,1,1
+BTyQj39ZbMs,431520,495360,decrease in volume thats called a,1,1
+BTyQj39ZbMs,807360,882720,it takes advantage of pressure volume,1,1
+BTyQj39ZbMs,1736640,1784144,to consider the volume of those,1,1
+BTyQj39ZbMs,1972320,2040960,volume of these cylinders so in this,1,1
+BTyQj39ZbMs,2104800,2164800,the volume of that cylinder and,1,1
+BTyQj39ZbMs,2164800,2243520,its going to expand the volume of that,1,1
+BTyQj39ZbMs,2778240,2852960,very small volume and it has a whole lot,1,1
+BTyQj39ZbMs,3111840,3186240,explosion is going to expand the volume,1,1
+BTyQj39ZbMs,3633600,3716640,pressure volume work and again were,1,1
+BTyQj39ZbMs,4408000,4503520,volume of the cylinder and thats a lot,1,1
+BTyQj39ZbMs,6207040,6310720,change in volume and so under conditions,1,1
+BTyQj39ZbMs,6368144,6448320,pressure and we know the volume change,1,1
+BTyQj39ZbMs,6624464,6701280,change in volume of that cylinder,1,1
+BTyQj39ZbMs,7424144,7516800,volume work so it says to calculate the,1,1
+BTyQj39ZbMs,7850384,7939184,is simply going to be the final volume,1,2
+BTyQj39ZbMs,7878064,7965584,minus the initial volume delta anything,1,1
+yvMMsfkO25I,168480,248144,take in forestry is a measure of volume,1,2
+yvMMsfkO25I,206400,288480,could be the volume of an individual,1,2
+yvMMsfkO25I,248144,356160,tree the volume per acre or the in,1,2
+yvMMsfkO25I,288480,390720,volume of entire woods and we can speak,1,2
+yvMMsfkO25I,356160,455040,in terms of volume from a standpoint of,1,1
+yvMMsfkO25I,555360,638384,the common way that we speak of volume,1,1
+yvMMsfkO25I,1894544,1984320,of this tree the volume measure you have,1,1
+yvMMsfkO25I,2031840,2112480,were determining sawtimber volume like,1,1
+yvMMsfkO25I,2379200,2487200,volume tables and some are printed out,1,1
+yvMMsfkO25I,2589920,2665280,different ways of estimating that volume,1,1
+yvMMsfkO25I,2665280,2762240,used to estimate that volume to the most,1,1
+yvMMsfkO25I,3136160,3234080,this tree scale stick which has a volume,1,1
+yvMMsfkO25I,3952640,4046240,scale stick has the volume in the the,1,2
+yvMMsfkO25I,4006880,4088480,doyle boardfoot volume for trees of a,1,1
+tJiakVgAtn4,118864,206400,shrink volumes on your hard drive to,1,1
+tJiakVgAtn4,769920,895040,shrink volume im going to shrink it by,1,1
+tJiakVgAtn4,1085280,1146720,hit new simple volume im going to get a,1,1
+tJiakVgAtn4,1360784,1424144,going to go ahead and format the volume,1,1
+tJiakVgAtn4,1472144,1549904,can see i have the new f volume here now,1,1
+tJiakVgAtn4,1712640,1784640,hit delete volume so i say are you sure,1,1
+tJiakVgAtn4,1901760,2005440,i cannot expand the volume right now i,1,1
+tJiakVgAtn4,2138240,2203520,stand the volume im gonna get another,1,1
+aHYcuCa6o9c,383520,449760,theyre the mega volume line im so,1,1
+aHYcuCa6o9c,472320,528944,easy to apply compared to regular volume,1,1
+aHYcuCa6o9c,1033904,1093440,struggle with doing the volume fans for,1,1
+aHYcuCa6o9c,1292144,1360320,type of volume eye lashes and these new,1,1
+aHYcuCa6o9c,2089600,2223200,volume i wash okay here yeah im also,1,0
+aHYcuCa6o9c,2383520,2497280,mink volume eyelashes doesnt matter,1,2
+aHYcuCa6o9c,2430080,2531360,what brand and our brand mega volume new,1,1
+aHYcuCa6o9c,2645600,2712320,volume eyelashes and the,1,1
+aHYcuCa6o9c,2712320,2816000,brandon mega volume minka sorry theres,1,2
+aHYcuCa6o9c,2779040,2841440,no mink but theyre the mega mega volume,1,1
+aHYcuCa6o9c,2876960,2958080,between picking up a regular volume,1,2
+aHYcuCa6o9c,2918720,2997920,eyelash and the new mega volume ones and,1,1
+aHYcuCa6o9c,3733760,3823520,volume blush i just grabbed it by the,1,1
+aHYcuCa6o9c,7947840,8051504,mega volume the plus curl for her in,1,1
+E8uGIeiaaUQ,1912784,2013120,volume to store the data in between our,1,1
+E8uGIeiaaUQ,4175040,4300160,volume claim so we can kubb ctl delete f,1,1
+E8uGIeiaaUQ,4484160,4600640,persistent volume claim so this will,1,1
+E8uGIeiaaUQ,4630400,4843680,volume claim metadata for the name were,1,1
+E8uGIeiaaUQ,5017440,5104320,persistent volume claim theres only one,1,1
+E8uGIeiaaUQ,5700480,5760480,create our persistent volume claim but,1,1
+E8uGIeiaaUQ,5842080,6000320,volume mounts give only need one right,1,1
+E8uGIeiaaUQ,6198224,6343504,volume and docker compose so lets go,1,1
+E8uGIeiaaUQ,6463184,6567664,volumes and were going to create one,1,1
+E8uGIeiaaUQ,6621424,6803984,volume claim is going to have the claim,1,1
+E8uGIeiaaUQ,6833760,6907184,persistent volume claim that specifies,1,1
+E8uGIeiaaUQ,6993104,7053104,volume is going to set up this,1,2
+E8uGIeiaaUQ,7020944,7083344,persistent volume claim when we spin it,1,1
+E8uGIeiaaUQ,7083344,7167344,not actually a persistent volume for me,1,1
+E8uGIeiaaUQ,7560464,7613264,persistent volume claim lets take a,1,1
+E8uGIeiaaUQ,7678064,7807184,we can say pvc for persistent volume,1,1
+E8uGIeiaaUQ,7861904,7928144,used in this particular volume it has,1,1
+E8uGIeiaaUQ,8019824,8115840,successfully provisioned volume and then,1,1
+E8uGIeiaaUQ,8115840,8201760,and look at persistent volumes if we,1,1
+E8uGIeiaaUQ,8232960,8282880,persistent volume so even though it says,1,2
+E8uGIeiaaUQ,8268960,8318880,volume up here,1,2
+E8uGIeiaaUQ,8282880,8352464,that doesnt mean volume like we would,1,1
+E8uGIeiaaUQ,8352464,8410560,persistent volume in kubernetes land and,1,1
+E8uGIeiaaUQ,12064464,12136000,set up a volume using a persistent,1,2
+E8uGIeiaaUQ,12100000,12181120,volume claim and although it set up the,1,2
+E8uGIeiaaUQ,12136000,12210384,volume for us behind the scenes it still,1,1
+dTsUyXXudvA,104896,149120,is this change in volume going up in volume,2,2
+dTsUyXXudvA,149120,172800,or going down in volume,1,1
+dTsUyXXudvA,3437120,3499040,like when i say you have more volume in the lungs,1,1
+dTsUyXXudvA,5838720,5874032,for why the volume goes back down,1,1
+dTsUyXXudvA,6157360,6206400,that you have a nice big volume whats going to happen,1,1
+dTsUyXXudvA,6829600,6870080,inhaling the way that we actually increase the volume,1,1
+dTsUyXXudvA,7210880,7268960,and to exhale when you reduce the volume,1,1
+aFAk8JA4-d8,211200,304320,volume so like between cubic feet and,1,1
+aFAk8JA4-d8,3033120,3146880,lets look at units of volume what is,1,1
+aFAk8JA4-d8,5222560,5325760,area or cubed units of volume so just as,1,1
+lg4ObZR5Pyo,90240,186224,talking about volume trading and volume,2,3
+lg4ObZR5Pyo,123360,215040,and practicing how to trade volume to,1,2
+lg4ObZR5Pyo,186224,236944,start off with what is volume for those,1,1
+lg4ObZR5Pyo,236944,297120,so volume represents the number of,1,1
+lg4ObZR5Pyo,438240,516464,right below that if you have volume,1,1
+lg4ObZR5Pyo,867360,967184,start off with what how good volume is,1,2
+lg4ObZR5Pyo,917264,1035360,volume has many pros and really not too,1,1
+lg4ObZR5Pyo,1035360,1095360,things about about volume or you said is,1,1
+lg4ObZR5Pyo,1354544,1439520,whereas volume is going to be using info,1,1
+lg4ObZR5Pyo,1970880,2043840,types of volume spikes that i have,1,1
+lg4ObZR5Pyo,2176320,2238720,common volume is bike that youve,1,1
+lg4ObZR5Pyo,3243200,3331200,identifying these types of volume spikes,1,1
+lg4ObZR5Pyo,3331200,3388800,is strong continuation volume and i said,1,1
+lg4ObZR5Pyo,3468480,3533760,also known as basing volume because its,1,1
+lg4ObZR5Pyo,3501600,3562560,the volume at the base of a trend and,1,1
+lg4ObZR5Pyo,3666720,3728640,volume spike that indicates oversold and,1,1
+lg4ObZR5Pyo,3809760,3880800,very strong volume in the direction,1,1
+lg4ObZR5Pyo,4161440,4239040,volume in the direction of that reversal,1,1
+lg4ObZR5Pyo,4286560,4327840,volume spike that indicates that a,1,1
+lg4ObZR5Pyo,4504000,4563520,high volume you need to see a volume,2,2
+lg4ObZR5Pyo,4947520,5027680,volume is this and if i told you that,1,1
+lg4ObZR5Pyo,5092000,5184160,volume is this as well right here,1,1
+lg4ObZR5Pyo,5245120,5338240,reason i say this is oversold volume is,1,2
+lg4ObZR5Pyo,5270080,5350720,a few reasons a volume spike which means,1,1
+lg4ObZR5Pyo,5350720,5405920,these three because volume is clearly,1,1
+lg4ObZR5Pyo,6699680,6758720,is overbought volume right here you see,1,1
+lg4ObZR5Pyo,7171040,7248800,question is this what type of volume is,1,1
+lg4ObZR5Pyo,7528160,7589600,after a volume spike that breaks above,1,1
+lg4ObZR5Pyo,7678704,7751840,very strong volume as well and we were,1,1
+lg4ObZR5Pyo,8168000,8240000,you can see here we have a volume spike,1,1
+lg4ObZR5Pyo,8198240,8269760,this is very clear breakout volume right,1,1
+lg4ObZR5Pyo,8240000,8304320,here strong momentum strong volume above,1,1
+lg4ObZR5Pyo,8730240,8824800,types of volume again and this guy so,1,1
+lg4ObZR5Pyo,8824800,8916000,volume is this and would you buy or sell,1,1
+lg4ObZR5Pyo,8916000,8991344,this is very clear breakout volume this,1,1
+lg4ObZR5Pyo,9182880,9271200,support on very high volume i mean this,1,1
+lg4ObZR5Pyo,9793920,9860640,such high volume the reason correctly,1,1
+lg4ObZR5Pyo,10138080,10212000,three types of volume is this and do you,1,1
+lg4ObZR5Pyo,10308464,10377600,downtrend volume spike here that,1,1
+lg4ObZR5Pyo,10575344,10618080,continuation volume and again what i had,1,1
+lg4ObZR5Pyo,10759184,10834080,volume not yet because price is not,1,1
+lg4ObZR5Pyo,10834080,10903040,is clearly not overbought volume it,1,1
+lg4ObZR5Pyo,11276144,11337600,breakout volume youre kind of right but,1,1
+lg4ObZR5Pyo,11396144,11467184,get another volume spike the propels,1,1
+lg4ObZR5Pyo,11467184,11556960,continuation volume now one little,1,1
+lg4ObZR5Pyo,11654384,11721600,can do is actually look at volume and,1,1
+lg4ObZR5Pyo,11830560,11908800,significant volume spike just a minor,1,2
+lg4ObZR5Pyo,11864640,11928464,volume spike and what i mean by that is,1,1
+lg4ObZR5Pyo,11928464,11997104,moving average this volume spike looks,1,1
+lg4ObZR5Pyo,12036960,12121424,to have much higher volume than that so,1,1
+lg4ObZR5Pyo,12207840,12275024,look at volume to distinguish why we,1,1
+lg4ObZR5Pyo,12275024,12338384,dont really see significant volume at,1,1
+lg4ObZR5Pyo,12338384,12421920,volume here yes we see about i would say,1,1
+lg4ObZR5Pyo,12421920,12501104,here of a volume spike here had a price,1,1
+lg4ObZR5Pyo,12652304,12739680,trading volume and this one is a little,1,1
+lg4ObZR5Pyo,12758880,12831360,market so this is called trending volume,1,1
+lg4ObZR5Pyo,13050720,13119840,volume trending right here and what i,1,1
+lg4ObZR5Pyo,13096320,13151040,mean by that is dont look at volume,1,2
+lg4ObZR5Pyo,13119840,13176000,spikes dont look at specific volume,1,1
+lg4ObZR5Pyo,13176000,13243680,of the overall volume and then compare,1,1
+lg4ObZR5Pyo,13433280,13502384,we have a volume that is increasing you,1,1
+lg4ObZR5Pyo,13474080,13527200,can pretty clearly see that volume is,1,1
+lg4ObZR5Pyo,13527200,13607840,and then we have a volume spike,1,1
+lg4ObZR5Pyo,13607840,13683344,but notice that the lack of volume is,1,1
+lg4ObZR5Pyo,13807200,13857120,its volume increasing during the,1,2
+lg4ObZR5Pyo,13824000,13880640,uptrend and why is volume decreasing,1,1
+lg4ObZR5Pyo,13906560,13991520,how can i use this volumes increasing,1,1
+lg4ObZR5Pyo,14646720,14724000,at the volume that volume was increasing,2,2
+lg4ObZR5Pyo,14724000,14812800,downtrend and theres a volume spike,1,1
+lg4ObZR5Pyo,14902064,14974864,volume patterns when you look at the,1,1
+lg4ObZR5Pyo,14974864,15092144,kind of the shrinking volume that occurs,1,1
+lg4ObZR5Pyo,15245744,15347984,analyzing some volume so im just gonna,1,1
+lg4ObZR5Pyo,15517424,15567824,volume right here and you probably would,1,1
+lg4ObZR5Pyo,15858224,15914384,significant volume spike thats much,1,1
+lg4ObZR5Pyo,15914384,15999344,volume moving average of 10 as you can,1,1
+lg4ObZR5Pyo,16127984,16249904,sold and yeah we see oversold volume,1,1
+lg4ObZR5Pyo,16341104,16414544,break out volume as you can see here,1,1
+lg4ObZR5Pyo,16414544,16495680,level on a very high volume which,1,1
+lg4ObZR5Pyo,16551840,16632000,continuation volume thats not,1,1
+lg4ObZR5Pyo,16632000,16699184,some good continuation volume here let,1,1
+lg4ObZR5Pyo,16699184,16755344,good examples of continuation volume,1,2
+lg4ObZR5Pyo,16721760,16784624,here not really significant volume,1,1
+lg4ObZR5Pyo,16815360,16874864,volume here with that candlestick then,1,2
+lg4ObZR5Pyo,16847520,16904144,these cal sticks have significant volume,1,1
+lg4ObZR5Pyo,16989600,17044640,continuation volume as well because,1,1
+lg4ObZR5Pyo,17110880,17279840,volume that occurred with a bit of an,1,1
+lg4ObZR5Pyo,17391200,17490080,here look at volume what is volume doing,2,2
+lg4ObZR5Pyo,17490080,17594720,nothing volume is like flat and even,1,1
+lg4ObZR5Pyo,17594720,17662400,volume volume divergence and i think i,2,2
+lg4ObZR5Pyo,17744960,17847200,volume and as price is very slowly going,1,1
+lg4ObZR5Pyo,17847200,17922560,volume spike at a resistance level and,1,1
+lg4ObZR5Pyo,18014240,18134240,how to trade volume we went over using,1,3
+lg4ObZR5Pyo,18080320,18184640,volume spikes we went over volume spikes,2,3
+lg4ObZR5Pyo,18134240,18203360,we went over volume trends and what,1,1
+lg4ObZR5Pyo,18302720,18366080,you have any questions about volume,1,1
+9VdHhD1vcDU,102560,210080,important lung volumes and then talk,1,1
+9VdHhD1vcDU,936784,1019824,displacement of air volume during,1,1
+9VdHhD1vcDU,1058720,1153280,volumes using the alveoli as an example,1,1
+9VdHhD1vcDU,1183520,1273120,volumes were going to talk about the,1,2
+9VdHhD1vcDU,1226240,1326560,lung volume of a typical adult male,1,1
+9VdHhD1vcDU,1550240,1640000,the tidal volume typical values of the,1,2
+9VdHhD1vcDU,1594880,1721120,tidal volume are on the order of 500 to,1,1
+9VdHhD1vcDU,1773440,1872160,volume of air in our lungs can increase,1,1
+9VdHhD1vcDU,1828000,1915520,this is the inspiratory reserve volume,1,1
+9VdHhD1vcDU,1958240,2081104,tunnel volume typically the inspiratory,1,2
+9VdHhD1vcDU,1997600,2103200,reserve volume is about three liters so,1,1
+9VdHhD1vcDU,2103200,2193440,important lung volumes here again is,1,2
+9VdHhD1vcDU,2155520,2248960,an example of your tidal volume and this,1,2
+9VdHhD1vcDU,2193440,2248960,is your inspiratory reserve volume,1,1
+9VdHhD1vcDU,2413760,2499680,to the tidal volume is the experi,1,2
+9VdHhD1vcDU,2444960,2578400,reserve volume this is typically 15,1,1
+9VdHhD1vcDU,2578400,2669584,is always an amount of air or volume,1,1
+9VdHhD1vcDU,2731520,2829920,volume and is about one liter,1,2
+9VdHhD1vcDU,2778400,2860160,when all four of the above of volume,1,1
+9VdHhD1vcDU,3163040,3258080,those four volumes by representing it in,1,2
+9VdHhD1vcDU,3211520,3296000,a graph because these volumes have,1,1
+9VdHhD1vcDU,3357920,3482080,is the lung volume in mil remember our,1,2
+9VdHhD1vcDU,3421264,3560000,total lung volume is about 6 litres to,1,1
+9VdHhD1vcDU,3680480,3767344,volume obviously and going down the,1,1
+9VdHhD1vcDU,3767344,3858080,decreasing our lung volume which kind of,1,1
+9VdHhD1vcDU,3934880,4046560,volumes if you remember the amount of,1,1
+9VdHhD1vcDU,4085584,4214080,our tidal volume typically five hundred,1,1
+9VdHhD1vcDU,4474560,4575840,is the inspiratory reserve volume and,1,1
+9VdHhD1vcDU,4575840,4700640,the tidal volume dont worry here i drew,1,1
+9VdHhD1vcDU,4821600,4915200,volume and then we have a maximal,1,1
+9VdHhD1vcDU,4915200,4997120,reserve volume typically 15 liters,1,1
+9VdHhD1vcDU,5109584,5230544,volume which is about one liter so an,1,1
+9VdHhD1vcDU,5420624,5505104,about those four lung volumes there are,1,1
+9VdHhD1vcDU,5604480,5714224,graph containing the lung volumes again,1,1
+9VdHhD1vcDU,5836320,5947184,volume about five hundred mils or 05,1,1
+9VdHhD1vcDU,5994224,6090064,tidal volume is the inspiratory reserve,1,2
+9VdHhD1vcDU,6024464,6163664,volume which is typically three liters,1,2
+9VdHhD1vcDU,6090064,6191504,the volume expelled by an active experia,1,1
+9VdHhD1vcDU,6191504,6274544,expiratory reserve volume which is about,1,1
+9VdHhD1vcDU,6350880,6487184,volume about one liter as well the vital,1,1
+9VdHhD1vcDU,6583664,6689280,essentially the tidal volume plus the,1,2
+9VdHhD1vcDU,6638704,6742544,inspiratory reserve volume plus the,1,2
+9VdHhD1vcDU,6689280,6771360,expiratory reserve volume these three,1,1
+9VdHhD1vcDU,7025280,7132144,inspiratory reserve volume plus the,1,2
+9VdHhD1vcDU,7092000,7132144,tidal volume,1,1
+9VdHhD1vcDU,7237440,7329104,volume represents the volume of air,2,2
+9VdHhD1vcDU,7380800,7499040,essentially the residual volume plus the,1,2
+9VdHhD1vcDU,7444320,7563360,expiratory reserve volume and the amount,1,1
+9VdHhD1vcDU,7617104,7717440,the lung volumes essentially and this is,1,1
+9VdHhD1vcDU,7846080,7917104,understanding of the lung volumes and,1,1
+OEJcj-RMp3k,7041440,7124960,read volume which is oh yeah,1,1
+AS3BpGXnhBk,1935984,2025264,enough volume at the right intensity for,1,1
+AS3BpGXnhBk,2160160,2249920,60 now volume refers to the amount of,1,2
+AS3BpGXnhBk,2209104,2284000,reps youre doing volume can be,1,1
+AS3BpGXnhBk,2320960,2393440,eight reps volume can be increased by,1,1
+AS3BpGXnhBk,2393440,2464480,versus five six five and volume can be,1,1
+AS3BpGXnhBk,2515360,2600320,at volume in a workout 3 sets of 5 is 15,1,2
+AS3BpGXnhBk,2566720,2650240,total reps or you can look at volume an,1,1
+AS3BpGXnhBk,2701120,2772160,really measure the value of volume,1,1
+AS3BpGXnhBk,2882560,2962720,gonna get paired volume reps and,1,1
+AS3BpGXnhBk,3460480,3522400,entire training block and volume in,1,1
+AS3BpGXnhBk,8276320,8380960,times the volume at a 5 percent higher,1,1
+AS3BpGXnhBk,8537440,8614720,still 25 times the volume at about 5,1,1
+AS3BpGXnhBk,8675200,8746720,numbers im just gonna list total volume,1,1
+AS3BpGXnhBk,8777440,8856640,gonna notice that my pressing volume is,1,1
+AS3BpGXnhBk,8926240,9003520,more volume intensity and frequency for,1,1
+AS3BpGXnhBk,9392800,9467680,or even less volume and frequency than,1,1
+AS3BpGXnhBk,9662080,9735040,more pressing volume than you think if,1,1
+AS3BpGXnhBk,10440160,10519344,dental volume at a 5 percent higher,1,1
+AS3BpGXnhBk,10519344,10590384,the good stuff pressing volume im gonna,1,1
+AS3BpGXnhBk,11903040,11976144,my pressing volume last year on five,1,1
+AS3BpGXnhBk,12396640,12494560,volume at almost eight percent higher,1,1
+AS3BpGXnhBk,12995680,13099344,here increasing your exposure to volume,1,1
+nZkTyN7sPeE,36000,113744,control volume settings on your pixel,1,2
+nZkTyN7sPeE,70080,146400,phone to change the volume for what,1,2
+nZkTyN7sPeE,113744,211200,youre currently doing press volume up,1,2
+nZkTyN7sPeE,146400,220304,or volume down to turn on vibrations tap,1,1
+nZkTyN7sPeE,378720,453584,volumes tap settings,1,1
+J4LzSt3FVxY,2376480,2469440,with my hands to try to keep the volume,1,1
+AeBSwmIEISk,1048304,1145760,hair salons is giving it volume and i,1,1
+AeBSwmIEISk,1194720,1249440,roots on volume so youre going to see,1,1
+AeBSwmIEISk,1369904,1470240,that very nice volume when it falls down,1,1
+AeBSwmIEISk,3201760,3265120,that this gives it a lot of volume and,1,1
+AeBSwmIEISk,4840000,4926400,volume and you want to make sure your,1,1
+AeBSwmIEISk,5128480,5214880,it volume as you see lifting it up and i,1,1
+AeBSwmIEISk,6966880,7018560,volume before i move on,1,1
+AeBSwmIEISk,7739520,7847840,trying to lift it give it volume and im,1,1
+AeBSwmIEISk,8064480,8119520,have that extra volume,1,1
+AeBSwmIEISk,8587840,8659840,volume and as soon as i take the hair,1,2
+AeBSwmIEISk,8625760,8752960,tie you see all the movement and volume,1,1
+AeBSwmIEISk,8926224,9005920,really all about movement and volume and,1,1
+AeBSwmIEISk,9220464,9309600,volume but really i could already be,1,1
+AeBSwmIEISk,10051840,10176160,lot of movement and volume okay guys so,1,1
+wdr2Kx6tdd8,492464,594560,bam mr tarrou in this lesson we are going to learn another technique for finding volumes,1,1
+wdr2Kx6tdd8,681120,743360,of the video what we are going to be doing is comparing how to find these volumes that,1,1
+wdr2Kx6tdd8,895040,1005120,the volume between these two methods we do that because you have a choice as to which,1,1
+wdr2Kx6tdd8,1159840,1209760,words it’s going to be easier to find the volume of that solid depending on whether,1,1
+wdr2Kx6tdd8,1346560,1448160,we have already talked about how to find volumes using the disk method now one thing to pay,1,1
+wdr2Kx6tdd8,1448160,1513120,attention to now that we are going to start the comparison is when you are finding volumes,1,1
+wdr2Kx6tdd8,1600000,1725120,creates these disks that we use to estimate the volumes is those representative rectangles,1,1
+wdr2Kx6tdd8,2082384,2201456,the volume now if we have that same horizontal axis of rotation you can see with the shell,1,1
+wdr2Kx6tdd8,2498880,2570064,zero we are going to be finding basically again be finding the volume of a cylinder,1,1
+wdr2Kx6tdd8,2652960,2755344,so it’s a shell and really how to find the volume of a shell at least a cylindrical,1,1
+wdr2Kx6tdd8,2755344,2822240,shell is to find the volume of the outside cylinder find the volume of the inside cylinder,2,2
+wdr2Kx6tdd8,3311680,3413440,to approach infinity and giving us a basically exact approximation again of the volume of,1,1
+wdr2Kx6tdd8,3559520,3636640,we are going to have the volume of a shell now i have taken this whatever the blue,1,1
+wdr2Kx6tdd8,3731344,3840960,the volume of a cylinder is pi times the radius squared times the height but we are going,1,1
+wdr2Kx6tdd8,3909280,3999824,the volume of the inside cylinder giving us the shell and we have the height which is,1,1
+wdr2Kx6tdd8,4816000,4952480,when i give us our formal formulas but when we look at all of this we have the volume,1,1
+wdr2Kx6tdd8,5624320,5752144,left with is two of these terms giving me a simplified version of the volume of a shell,1,1
+wdr2Kx6tdd8,6148624,6245280,screen if you have a horizontal axis of rotation then using finding the volume using the shell,1,1
+wdr2Kx6tdd8,6575664,6655840,integrate with respect to y so the volume is equal to 2pi times the definite integral,1,1
+wdr2Kx6tdd8,6945584,7044320,the volume of a cylinder was pi r2 the area of the base times the height but when you,1,1
+wdr2Kx6tdd8,7752800,7857440,a circle its 2 pi r times h so yes we are talking about volumes but with those delta,1,1
+wdr2Kx6tdd8,10166720,10249440,1 find the volume of the solid formed by revolving the region that one about the,1,1
+wdr2Kx6tdd8,10770240,10913104,this up so our volume is going to be equal to let’s see that formula again 2 pi times,1,1
+wdr2Kx6tdd8,14445600,14573120,volume has an area excuse me our volume has a value of 27 pi over 2 cubic units and,2,2
+wdr2Kx6tdd8,15173280,15263040,though so that means that if i am going to go through the process of finding the volume,1,1
+wdr2Kx6tdd8,15263040,15328640,using the disk method which by the way the volume using the disk method is going to be,1,1
+wdr2Kx6tdd8,17597120,17680800,my lower limit now is going to be 1 and upper limit is going to be 4 so my volume is going,1,1
+wdr2Kx6tdd8,18771360,18833440,i am going to pull a clip from an old video where i taught how to find the volume of these,1,1
+wdr2Kx6tdd8,20616160,20692000,hole in iti need to find the volume of the larger disk and then subtract out the volume,2,1
+wdr2Kx6tdd8,23129920,23211200,finding the integral i did the definite integral and came up with the volume of this solid,1,1
+wdr2Kx6tdd8,23454400,23522416,finding the volume of the solid let’s see what it looks like doing it with the shell,1,1
+wdr2Kx6tdd8,27270096,27463680,what you believe is best and easiest it’s the last example find the volume of the solid,1,1
+wdr2Kx6tdd8,28100000,28167840,section of finding volumes using disk and washer method that we have a portion of this,1,1
+wdr2Kx6tdd8,28827200,28946560,going to have a definite integral to represent this volume that looks pretty much something,1,1
+wdr2Kx6tdd8,31784160,31883680,okay so as we set up our definite integral to find the volume of this solid using the,1,1
+wdr2Kx6tdd8,31883680,32074560,shell method well that is going to be the volume is equal to 2 pi times the definite,1,1
+wdr2Kx6tdd8,33908160,33983040,now that we have the definite integral set up for finding volume using the shell method,1,1
+wdr2Kx6tdd8,34405920,34485600,for the solid the volume of this solid which i am pointing to like i drew the three,1,1
+wdr2Kx6tdd8,34485600,34566080,dimensional solid or attempted tobut the volume comes out to be 16 pi over 3 cubic,1,1
+hRyKNLAlPqY,147360,256784,volume to my own hair how to add in yo,1,2
+hRyKNLAlPqY,1735200,1802384,volume my mom gave me this product in a,1,1
+hRyKNLAlPqY,3599200,3664480,for this hairstyle to get more volume in,1,1
+hRyKNLAlPqY,4418400,4476960,volume to my hair and this is how i get,1,1
+x2qhTjWHiVU,79680,132320,and tricks to get more volume in your hair slash hairline,1,1
+x2qhTjWHiVU,1292160,1316960,the volume with be there because your hair,1,1
+x2qhTjWHiVU,7728480,7772112,or you can just like eek the volume up just a little bit,1,1
+x2qhTjWHiVU,8708672,8743520,okay this feels like a ton of volume to me,1,1
+x2qhTjWHiVU,9548960,9602240,and thats it for our weird volume tips and tricks,1,1
+TcxJ3rGJ4jE,2468480,2538064,and volume in your hair really easily,1,1
+TcxJ3rGJ4jE,3152000,3215344,more volume than without and also many,1,1
+TcxJ3rGJ4jE,3348784,3431344,recommend and that is volume mousse and,1,2
+TcxJ3rGJ4jE,3388960,3463040,thickening tonic the volume mousse is,1,1
+TcxJ3rGJ4jE,3463040,3521104,lot of highs and volume because these,1,1
+TcxJ3rGJ4jE,3738064,3799040,exceptionally well in terms of volume,1,1
+TcxJ3rGJ4jE,3963184,4030400,volume as well as the thickening effect,1,1
+TcxJ3rGJ4jE,5758400,5816000,allow you to build as much volume in,1,1
+TcxJ3rGJ4jE,5893760,5991680,build much volume as a result of this i,1,1
+WCiGryNUPZ8,58544,147360,volume and move and shape but it doesnt,1,1
+WCiGryNUPZ8,178080,251504,the steps i take to ensure i have volume,1,1
+WCiGryNUPZ8,816480,880800,hair straight and still have volume in,1,1
+WCiGryNUPZ8,9788464,10067840,the back so lots of volume over here i,1,1
+WCiGryNUPZ8,12301424,12365760,a lot of volume with my hair which is,1,1
+WCiGryNUPZ8,13100144,13206720,opposite i want texture and volume so,1,1
+WCiGryNUPZ8,13325264,13537920,volume a little just a little a lot of,1,1
+WCiGryNUPZ8,13959344,14059184,favorite camera volume 25 i like to,1,1
+WCiGryNUPZ8,14059184,14184000,to add a touch of volume up there and,1,1
+WCiGryNUPZ8,15012000,15054080,some volume up at my root area because,1,1
+WCiGryNUPZ8,15250400,15332480,products help a lot for volume if you,1,1
+WCiGryNUPZ8,15372320,15425600,you can see that you can get volume out,1,1
+WxMah_i6j-M,297440,403184,determining the volume of an ideal gas,1,2
+WxMah_i6j-M,4236320,4406704,were going to measure now the volume of,1,1
+WxMah_i6j-M,5026880,5128624,measurement as the volume of the,1,1
+rC2ibuCRfzo,48000,104320,in this video we get to take a look at what volume is,1,1
+rC2ibuCRfzo,319360,431360,so lets take a closer look at that definition and how we measure such things as volume and you may notice if you look around wherever you happen to be that just about everything youre looking at has three dimensions,1,0
+rC2ibuCRfzo,2894720,2948480,so therefore we say that the volume is 40 cubic cm,1,1
+rC2ibuCRfzo,3184960,3296960,so for any regular space where you can take the measurement of each dimension you can use those measurements to figure out the volume,1,1
+rC2ibuCRfzo,4344640,4456640,well that would give us 70 cubic cm so in doing this what we can do is create markings simply by how high the water is to mark the volume for that height of water or whatever you happen to be filling it with,1,1
+rC2ibuCRfzo,4552640,4611840,and they tell you the volume of a liquid filled to that mark,1,1
+dtgHBVRHI1E,4160,73760,volume of a cone,1,0
+dtgHBVRHI1E,847184,1065136,let us plug in the calculator so 13 x pi x 9 squared x 30 altogether gives us a volume,1,1
+dtgHBVRHI1E,1366560,1618560,the total volume and content and capacity in this solid is –2545cm cube,1,1
+qSU1ON2LPHU,2076320,2151680,in volume when youre off base so were,1,1
+qSU1ON2LPHU,2413920,2506560,the volume factor in that section low,1,1
+qSU1ON2LPHU,10263680,10345264,going to create not that much volume in,1,1
+qSU1ON2LPHU,10345264,10417760,forget that you dont always want volume,1,1
+qSU1ON2LPHU,11180464,11251024,scalp we have a lot of volume coming,1,1
+qSU1ON2LPHU,11251024,11333264,us lift our half off base some volume,1,1
+qSU1ON2LPHU,11399984,11477264,volume with still getting a nice curl,1,1
+-HchPhg4x10,117104,209280,formula for the volume of a sphere which,1,1
+-HchPhg4x10,1546080,1639200,that he already knows what the volume of,1,1
+-HchPhg4x10,1639200,1702544,volume of a cone is he has the formulas,1,1
+-HchPhg4x10,1857120,1920480,able to figure out what the volume of,1,1
+-HchPhg4x10,2253280,2346880,could say that the volume of the,1,1
+-HchPhg4x10,2346880,2437600,volume of the cone is 8 thirds pi r,1,1
+-HchPhg4x10,2499040,2591680,volume of this of the cylinder the,1,1
+-HchPhg4x10,2538400,2622400,volume of the cone here then it becomes,1,1
+-HchPhg4x10,2706400,2799040,volume of a sphere is 43 pi r cubed but,1,1
+f6nUNTfiK5Y,177120,261760,times height gives you the volume of a square pyramid,1,1
+f6nUNTfiK5Y,309440,386880,first well create a pyramid with a square base and fill in its volume,1,1
+f6nUNTfiK5Y,702384,795360,and if the step pyramid has an infinite amount of slices then the volume of the step pyramid,1,1
+f6nUNTfiK5Y,795360,875040,is equal to the volume of the square pyramid,1,1
+f6nUNTfiK5Y,875040,951184,so lets derive a formula for the volume of a step pyramid with an arbitrary amount of,1,1
+f6nUNTfiK5Y,1227360,1309440,so lets take a look at one of the prisms and remember that its volume is equal to length,1,1
+f6nUNTfiK5Y,1478240,1577760,therefore volume is equal to length x length x height,1,1
+f6nUNTfiK5Y,1577760,1654080,so now we have a general formula for volume of a rectangular prism,1,1
+f6nUNTfiK5Y,3312480,3424480,and now the volume of a rectangular prism becomes equal to  ln x ln,1,1
+f6nUNTfiK5Y,3624000,3696640,so in order to find the volume of the step pyramid we simply calculate the volume,2,2
+f6nUNTfiK5Y,3776640,3881920,so lining up the prisms we start from the beginning and we have volume of the step pyramid,1,1
+f6nUNTfiK5Y,4139184,4227040,and we continue this process up until the last prism which has a volume of,1,1
+f6nUNTfiK5Y,4601440,4713440,therefore the volume of the step pyramid is equal to ln squared x hn x the sum of integers,1,1
+f6nUNTfiK5Y,6167520,6279520,and now we have volume of the step pyramid is equal to l2h over 6 times 2 3n  1n2,1,1
+f6nUNTfiK5Y,6452000,6550224,to infinitely many slices therefore the volume of the step pyramid becomes equal to the volume,2,2
+f6nUNTfiK5Y,7524480,7633600,and finally we have 13 area of the base x heigth which gives us the volume of a square,1,1
+SRXAL_gQnug,768032,823392,on his top 10 rules for success volume two,1,1
+SRXAL_gQnug,19789200,19814528,and if you havent checked out volume one,1,1
+AwysSy4scqA,249120,308624,and create some volume lets say that,1,1
+AwysSy4scqA,337904,396960,want some volume on the top what would,1,1
+AwysSy4scqA,655680,736320,sense of volume in terms of bringing,1,1
+AwysSy4scqA,696000,777120,some volume into it without really over,1,1
+AwysSy4scqA,2388480,2463840,volume but also at the same time get,1,1
+AwysSy4scqA,11122720,11275360,how much volume shes getting by simply,1,1
+crJXRGX2hxc,71520,169440,always ask how do i get so much volume,1,1
+crJXRGX2hxc,201584,277904,to create more volume so if you want to,1,1
+crJXRGX2hxc,2141280,2192160,that great volume,1,1
+crJXRGX2hxc,2233920,2302064,hair to get more volume to your roots,1,1
+crJXRGX2hxc,3505440,3583200,volume and it gives it a beautiful,1,1
+crJXRGX2hxc,3855344,3921104,volume so for today i will part my hair,1,1
+crJXRGX2hxc,4119040,4198224,really help to amplify the volume and,1,1
+crJXRGX2hxc,4994080,5051664,top section here where i want the volume,1,1
+crJXRGX2hxc,5363664,5436160,volume as possible so this is what i do,1,1
+crJXRGX2hxc,5501440,5567200,extra hold for your volume just add a,1,1
+crJXRGX2hxc,5897760,5994240,right here out and look at that volume,1,1
+crJXRGX2hxc,5994240,6091680,you have like ten times more volume so,1,1
+crJXRGX2hxc,6308160,6387360,away from my face to add that volume,1,1
+crJXRGX2hxc,6597600,6706080,got let go you see that instant volume,1,1
+crJXRGX2hxc,6797760,6905280,50s housewife the crazy volume in my,1,1
+crJXRGX2hxc,7692000,7767360,volume so tip number eight is where im,1,1
+crJXRGX2hxc,7806240,7881120,hair extra volume and extra hold the,1,1
+crJXRGX2hxc,7966544,8047664,great is because a they give you volume,1,1
+crJXRGX2hxc,8761920,8847840,of hold to my hair a lot of volume and,1,1
+crJXRGX2hxc,9757120,9869440,gives that beautiful volume and it gives,1,1
+crJXRGX2hxc,10141120,10211680,where i want the most volume and i make,1,1
+crJXRGX2hxc,10457440,10532800,so many ways to get more volume in your,1,1
+crJXRGX2hxc,11011840,11074240,maybe tips on how to create more volume,1,1
+JcPlvcfUiNQ,727200,780480,know the on all features and volume,1,1
+JcPlvcfUiNQ,3256160,3327680,your tv set you know the volume and the,1,1
+JcPlvcfUiNQ,3984320,4064800,volume up and then hit volume up,2,2
+JcPlvcfUiNQ,4733920,4857760,do the volume control yeah that works,1,2
+JcPlvcfUiNQ,4809280,4914240,good volume down that works as well all,1,1
+JcPlvcfUiNQ,5269120,5351200,sound volume right here if you want it,1,1
+AB9zpbc8fUE,0,71520,welcome to a lesson on volume volume is a three dimensional measurement that,2,1
+AB9zpbc8fUE,152160,240960,the volume we count the number of unit cubes inside a shape if there are units,1,1
+AB9zpbc8fUE,408320,504320,so remember with area we count unit squares and with volume we count unit cubes,1,1
+AB9zpbc8fUE,624320,675840,for a were asked to find the volume of the cube shown,1,1
+AB9zpbc8fUE,701760,801120,we know all the edges have a length of four inches to determine the volume we,1,1
+AB9zpbc8fUE,801120,880320,need to determine how many cubic inches will fit inside this cube the volume,1,1
+AB9zpbc8fUE,880320,959360,formula for a cube is v equals scubed where v is the volume,1,1
+AB9zpbc8fUE,1016624,1108320,this is the same formula as the volume for a rectangular solid v equals l times w,1,1
+AB9zpbc8fUE,1212000,1348320,lengths are the same so using the volume formula v equals scubed s is equal to four,1,1
+AB9zpbc8fUE,1348320,1495664,inches and therefore the volume v equals the cube of four which is equal to four,1,1
+AB9zpbc8fUE,1740480,1841280,now lets verify that the volume is sixtyfour cubic inches by cutting this cube into,1,1
+AB9zpbc8fUE,2047680,2117760,now that we have the cube cut into cubic inches we can verify that the volume is,1,1
+AB9zpbc8fUE,2226880,2350720,four layers of sixteen cubic inches giving us a total volume of sixtyfour cubic inches for b,1,1
+AB9zpbc8fUE,2350720,2416320,were asked to find the volume of the box with sides of length two feet three feet,1,1
+AB9zpbc8fUE,2579840,2652800,the volume is equal to the number of cubic feet that will fit inside this box,1,1
+AB9zpbc8fUE,2652800,2763840,to determine the volume we can use the volume formula v equals l times w times h,2,2
+AB9zpbc8fUE,2763840,2837440,so the volume is equal to the length times the width times the height which,1,1
+AB9zpbc8fUE,2837440,2960000,in this case wed have the volume v is equal to two feet times three feet times five feet two times three,1,1
+AB9zpbc8fUE,2960000,3081920,times five is equal to thirty and therefore the volume is thirty cubic feet,1,1
+AB9zpbc8fUE,3081920,3205440,again for this example lets divide the box into cubic feet to verify the volume is thirty cubic feet,1,1
+AB9zpbc8fUE,3533760,3625920,which does give us a total of thirty cubic feet verifying the volume is correct,1,1
+w6ax6w6PlQw,542912,583792,on his top 10 rules for success volume two,1,1
+w6ax6w6PlQw,19794032,19828096,and in general what do you think of our volume two series,1,1
+gL3HxBQyeg0,8000,42720,lets find the volume of a few more solid figures,1,1
+gL3HxBQyeg0,720480,761920,so what is the volume here,1,1
+gL3HxBQyeg0,761920,817600,what is the volume going to be,1,1
+gL3HxBQyeg0,973760,1002080,youll be able to figure out the volume,1,1
+gL3HxBQyeg0,1163520,1183520,and thatll give us a volume,1,1
+gL3HxBQyeg0,2042080,2103360,the volume is going to be this area times the height,1,1
+gL3HxBQyeg0,2103360,2183680,so the volume is going to be equal to 16 pi,1,1
+gL3HxBQyeg0,7441280,7498880,when we did the volume we got centimeters cubed,1,1
+1lQWSHcJ4JQ,927360,984000,a cloud and maintain that volume for,1,1
+1lQWSHcJ4JQ,1109280,1163520,guys who are trying to achieve volume,1,1
+1lQWSHcJ4JQ,1459200,1521120,tip to achieving long lasting volume is,1,1
+1lQWSHcJ4JQ,1659360,1720784,they cant achieve volume or why they,1,1
+1lQWSHcJ4JQ,1690544,1749600,cant have volume that lasts is because,1,1
+1lQWSHcJ4JQ,1988144,2058240,to obtain volume thats just physics the,1,1
+1lQWSHcJ4JQ,2145920,2191024,amount of volume you need to find that,1,1
+1lQWSHcJ4JQ,2309104,2370064,still get crazy amounts of volume but to,1,1
+1lQWSHcJ4JQ,2432480,2504480,basics usually are if you want volume to,1,1
+1lQWSHcJ4JQ,3025264,3097264,featherweight volume a popular product,1,2
+1lQWSHcJ4JQ,3058880,3119344,known to give massive volume is hair,1,1
+1lQWSHcJ4JQ,3615664,3676640,lightweight volume but im after every,1,1
+1lQWSHcJ4JQ,3794704,3875824,give you long lasting volume,1,1
+1lQWSHcJ4JQ,6055040,6113600,is just to build that volume im gonna,1,1
+1lQWSHcJ4JQ,6297920,6351680,help to build in some of that volume,1,1
+1lQWSHcJ4JQ,6586880,6640640,all of this new volume because we,1,1
+1lQWSHcJ4JQ,7748960,7806080,keep that volume going at this point,1,1
+1lQWSHcJ4JQ,7886720,7949120,of the process to bigger better volume,1,1
+1lQWSHcJ4JQ,8228480,8304320,you will be rocking that volume once,1,1
+mNadr6bGEMU,346080,432960,volume of air thats moving in and out,1,1
+mNadr6bGEMU,718560,791504,tidal volume right now tidal volume on,2,2
+mNadr6bGEMU,1019504,1079520,actual graph and again this isnt volume,1,1
+mNadr6bGEMU,1079520,1195664,is volume right here on the yaxis so,1,2
+mNadr6bGEMU,1124640,1228320,volume specifically in milliliters so,1,1
+mNadr6bGEMU,1298880,1399664,volume of air that is moving in and out,1,1
+mNadr6bGEMU,1528784,1589760,tidal volume right and its going to,1,1
+mNadr6bGEMU,1785120,1854720,volume inspiration as it goes down,1,2
+mNadr6bGEMU,1819200,1872480,thats my tidal volume exploration,1,1
+mNadr6bGEMU,2029904,2108640,volume inspiration so right here at the,1,2
+mNadr6bGEMU,2065440,2142400,peak this is my title volume inspiration,1,1
+mNadr6bGEMU,2172160,2233584,volume inspiration then what im going,1,1
+mNadr6bGEMU,2327200,2394400,point of the title volume inspiration,1,1
+mNadr6bGEMU,2394400,2486880,volume expiration okay so lets do one,1,1
+mNadr6bGEMU,2486880,2591680,again we go up that is title volume,1,2
+mNadr6bGEMU,2554240,2649744,inspiration so title volume inspiration,1,2
+mNadr6bGEMU,2733744,2856160,this is my tidal volume expiration okay,1,1
+mNadr6bGEMU,2927200,3042880,average volume its about 500 so right,1,1
+mNadr6bGEMU,3325104,3381264,right here is my tidal volume so what,1,1
+mNadr6bGEMU,3583344,3702880,here this is my tidal volume now lets,1,1
+mNadr6bGEMU,3827184,3912160,beyond my tidal volume inspiration so i,1,1
+mNadr6bGEMU,4045584,4129120,in normal air so title volume,1,1
+mNadr6bGEMU,4645584,4725280,volume so now look what happens,1,2
+mNadr6bGEMU,4689104,4742544,bring a normaltype normal tidal volume,1,1
+mNadr6bGEMU,4955664,5028624,certain amount of volume in this point,1,1
+mNadr6bGEMU,5028624,5086704,volume so what is this volume up here,2,2
+mNadr6bGEMU,5116960,5196960,volume inhalation,1,1
+mNadr6bGEMU,5133760,5260960,its called inspiratory reserve volume,1,2
+mNadr6bGEMU,5196960,5282064,so inspire to area reserve volume this,1,2
+mNadr6bGEMU,5282064,5339184,bringing in beyond tidal volume,1,1
+mNadr6bGEMU,5738064,5820144,so this volume here the amount of air,1,1
+mNadr6bGEMU,5820144,5908960,tidal volume inspiration this volume,2,2
+mNadr6bGEMU,5933424,6025104,that is my inspire torria reserve volume,1,1
+mNadr6bGEMU,6418720,6519520,forceful inspiratory reserve volume okay,1,1
+mNadr6bGEMU,6519520,6588640,have our normal title volume expiration,1,1
+mNadr6bGEMU,6829600,6879040,air that we brought the on tidal volume,1,1
+mNadr6bGEMU,6879040,6951360,this little tidal volume exploration so,1,2
+mNadr6bGEMU,6911200,6988800,lets go down with our title volume,1,2
+mNadr6bGEMU,6951360,7025440,expiration so this is our title volume,1,1
+mNadr6bGEMU,7060960,7167520,here and we have another tidal volume,1,1
+mNadr6bGEMU,7167520,7282240,another title volume expiration but then,1,1
+mNadr6bGEMU,7536160,7652320,out from this normal tidal volume,1,1
+mNadr6bGEMU,7869760,7931680,im taking from my normal tidal volume,1,1
+mNadr6bGEMU,7931680,7992640,i possibly can be on that title volume,1,1
+mNadr6bGEMU,8257120,8319840,what is this total volume of air that,1,1
+mNadr6bGEMU,8319840,8433120,beyond my tidal volume expiration this,1,2
+mNadr6bGEMU,8371360,8476960,is called my expiratory reserve volume,1,1
+mNadr6bGEMU,8508160,8663040,reserve volume is in a male usually,1,1
+mNadr6bGEMU,8663040,8742880,we have our inspiratory reserve volume,1,1
+mNadr6bGEMU,8708640,8777920,we have our expiratory reserve volume,1,1
+mNadr6bGEMU,8777920,8849920,volume our normal tidal volume is going,2,2
+mNadr6bGEMU,8943040,9000160,tidal volume is the amount of air thats,1,1
+mNadr6bGEMU,8965600,9027040,going in and out so the title volume,1,1
+mNadr6bGEMU,9080800,9171840,so technically tidal volume as a whole,1,1
+mNadr6bGEMU,9236800,9310240,mail now we have our title volume,1,1
+mNadr6bGEMU,9286720,9348160,inspiratory reserve volume expiratory,1,2
+mNadr6bGEMU,9310240,9371200,reserve volume theres always a certain,1,1
+mNadr6bGEMU,9718720,9784000,to have a certain volume of air thats,1,1
+mNadr6bGEMU,10007040,10098880,residual volume my rv okay,1,1
+mNadr6bGEMU,10126720,10183360,to have residual volume because the,1,2
+mNadr6bGEMU,10158880,10221760,residual volume is the volume of air,2,2
+mNadr6bGEMU,10356160,10459360,forcefully expiratory volume is 1200,1,1
+mNadr6bGEMU,10541920,10645120,residual volume to be approximately 1200,1,1
+mNadr6bGEMU,10801600,10873600,volume what is it again by definition,1,2
+mNadr6bGEMU,10832640,10905760,its the volume of air thats coming in,1,1
+mNadr6bGEMU,11119360,11190880,how do we find that if the total volume,1,1
+mNadr6bGEMU,11249920,11302240,the tidal volume inhalation so think,1,1
+mNadr6bGEMU,11343040,11408800,volume inspiration okay,1,1
+mNadr6bGEMU,11408800,11479360,line my expiratory reserve volume is the,1,2
+mNadr6bGEMU,11479360,11558080,exhaling beyond my tidal volume,1,1
+mNadr6bGEMU,11708800,11788000,beyond tidal volume exhalation is called,1,2
+mNadr6bGEMU,11750560,11826880,my expiratory reserve volume thats on,1,1
+mNadr6bGEMU,11873920,11950240,certain volume of air in my lungs that,1,1
+mNadr6bGEMU,11982080,12045920,and thats called residual volume now,1,1
+mNadr6bGEMU,12127520,12168800,got all that title volumes normally five,1,1
+mNadr6bGEMU,12886384,12944464,down to zero thats the residual volume,1,1
+mNadr6bGEMU,13498880,13582224,as the total volume of air that you can,1,1
+mNadr6bGEMU,13582224,13639520,bringing in air my tidal volume,1,1
+mNadr6bGEMU,13700000,13781600,volume which is this point to this point,1,1
+mNadr6bGEMU,13827680,13951520,its just tidal volume plus ir v well if,1,2
+mNadr6bGEMU,13880000,13993264,its just tidal volume plus my ir v and,1,1
+mNadr6bGEMU,13993264,14062384,could say tidal volume inspiration if,1,1
+mNadr6bGEMU,14122560,14265104,this is title volume is 500 ml plus the,1,1
+mNadr6bGEMU,14811840,14884800,tidal volume exhalation is this point,1,1
+mNadr6bGEMU,14884800,14942384,that title volume expiration all the way,1,1
+mNadr6bGEMU,15006224,15070064,volume expiration so if thats the case,1,1
+mNadr6bGEMU,15070064,15197264,tidal volume expiration and im adding,1,1
+mNadr6bGEMU,15197264,15238560,particular its the tidal volume,1,2
+mNadr6bGEMU,15210224,15282224,expiration we said tidal volume is,1,1
+mNadr6bGEMU,16096304,16160640,is my expiratory reserve volume which is,1,1
+mNadr6bGEMU,16239360,16295040,i have to have a certain volume of air,1,1
+mNadr6bGEMU,16985760,17070240,defined as the total volume of air that,1,1
+mNadr6bGEMU,17070240,17132160,volume of air that can exhale forcefully,1,1
+mNadr6bGEMU,17132160,17186400,have to account for my tidal volume no,1,1
+mNadr6bGEMU,17186400,17248320,have my type of volume here in this,1,1
+mNadr6bGEMU,17406720,17464320,volume inspiration then i have to,1,1
+mNadr6bGEMU,17506080,17616944,have to add my erv plus my tidal volume,1,1
+mNadr6bGEMU,18011520,18079200,tidal volume and again some people will,1,1
+mNadr6bGEMU,18079200,18124800,title volume inspiration exploration no,1,1
+mNadr6bGEMU,18175200,18305280,title volume here and we just say title,1,2
+mNadr6bGEMU,18207360,18336000,volume plus erv plus ir v so tidal,1,2
+mNadr6bGEMU,18305280,18358560,volumes about 500 mls,1,1
+mNadr6bGEMU,18793280,18906240,so 4600 milliliters is the total volume,1,1
+mNadr6bGEMU,19091520,19143840,capacity is the total volume of air that,1,1
+mNadr6bGEMU,19143840,19205760,accounting for the residual volume the,1,1
+mNadr6bGEMU,19568640,19744320,so it goes like this right tidal volume,1,1
+mNadr6bGEMU,19744320,19806720,because i told you its the total volume,1,1
+mNadr6bGEMU,19829760,19896960,residual volume so it goes from 0 to the,1,1
+mNadr6bGEMU,20186720,20241440,understand what these volumes how you,1,1
+qwbUX8MoXK4,73920,156480,audio volume levels in premiere pro ive,1,1
+qwbUX8MoXK4,996000,1043520,volume the drop and that will dictate,1,1
+qwbUX8MoXK4,2032000,2106400,its called volume all audio clips are,1,1
+qwbUX8MoXK4,2069904,2147200,all clips that have audio have a volume,1,1
+qwbUX8MoXK4,2971344,3029440,you work with volume normally key frames,1,1
+qwbUX8MoXK4,3066880,3145120,the volume effect and so if i were to,1,1
+qwbUX8MoXK4,3796960,3872784,show the volume level dropping i want,1,1
+qwbUX8MoXK4,4499200,4597120,standard change in volume level when,1,1
+qwbUX8MoXK4,4648480,4707520,enough because you look at the volume,1,1
+qwbUX8MoXK4,4707520,4775664,that the volume levels are not that high,1,1
+qwbUX8MoXK4,4775664,4824624,they get higher so the volume is going,1,1
+qwbUX8MoXK4,4872160,4941760,volume again later so i need to put more,1,1
+qwbUX8MoXK4,7252480,7322560,want to bring the volume back up so i,1,1
+qwbUX8MoXK4,7322560,7395520,i could then just raise the volume back,1,1
+qwbUX8MoXK4,8405760,8465280,only 14 raises the volume back up again,1,1
+qwbUX8MoXK4,10088960,10148304,control volume in premiere pro,1,1
+fE6vmorV-rA,38864,176000,finding the volume using the shell,1,0
+fE6vmorV-rA,213920,324960,now were going to find the volume when,1,0
+fE6vmorV-rA,989120,1170720,this the volume is going to be equal to,1,0
+fE6vmorV-rA,1263840,1372640,x so if you want to find a volume of the,1,0
+fE6vmorV-rA,2442240,2570400,volume when rotated about the xaxis so,1,0
+fE6vmorV-rA,2981280,3164640,rectangle so the volume is going to be,1,0
+fE6vmorV-rA,5968480,6105760,formula so the volume is equal to 2 pi,1,0
+fE6vmorV-rA,10156800,10247840,the volume is going to be 2 pi,1,0
+fE6vmorV-rA,11834240,11940000,around 3 find the volume bounded by the,1,0
+fE6vmorV-rA,13228800,13298400,calculate the volume thats what i meant,1,0
+fE6vmorV-rA,19024480,19133920,expression for the volume so its going,1,0
+fE6vmorV-rA,19391680,19509280,distribute x squared so the volume is 2,1,0
+fE6vmorV-rA,26031984,26137584,expression for the volume so the volume,2,0
+fE6vmorV-rA,29002880,29126240,is the volume now this time were going,1,0
+fE6vmorV-rA,31275360,31406400,volume its 2 pi integration from c to d,1,0
+fE6vmorV-rA,33066544,33191360,find the volume so lets say that the,1,0
+fE6vmorV-rA,34530080,34643680,radius we could find the volume now we,1,0
+fE6vmorV-rA,34888640,35009600,the volume is 2 pi integration from 0 to,1,0
+fE6vmorV-rA,35149760,35317760,volume is 2 pi integration 0 to 1 y,1,0
+fE6vmorV-rA,37935040,38058880,need the volume is going to be 2 pi,1,0
+fE6vmorV-rA,43051040,43178240,so when x is 5 y is 2 so the volume is,1,0
+fE6vmorV-rA,45341424,45440160,this video lets find the volume which,1,0
+fE6vmorV-rA,49194384,49328464,so the volume is going to be 2 pi,1,0
+eIvKaEX_9mk,983712,1034368,on his top ten rules to success volume two,1,1
+eIvKaEX_9mk,16772640,16821312,the warren buffet top 10 rules to success volume one,1,1
+eIvKaEX_9mk,16849904,16893248,the volume one of and you want us to do a volume two,2,2
+P79EC9qHXEg,4160,218720,hi guys we are doing volumes and we have a very vast volume here in a very different,2,2
+P79EC9qHXEg,260944,363520,but first of all let’s go through the definition of a volume a volume is the amount of space,2,2
+P79EC9qHXEg,644480,700320,rare but you do see them now what’s the point here with volumes,1,1
+P79EC9qHXEg,927344,1017424,2 is multiplied by the depth and then we get the volume and of course all units here shown,1,1
+P79EC9qHXEg,2107200,2178224,now we are going to get the depth so we can find how much capacity of volumes it has within,1,1
+P79EC9qHXEg,2285280,2440160,so let’s write this up – so volume equals the area times the depth over here so it called,1,1
+P79EC9qHXEg,2696464,2863504,up – we have 35 times the depth of 8 centimeters – so the volumes of these total area here,1,1
+P79EC9qHXEg,2863504,3080304,which is called parallelo prism all of that the whole volume is all together – 280 cm,1,1
+GnBQ6vIutDM,374560,560304,common they have mass and volume,1,2
+GnBQ6vIutDM,514560,636640,everything that has mass and volume is,1,1
+GnBQ6vIutDM,928480,1121760,units the volume of an object is a,1,1
+GnBQ6vIutDM,1192480,1365280,greater its volume volume is measured in,2,2
+GnBQ6vIutDM,1397904,1449600,between mass and volume,1,1
+GnBQ6vIutDM,1761920,1795840,volume,1,1
+QzqSO7HeNQg,422880,517440,volume and listing numbers so its not,1,1
+QzqSO7HeNQg,1330080,1428784,another way lets say sales volume just,1,1
+QzqSO7HeNQg,1842240,1921440,the sales volume how many sales are,1,1
+QzqSO7HeNQg,3193264,3265264,volume really only shows you something,1,1
+QzqSO7HeNQg,3315664,3402544,volume goes down that could just mean,1,1
+QzqSO7HeNQg,8787520,8875840,the sales volume if people arent buying,1,1
+QzqSO7HeNQg,9005760,9110560,sales volume and sale price,1,1
+QzqSO7HeNQg,9771520,9881440,sales volume going down so this article,1,1
+ZwMUpPOAOSE,0,85120,welcome to a lesson on how to determine the volume of a right circular cylinder,1,1
+ZwMUpPOAOSE,85120,158400,and the volume of a square pyramid volume of a solid is equal to the,2,2
+ZwMUpPOAOSE,258064,315840,notice how the lengths are given in centimeters and therefore the volume is,1,1
+ZwMUpPOAOSE,420304,491840,the volume of a right circular cylinder we use the formula v equals pi times r,1,1
+ZwMUpPOAOSE,491840,589440,squared times h where v is the volume r is the radius and h is the height,1,1
+ZwMUpPOAOSE,725744,855984,and therefore the volume v is equal to pi times six squared times twelve,1,1
+ZwMUpPOAOSE,856000,930240,well determine the exact volume in terms of pi and also get a decimal,1,1
+ZwMUpPOAOSE,987184,1110080,so the volume v is equal to pi times six squared is thirtysix thirtysix times twelve is equal to,1,1
+ZwMUpPOAOSE,1110080,1225600,four hundred thirtytwo and therefore the exact volume is four hundred thirtytwo pi and the units are cubic,1,1
+ZwMUpPOAOSE,1321264,1417584,volume often we use three point one four as an approximation for pi,1,1
+ZwMUpPOAOSE,2584320,2682560,cylinder and now lets determine the volume of the square pyramid were given the volume,2,2
+ZwMUpPOAOSE,2764800,2824960,this formula can be used to determine the volume of a pyramid,1,1
+ZwMUpPOAOSE,3063680,3106240,the volume is equal to the number of cubic meters,1,1
+ZwMUpPOAOSE,3106240,3213760,that will fit inside the pyramid using the formula we have the volume v equals,1,1
+ZwMUpPOAOSE,3353440,3482240,volume v is equal to onethird times six is two two times six is twelve twelve times twelve is one hundred fortyfour,1,1
+ZwMUpPOAOSE,3482240,3580480,the volume is exactly one hundred fortyfour and the units are cubic meters,1,1
+HWzY_js5ljU,76320,151200,search volume is over 250 what do you think i should do doc should i go for it,1,1
+HWzY_js5ljU,934560,996944,lot of people have said ive done it with different search volumes with,1,1
+HWzY_js5ljU,996944,1056960,higher search volumes and it worked fine and then a whole other set of people say,1,1
+HWzY_js5ljU,1267200,1338240,ill give you a couple of scenarios ill tell you why the search volume matters,1,1
+HWzY_js5ljU,1422240,1491360,search volume over 250 and ill tell you if you should think twice about going,1,1
+HWzY_js5ljU,1491360,1548960,after a search volume over 250 or not and with that ill give you a little,1,1
+HWzY_js5ljU,2090864,2142240,them so heres why the search volume matters now ive,1,1
+HWzY_js5ljU,2281440,2350080,higher search volume takes longer to rank for theres a couple things in play,1,1
+HWzY_js5ljU,2350080,2419200,here right so a higher search volume usually means its more profitable so if,1,1
+HWzY_js5ljU,2564160,2643824,5000 you could expect did that search volume that keyword phrase is going to,1,1
+HWzY_js5ljU,2860800,2922720,the volume matters now the other part and this is the part that is untested,1,1
+HWzY_js5ljU,3479040,3550080,theres higher search volumes like i said 5000 to say 10000 it may take you,1,1
+HWzY_js5ljU,3774720,3836640,approach its probably going to take you longer to rank for those higher volume,1,1
+HWzY_js5ljU,3836640,3908160,search terms so this way the search volume matters number one if its a,1,1
+HWzY_js5ljU,3908160,3970080,higher search volume term its more profitable and basically more people are,1,1
+HWzY_js5ljU,4044960,4127040,well number two it seems like the google sandbox takes longer for higher volume,1,1
+HWzY_js5ljU,4920640,4996000,progressive scale so if you have a very high search volume its gonna take,1,1
+HWzY_js5ljU,5424640,5495680,volume terms now my previous answer on who should go for it it still applies,1,1
+HWzY_js5ljU,6460320,6515520,after the higher volume search terms and youll be able to rank a little bit more,1,1
+sJ5vhShdVjo,9920,86560,in this video well be building a stylish desktop volume knob which besides looking,1,1
+sJ5vhShdVjo,1898080,2008960,which in most cases should be 18mm this potentiometer by the way is what actually adjusts the volume,1,1
+sJ5vhShdVjo,4089920,4185920,audio both to and from the volume knob so after trimming the wires we need to group,1,1
+sJ5vhShdVjo,10034720,10114384,speakers or headphones into its audio socket the volume on the source can then be set to,1,1
+sJ5vhShdVjo,10114384,10198880,maximum which gives us the most volume range to work with and its then ready to use,1,1
+sJ5vhShdVjo,10198880,10285760,it really does work a treat and evenly controls the volume from minimum to maximum when used,1,1
+be08EuaZo3M,43200,115200,going to show you how to shrink a volume,1,1
+be08EuaZo3M,197760,279360,here click on volumes and then highlight,1,2
+be08EuaZo3M,242864,324000,the volume you would like to shrink and,1,1
+be08EuaZo3M,324000,380160,volume or you could right click and,1,2
+be08EuaZo3M,869264,951824,choose shrink volume so there we go we,1,1
+Iaz93P_qQk0,1251200,1311504,know the volume of each of the,1,1
+Iaz93P_qQk0,1311504,1418240,also the total volume of the home thank,1,1
+2yd_Ae-7wls,33216,67696,to determine the volume of the solid formed,1,1
+2yd_Ae-7wls,243296,292160,well be using this formula here to determine the volume,1,1
+2yd_Ae-7wls,292160,334880,where the volume is equal to pi times integral,1,1
+2yd_Ae-7wls,1014912,1048928,this volume on the right so our goal,1,1
+2yd_Ae-7wls,1048928,1103952,is to find this volume using the washer method,1,1
+2yd_Ae-7wls,1658208,1718608,it would give us one washer volume of the solid,1,1
+2yd_Ae-7wls,3934080,3976128,now we have all the information we need to find the volume,1,1
+2yd_Ae-7wls,3976128,4029392,the volume v is equal to pi times the integral,1,1
+2yd_Ae-7wls,4374976,4416016,so this integral will give us the volume of the solid,1,1
+2yd_Ae-7wls,6528016,6593344,to pi times 83215 so the exact volume,1,0
+2yd_Ae-7wls,7111664,7176720,so here we have both the exact and the approximate volume,1,1
+NdaN3ZT8Wo4,136800,196800,gonna be using our volume treatment,1,2
+NdaN3ZT8Wo4,165120,228000,system i wash my hair with the volume,1,1
+7ofK6GmoshM,282240,363360,if the volume hat that the box says a by,1,2
+7ofK6GmoshM,4519520,4590560,know is i have a volume the equation for,1,2
+7ofK6GmoshM,4563200,4627520,volume is length times width times,1,1
+7ofK6GmoshM,4627520,4738400,stuff in well volume we know is 128 we,1,1
+zmkZuiLL54o,96960,194400,reconstruction volume from matlab a two,1,2
+zmkZuiLL54o,160800,230400,dimensional volume geometry is created,1,1
+zmkZuiLL54o,354240,464624,the volume and the number of columns on,1,1
+zmkZuiLL54o,732000,826560,height for threedimensional volume,1,1
+MQlI2Dhomk8,36928,69152,volume using metric units,1,1
+b7FEpkNf_2E,2844640,2925280,its make magazine volume 65 it just,1,1
+b7FEpkNf_2E,4696000,4792960,excited about making volume 65 were,1,1
+b7FEpkNf_2E,5464800,5600640,but lets take a peek at make volume 65,1,1
+b7FEpkNf_2E,29152944,29282080,on make volume 65 which again im really,1,1
+b7FEpkNf_2E,31812800,31886720,make volume 65 were excited about it,1,1
+hqyBzipBoTI,16000,43200,to resize a volume,1,1
+hqyBzipBoTI,43200,87456,navigate to volumes on the left side,1,1
+hqyBzipBoTI,128000,164800,choose the volume you want to resize,1,1
+hqyBzipBoTI,192000,225600,on the volume detail page,1,1
+hqyBzipBoTI,225600,274128,we can see this volume is almost full,1,1
+hqyBzipBoTI,354656,394656,which tells us the volume is running out of space,1,1
+hqyBzipBoTI,394656,447456,and then clicking go to volume,1,1
+hqyBzipBoTI,670928,709328,and thats all there is to resizing a volume,1,1
+BYanHuoxTvc,197280,279360,more volume in my hair i loved the way,1,1
+BYanHuoxTvc,427680,492000,fluid while also giving it the volume i,1,1
+BYanHuoxTvc,492000,548640,able to go home and create more volume,1,1
+fx0wA-oEGTc,621600,702720,revolutionary volume adjustment system,1,1
+fx0wA-oEGTc,702720,796320,crystalclear at full volume,1,1
+fx0wA-oEGTc,1703840,1760960,control your volume,1,1
+0kGG1qHyknU,153760,231040,in vegas pro you can change the volume,1,1
+0kGG1qHyknU,231040,313584,overall volume of the entire track,1,1
+0kGG1qHyknU,313584,424464,insert remove envelope and select volume,1,2
+0kGG1qHyknU,376800,470080,double click the volume envelope to add,1,1
+0kGG1qHyknU,470080,534240,to raise or lower the volume,1,1
+zZ1TWvVyszY,633600,713760,appropriate volumes for a single shot,1,1
+zZ1TWvVyszY,1346880,1411664,less volume yep so youre interesting,1,2
+zZ1TWvVyszY,1383840,1441440,having less volume but youre using the,1,1
+zZ1TWvVyszY,1781760,1876784,things as double the volume so youre,1,1
+zZ1TWvVyszY,2164304,2221440,that same volume is still within that,1,1
+4nQApZ8Q0XM,298560,378240,is measuring lung volumes the learning,1,1
+4nQApZ8Q0XM,745424,819824,volume and the inspiratory and,1,2
+4nQApZ8Q0XM,771824,849600,expiratory reserve volume however there,1,1
+4nQApZ8Q0XM,819824,901904,is one volume that spirometry cannot,1,2
+4nQApZ8Q0XM,849600,936480,measure the residual volume that is the,1,1
+4nQApZ8Q0XM,1018064,1095360,residual volume using just spirometry we,1,1
+4nQApZ8Q0XM,1337280,1414400,to measure these remaining lung volumes,1,1
+4nQApZ8Q0XM,1528800,1609920,extrapolate volumes from radiographic,1,1
+4nQApZ8Q0XM,2130720,2206544,outside air with normal tidal volumes,1,1
+4nQApZ8Q0XM,2817104,2892480,the volume of the reservoir including,1,1
+4nQApZ8Q0XM,2922240,2991344,times the total volume over which the,1,1
+4nQApZ8Q0XM,2991344,3066240,volume of the reservoir plus the,1,1
+4nQApZ8Q0XM,3383040,3441120,the volume within the chest that,1,1
+4nQApZ8Q0XM,3483824,3600960,volume of gas trapped in lung bullae,1,1
+4nQApZ8Q0XM,3751680,3810240,which records both a volume of gas,1,1
+4nQApZ8Q0XM,4645920,4717920,total volume exhaled over all the,1,1
+4nQApZ8Q0XM,5962064,6057104,product of pressure and volume is a,1,1
+4nQApZ8Q0XM,6196320,6280800,thoracic gas volume and is used to,1,1
+4nQApZ8Q0XM,6559664,6631664,method for determining lung volume,1,1
+4nQApZ8Q0XM,6762224,6846704,volumes are radiographic techniques from,1,1
+4nQApZ8Q0XM,6914880,7011360,algorithm to estimate lung volume from a,1,1
+4nQApZ8Q0XM,7114544,7197104,lung volume both of these are easier to,1,1
+4nQApZ8Q0XM,7443840,7542704,volumes specifically the total lung,1,1
+4nQApZ8Q0XM,7570544,7636800,volumes can be used together to make a,1,1
+4nQApZ8Q0XM,8176304,8264624,individual lung volumes breakdown for,1,1
+4nQApZ8Q0XM,8298224,8429264,volumes with the vital capacity or fvc,1,1
+4nQApZ8Q0XM,8429264,8501760,disease the residual volume is greatly,1,2
+4nQApZ8Q0XM,8464304,8518880,increased while the other volumes remain,1,1
+4nQApZ8Q0XM,8683680,8736960,volumes are reduced resulting in both,1,1
+4nQApZ8Q0XM,8852640,8936160,the residual volume is so increased,1,1
+4nQApZ8Q0XM,8936160,9008640,out the other long volumes,1,1
+4nQApZ8Q0XM,9207840,9299520,if only the lung volumes from spirometry,1,1
+4nQApZ8Q0XM,9400320,9477120,volumes measured while the flow volume,2,2
+4nQApZ8Q0XM,9972960,10067040,volumes first is this category of,1,1
+4nQApZ8Q0XM,10704960,10798080,volumes before drawing any conclusions,1,1
+4nQApZ8Q0XM,11023680,11125760,lung volumes the next video in this,1,1
+owZhLmU5rMQ,272320,343360,volume if youre using vmware a,1,1
+owZhLmU5rMQ,598240,695680,now click volumes under volumes click,2,4
+owZhLmU5rMQ,650560,736000,create volume now name your volume mine,2,3
+owZhLmU5rMQ,695680,766720,will be called volume one select the,1,1
+owZhLmU5rMQ,1435840,1488160,going to click add volume,1,1
+owZhLmU5rMQ,1532800,1634560,using your volumes have now been created,1,2
+owZhLmU5rMQ,1590720,1679200,under volumes on the left you should now,1,2
+owZhLmU5rMQ,1634560,1696480,see your newly created volume under it,1,1
+owZhLmU5rMQ,2266560,2357120,your volume has been set up and is now,1,1
+pVLmZLoWd0s,21550400,21654560,this this volume is over for the,1,1
+pVLmZLoWd0s,22717760,22766240,itll be in kind of like all the volumes,1,1
+AQHcZklcltI,35184,66464,on triple integrals and volume,1,1
+AQHcZklcltI,66464,108336,we can determine the volume of a solid region v,1,1
+AQHcZklcltI,491568,528016,this will give us the volume of the solid,1,1
+AQHcZklcltI,585584,630272,we can now use a triple integral to determine volume,1,1
+AQHcZklcltI,804480,854400,were going to use this same principle to determine volume,1,1
+AQHcZklcltI,913392,952816,here were going to determine the volume of the solid,1,1
+AQHcZklcltI,3433232,3482048,and therefore will give us the volume of the solid,1,1
+AQHcZklcltI,3521280,3548560,the volume that were determining,1,1
+AQHcZklcltI,3548560,3613888,will be the volume of this triangular prism here,1,1
+AQHcZklcltI,3636064,3678192,so lets go ahead and determine this volume,1,1
+AQHcZklcltI,4862720,4909104,and we can see geometrically that the volume that we wanted,1,1
+AQHcZklcltI,5188976,5211904,weve already determined the volume,1,1
+AQHcZklcltI,6689584,6736176,so our volume would be equal to the triple integral,1,1
+AQHcZklcltI,7580672,7612016,and this triple integral will give us the volume,1,1
+AQHcZklcltI,7684736,7730624,so the volume that were determining is this region in here,1,1
+AQHcZklcltI,7874784,7912240,lets go ahead and find that volume,1,1
+AQHcZklcltI,9870288,9932960,and again this gives us the volume of region v,1,1
+AQHcZklcltI,9947040,10000480,so 815 is the volume of this solid region here,1,1
