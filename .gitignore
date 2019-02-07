@@ -105,7 +105,7 @@ venv.bak/
 .mypy_cache/
 
 # keyword generator
-keyword_spotting_data_generator/data
+keyword_spotting_data_generator/evaluation/audio_data
 
 .DS_STORE
 training_data/

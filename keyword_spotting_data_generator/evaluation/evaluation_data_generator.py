@@ -123,8 +123,10 @@ def main():
         try:
             video = PyTube(utils.get_youtube_url(url))
         except Exception as exception:
-            cp.print_error("failed to generate PyTube representation for vidoe ", url)
+            cp.print_error("failed to generate PyTube representation for video ", url)
+            cp.print_error(exception)
             continue
+
         if int(video.length) > args.video_length:
             continue
 
@@ -136,7 +138,8 @@ def main():
         try:
             srt_captions = caption.generate_srt_captions().split('\n\n')
         except Exception as exception:
-            cp.print_error("failed to retrieve for vidoe - ", url)
+            cp.print_error("failed to retrieve srt for video - ", url)
+            cp.print_error(exception)
             continue
 
         translator = str.maketrans('', '', string.punctuation) # to remove punctuation
@@ -156,6 +159,7 @@ def main():
             crawler = YoutubeCrawler(url)
             audio_data = crawler.get_audio()
         except Exception as exception:
+            cp.print_error("failed to download audio file for video ", url)
             cp.print_warning(exception)
             continue
 
