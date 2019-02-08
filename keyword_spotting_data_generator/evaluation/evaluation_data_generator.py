@@ -159,7 +159,7 @@ def main():
             audio_data = crawler.get_audio()
         except Exception as exception:
             cp.print_error("failed to download audio file for video ", url)
-            cp.print_warning(exception)
+            cp.print_error(exception)
             continue
 
         collected_data = []
