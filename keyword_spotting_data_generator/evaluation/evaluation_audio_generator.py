@@ -8,9 +8,8 @@ import csv
 import os
 import librosa
 
-import color_print as cp
-
-from youtube_crawler import YoutubeCrawler
+from utils import color_print as cp
+from utils import YoutubeCrawler
 
 SAMPLE_RATE = 16000
 
@@ -26,9 +25,9 @@ def main():
 
     parser.add_argument(
         "-f",
-        "--evaluation_data_file",
+        "--summary_file",
         type=str,
-        help="file containing list of evaluation data to be generated")
+        help="file containing summary of audio blocks")
 
     parser.add_argument(
         "-a",
@@ -54,11 +53,11 @@ def main():
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    total = sum([1 for i in open(args.evaluation_data_file, "r").readlines() if i.strip()])
+    total = sum([1 for i in open(args.summary_file, "r").readlines() if i.strip()])
 
-    cp.print_progress("evaluation data file - ", args.evaluation_data_file)
+    cp.print_progress("evaluation data file - ", args.summary_file)
 
-    with open(args.evaluation_data_file, "r") as file:
+    with open(args.summary_file, "r") as file:
         reader = csv.reader(file, delimiter=",")
 
         prev_vid = None
