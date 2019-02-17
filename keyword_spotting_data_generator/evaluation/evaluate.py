@@ -7,10 +7,9 @@ import csv
 import os
 import librosa
 
-import numpy as np
-import color_print as cp
+from utils import color_print as cp
 
-import similarity_metric.cosine_similarity as cs
+from extractor import EditDistanceExtractor
 
 SAMPLE_RATE = 16000
 
@@ -26,43 +25,36 @@ def main():
 
     parser.add_argument(
         "-f",
-        "--evaluation_data_file",
+        "--summary_file",
         type=str,
         help="file containing list of evaluation data to be generated")
-
-    parser.add_argument(
-        "-a",
-        "--api_key",
-        type=str,
-        required=True,
-        help="API key for youtube data v3 API")
 
     parser.add_argument(
         "-d",
         "--audio_data_directory",
         type=str,
         default="audio_data",
-        help="audio data folder")
+        help="path to audio files")
 
     parser.add_argument(
-        "-s",
-        "--similarity_metric",
+        "-e",
+        "--extractor",
         type=str,
-        default="cosine",
-        help="similarity metric to use")
+        default="edit_distance_extractor",
+        help="type of extraction algorithm to use")
 
     parser.add_argument(
-        "-t",
+        "-th",
         "--threshold",
         type=float,
         default=0.95,
-        help="threshold for simliarity between audio")
+        help="threshold for retrieving a window")
 
     parser.add_argument(
-        "-r",
-        "--recording",
+        "-t",
+        "--target",
         type=str,
-        help="recording of target keyword")
+        help="path to target audio file")
 
     args = parser.parse_args()
     keyword = args.keyword.lower()
@@ -72,20 +64,19 @@ def main():
     if not os.path.exists(directory):
         cp.print_progress("audio data is missing - ", directory)
 
-    total = sum([1 for i in open(args.evaluation_data_file, "r").readlines() if i.strip()])
+    total = sum([1 for i in open(args.summary_file, "r").readlines() if i.strip()])
 
-    cp.print_progress("evaluation data file - ", args.evaluation_data_file)
+    cp.print_progress("evaluation data file - ", args.summary_file)
 
     # TODO :: load recorded target keyword audio
     recording = [1, 2, 3, 4] # placeholder
 
-    # TODO :: instantiate similarity metric object
+    extractor = None
+    if args.extractor == "edit_distance_extractor":
+        cp.print_progress("extractor type :", args.extractor, "with threshold :", args.threshold)
+        extractor = EditDistanceExtractor(recording, args.threshold)
 
-    similarity = None
-    if args.similarity_metric == "cosine":
-        similarity = cs.CosineSimilarity(recording)
-
-    with open(args.evaluation_data_file, "r") as file:
+    with open(args.summary_file, "r") as file:
         reader = csv.reader(file, delimiter=",")
 
         for i, line in enumerate(reader):
@@ -100,17 +91,14 @@ def main():
             cp.print_progress(i + 1, " / ", total, " - ", wav_file)
 
             if not os.path.exists(wav_file):
-                cp.print_progress("audio file is missing - ", wav_file)
-                break
+                cp.print_warning("audio file is missing - ", wav_file)
+                continue
 
             data, _ = librosa.core.load(wav_file, SAMPLE_RATE)
 
-            # TODO :: for each window, call similarity metrics using window and recording
-            # similarity.compute_similarity(data)
+            extracted_audio_times = extractor.extract_keywords(data)
 
-            # TODO :: if similarity is greater than threshold, remember window
-
-            # TODO :: generate a wav file and updaate counts
+            # TODO :: count how many window has been extracted and compare it against true count
 
             # TODO :: might be good idea to update threshold if the accuracy is way too low
 

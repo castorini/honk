@@ -1,5 +1,4 @@
 import re
-import color_print as cp
 
 URL_TEMPLATE = "http://youtube.com/watch?v={}"
 
@@ -38,6 +37,6 @@ def parse_srt_time(time):
         stop_pos = stop_time_ms * 16
 
     else:
-        cp.print_warning("failed to parse srt time - ", time)
+        raise Exception("failed to parse srt time - " + time)
 
     return start_pos, stop_pos

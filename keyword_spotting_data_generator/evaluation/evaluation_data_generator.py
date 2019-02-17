@@ -1,19 +1,15 @@
 import argparse
-import inflect
 import re
 import string
 import time
+import inflect
 import sounddevice as sd
 
 from pytube import YouTube as PyTube
 
-import color_print as cp
-import utils as utils
-
-from evaluation_data_csv_writer import CsvWriter
-from url_file_reader import FileReader
-from youtube_crawler import YoutubeCrawler
-from youtube_searcher import YoutubeSearcher
+from utils import color_print as cp
+from utils import util, CsvWriter, YoutubeCrawler
+from url_fetcher import FileReader, YoutubeSearcher
 
 SAMPLE_RATE = 16000
 
@@ -87,7 +83,7 @@ def main():
     total_cc_count = 0
     total_audio_count = 0
 
-    continuing = args.continue_from != None
+    continuing = args.continue_from is not None
 
     url_set = set()
 
@@ -121,7 +117,7 @@ def main():
                 continuing = False
 
         try:
-            video = PyTube(utils.get_youtube_url(url))
+            video = PyTube(util.get_youtube_url(url))
         except Exception as exception:
             cp.print_error("failed to generate PyTube representation for video ", url)
             cp.print_error(exception)
@@ -186,8 +182,13 @@ def main():
             if keyword not in words and plural.plural(keyword) not in words:
                 continue
 
-            # occurance in audio
-            start_ms, end_ms = utils.parse_srt_time(cc_time)
+            try:
+                # occurance in audio
+                start_ms, end_ms = util.parse_srt_time(cc_time)
+            except Exception as exception:
+                cp.print_error(exception)
+                continue
+
             cp.print_instruction("How many time was the keyword spoken? (\"r\" to replay audio)\n", "[ " + cc_text + " ]")
 
             while True:
@@ -207,7 +208,7 @@ def main():
             # occurance in captions
             cc_count = 0
             for word in words:
-                if keyword == word or keyword + "s" == word or keyword + "es" == word:
+                if word == plural.plural(keyword):
                     cc_count += 1
 
             collected_data.append([url, start_ms, end_ms, cc_text, cc_count, audio_count])

@@ -1,4 +1,4 @@
-from url_fetcher import UrlFetcher
+from .url_fetcher import UrlFetcher
 
 class FileReader(UrlFetcher):
     def __init__(self, file_name, batch_size=50):

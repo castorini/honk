@@ -36,11 +36,28 @@ ___
 - increase rate of finding target term by stemming words
 
 ## Evaluation of Improvements
-In order to quantize the improvements, we are working on evaluation framework. We are hoping that this helps us to develop robust keyword spotting data generator.
+In order to quantize the improvements, we are working on evaluation framework which measures the quality of selected audio. We are hoping that this helps us to develop robust keyword spotting data generator.
 
-##### Evaluation Data Generator
-Dataset which we run our evaluation on must be correctly labeled,
-for given keyword or list of url, `evaluation_data_generator.py` generates csv with each column representing `url`, `start_ms`, `end_ms`, `cc_count`, `audio_count`
+Evaluation process involves following steps:
+
+1. `python url_file_generator.py` : collect urls which contains target keyword in the audio and store it in a single .txt file (url file)
+2. `evaluation_data_generator.py` : for each audio block containing target keyword, record how many times the target keyword actually appear; csv file is generated summarizing details of each audio block (summary file)
+3. `evaluation_audio_generator.py` : generate audio dataset from summary file
+4. `evaluate.py` : measure the quality of the specified similar audio extraction algorithm on given summary file
+
+##### `url_file_generator.py`
+Collect urls of videos which subtitle contains target keywords
+
+```
+python url_file_generator.py
+	-a < youtube data v3 API key >
+	-k < keywords to search >
+	-s < number of urls >
+```
+
+##### `evaluation_data_generator.py`
+For each audio block with keyword, allow users to record how many times the target keyword actually appear. This is the ground truth for measuring quality.
+A csv file generated is called a summary file where each column represents `url`, `start_ms`, `end_ms`, `cc_count`, `audio_count`
 - url - unique id of youtube video
 - start_ms - start time of the given subtitle section
 - end_ms - end time of the given subtitle section
@@ -48,14 +65,36 @@ for given keyword or list of url, `evaluation_data_generator.py` generates csv w
 - audio_count - how many time keyword appeared in the audio (user input)
 
 ```
-python url_file_generator.py -a < youtube data v3 API key > -k < keywords to search > -s < number of urls >
+python evaluation_data_generator.py
+	-a < youtube data v3 API key >
+	-k < keywords to search >
+	-s < number of urls > 
+	-f < url file name (when unspecified, directly search youtube) >
+	-c < url in url file to start from >
+	-l < length of maximum length for a video (s) >
+	-o < output csv file to append output to >
 ```
 
-##### URL file
-In order to ease distribution of video list which we use, `url_file_generator.py` script can be used to generate .txt file with urls.
+##### `evaluation_data_generator.py`
+Generate set of `.wav` files from the provided summary file
 
 ```
-python evaluation_data_generator.py -a < youtube data v3 API key > -k < keywords to search > -s < number of urls > -l < length of maximum length for a video (s) >
+python evaluation_audio_generator.py
+	-a < youtube data v3 API key >
+	-k < keywords to search >
+	-f < summary file >
+	-o < folder to store the audio data >
 ```
 
-if url_file is not specified, it will search youtube on the fly.
+##### `evaluate.py`
+Measure the quality of the specified similar audio retrieval process on given summary file
+
+```
+python evaluation_audio_generator.py
+	-k < keywords to search >
+	-f < summary file >
+	-d < path to audio files >
+	-r < type of extraction algorithm to use >
+	-th < threshold for retrieving a window >
+	-t < path to target audio file >
+```

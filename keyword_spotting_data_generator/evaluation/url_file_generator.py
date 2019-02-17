@@ -1,12 +1,10 @@
 import argparse
-import inflect
-
 from pytube import YouTube as PyTube
 
-import color_print as cp
-import utils as utils
-
-from youtube_searcher import YoutubeSearcher
+import inflect
+from utils import color_print as cp
+from utils import util
+from url_fetcher import YoutubeSearcher
 
 def main():
     parser = argparse.ArgumentParser()
@@ -52,7 +50,7 @@ def main():
             continue
 
         try:
-            video = PyTube(utils.get_youtube_url(url))
+            video = PyTube(util.get_youtube_url(url))
         except Exception as exception:
             cp.print_error("failed to generate PyTube representation for vidoe - ", url)
             continue
