@@ -36,7 +36,7 @@ ___
 - increase rate of finding target term by stemming words
 
 ## Evaluation of Improvements
-In order to quantize the improvements, we are working on evaluation framework which measures the quality of selected audio. We are hoping that this helps us to develop robust keyword spotting data generator.
+In order to quantify the improvements, we are working on evaluation framework which measures the quality of selected audio. We are hoping that this helps us to develop robust keyword spotting data generator.
 
 Evaluation process involves following steps:
 
