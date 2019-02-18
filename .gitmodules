@@ -1,3 +1,3 @@
 [submodule "keyword_spotting_data_generator/evaluation/kws-gen-data"]
 	path = keyword_spotting_data_generator/evaluation/kws-gen-data
-	url = git@github.com:castorini/kws-gen-data.git
+	url = https://github.com/castorini/kws-gen-data
