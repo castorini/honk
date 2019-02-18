@@ -1,4 +1,5 @@
 import argparse
+import os
 from pytube import YouTube as PyTube
 
 import inflect
@@ -29,6 +30,11 @@ def main():
         type=str,
         required=True,
         help="API key for youtube data v3 API")
+
+    data_folder_path = "./kws-gen-data/evaluation_data"
+    if not os.path.exists(data_folder_path):
+        cp.print_error("please clone kws-gen-data folder using git submodule")
+        exit()
 
     args = parser.parse_args()
     keyword = args.keyword.lower()
@@ -81,7 +87,8 @@ def main():
 
     cp.print_warning(len(urls), "urls are collected for ", keyword)
 
-    with open(keyword + "_url_" + args.size +".txt", 'w') as output_file:
+    file_path = os.path.join(data_folder_path, keyword + "_url_" + str(args.size) +".txt")
+    with open(file_path, 'w') as output_file:
         for url in urls:
             output_file.write(url+"\n")
 

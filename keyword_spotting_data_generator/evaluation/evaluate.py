@@ -30,13 +30,6 @@ def main():
         help="file containing list of evaluation data to be generated")
 
     parser.add_argument(
-        "-d",
-        "--audio_data_directory",
-        type=str,
-        default="audio_data",
-        help="path to audio files")
-
-    parser.add_argument(
         "-e",
         "--extractor",
         type=str,
@@ -50,32 +43,41 @@ def main():
         default=0.95,
         help="threshold for retrieving a window")
 
-    parser.add_argument(
-        "-t",
-        "--target",
-        type=str,
-        help="path to target audio file")
-
     args = parser.parse_args()
+    data_folder_path = "./kws-gen-data"
+    if not os.path.exists(data_folder_path):
+        cp.print_error("please clone kws-gen-data folder using git submodule")
+        exit()
+
     keyword = args.keyword.lower()
+    audio_dir = os.path.join(data_folder_path, "audio_data/"+keyword)
 
-    directory = os.path.join(args.audio_data_directory, keyword)
-
-    if not os.path.exists(directory):
-        cp.print_progress("audio data is missing - ", directory)
+    if not os.path.exists(audio_dir):
+        cp.print_error("audio data is missing - ", audio_dir)
+        exit()
 
     total = sum([1 for i in open(args.summary_file, "r").readlines() if i.strip()])
 
     cp.print_progress("evaluation data file - ", args.summary_file)
 
-    # TODO :: load recorded target keyword audio
-    recording = [1, 2, 3, 4] # placeholder
+    # load pre recorded target audios
+    target_audios = []
+    target_audio_dir = os.path.join(data_folder_path, "target_audio/"+keyword)
 
+    if not os.path.exists(target_audio_dir):
+        cp.print_error("target audio data is missing - ", target_audio_dir)
+        exit()
+
+    for file_name in os.listdir(target_audio_dir):
+        target_audios.append(librosa.core.load(os.path.join(target_audio_dir, file_name))[0])
+
+    # instantiate extractor
     extractor = None
     if args.extractor == "edit_distance_extractor":
-        cp.print_progress("extractor type :", args.extractor, "with threshold :", args.threshold)
-        extractor = EditDistanceExtractor(recording, args.threshold)
+        cp.print_progress("extractor type :", args.extractor, "( threshold :", args.threshold, ", number of target audios : ", len(target_audios), ")")
+        extractor = EditDistanceExtractor(target_audios, args.threshold)
 
+    # extract similar audio from each audio blocks
     with open(args.summary_file, "r") as file:
         reader = csv.reader(file, delimiter=",")
 
@@ -83,7 +85,7 @@ def main():
             vid = line[0]
             start_time = line[1]
             end_time = line[2]
-            wav_file = os.path.join(directory, vid + "~" + start_time + "~" + end_time + ".wav")
+            wav_file = os.path.join(audio_dir, vid + "~" + start_time + "~" + end_time + ".wav")
 
             start_time = int(start_time)
             end_time = int(end_time)
@@ -94,7 +96,7 @@ def main():
                 cp.print_warning("audio file is missing - ", wav_file)
                 continue
 
-            data, _ = librosa.core.load(wav_file, SAMPLE_RATE)
+            data = librosa.core.load(wav_file, SAMPLE_RATE)[0]
 
             extracted_audio_times = extractor.extract_keywords(data)
 
