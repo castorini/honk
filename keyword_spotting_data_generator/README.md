@@ -45,6 +45,10 @@ Evaluation process involves following steps:
 3. `evaluation_audio_generator.py` : generate audio dataset from summary file
 4. `evaluate.py` : measure the quality of the specified similar audio extraction algorithm on given summary file
 
+##### Setting up Experiment
+After cloning this repo, run following command to clone submodule [kws-gen-data](https://github.com/castorini/kws-gen-data)
+`git submodule update --init --recursive`
+
 ##### `url_file_generator.py`
 Collect urls of videos which subtitle contains target keywords
 
@@ -68,7 +72,7 @@ A csv file generated is called a summary file where each column represents `url`
 python evaluation_data_generator.py
 	-a < youtube data v3 API key >
 	-k < keywords to search >
-	-s < number of urls > 
+	-s < number of urls >
 	-f < url file name (when unspecified, directly search youtube) >
 	-c < url in url file to start from >
 	-l < length of maximum length for a video (s) >
