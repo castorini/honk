@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 import string
 import time
@@ -63,6 +64,12 @@ def main():
         help="csv file to append output to")
 
     args = parser.parse_args()
+
+    data_folder_path = "./kws-gen-data/evaluation_data"
+    if not os.path.exists(data_folder_path):
+        cp.print_error("please clone kws-gen-data folder using git submodule")
+        exit()
+
     keyword = args.keyword.lower()
     sd.default.samplerate = SAMPLE_RATE
     cp.print_progress("keyword is ", keyword)
@@ -78,7 +85,7 @@ def main():
         print('fetching urls by searching youtube with keywords : ', keyword)
         url_fetcher = YoutubeSearcher(args.api_key, keyword)
 
-    csv_writer = CsvWriter(keyword, args.output_file)
+    csv_writer = CsvWriter(keyword, data_folder_path, args.output_file)
 
     total_cc_count = 0
     total_audio_count = 0

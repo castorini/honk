@@ -36,17 +36,14 @@ def main():
         required=True,
         help="API key for youtube data v3 API")
 
-    parser.add_argument(
-        "-o",
-        "--output_folder",
-        type=str,
-        default="audio_data",
-        help="folder to store the audio data")
-
     args = parser.parse_args()
-    keyword = args.keyword.lower()
+    data_folder_path = "./kws-gen-data"
+    if not os.path.exists(data_folder_path):
+        cp.print_error("please clone kws-gen-data folder using git submodule")
+        exit()
 
-    directory = os.path.join(args.output_folder, keyword)
+    keyword = args.keyword.lower()
+    directory = os.path.join(data_folder_path, "audio_data/" + keyword)
 
     cp.print_progress("location of audio data - ", directory)
 

@@ -83,7 +83,6 @@ python evaluation_audio_generator.py
 	-a < youtube data v3 API key >
 	-k < keywords to search >
 	-f < summary file >
-	-o < folder to store the audio data >
 ```
 
 ##### `evaluate.py`
@@ -93,8 +92,6 @@ Measure the quality of the specified similar audio retrieval process on given su
 python evaluation_audio_generator.py
 	-k < keywords to search >
 	-f < summary file >
-	-d < path to audio files >
 	-r < type of extraction algorithm to use >
 	-th < threshold for retrieving a window >
-	-t < path to target audio folder >
 ```
