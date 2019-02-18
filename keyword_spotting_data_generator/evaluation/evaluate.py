@@ -54,7 +54,8 @@ def main():
         "-t",
         "--target",
         type=str,
-        help="path to target audio file")
+        default="target_audio",
+        help="path to target audio folder")
 
     args = parser.parse_args()
     keyword = args.keyword.lower()
@@ -68,14 +69,20 @@ def main():
 
     cp.print_progress("evaluation data file - ", args.summary_file)
 
-    # TODO :: load recorded target keyword audio
-    recording = [1, 2, 3, 4] # placeholder
+    # load pre recorded target audios
+    target_audios = []
+    target_audio_dir = os.path.join(args.target, keyword)
 
+    for file_name in os.listdir(target_audio_dir):
+        target_audios.append(librosa.core.load(os.path.join(target_audio_dir, file_name))[0])
+
+    # instantiate extractor
     extractor = None
     if args.extractor == "edit_distance_extractor":
-        cp.print_progress("extractor type :", args.extractor, "with threshold :", args.threshold)
-        extractor = EditDistanceExtractor(recording, args.threshold)
+        cp.print_progress("extractor type :", args.extractor, "( threshold :", args.threshold, ", number of target audios : ", len(target_audios), ")")
+        extractor = EditDistanceExtractor(target_audios, args.threshold)
 
+    # extract similar audio from each audio blocks
     with open(args.summary_file, "r") as file:
         reader = csv.reader(file, delimiter=",")
 
@@ -94,7 +101,7 @@ def main():
                 cp.print_warning("audio file is missing - ", wav_file)
                 continue
 
-            data, _ = librosa.core.load(wav_file, SAMPLE_RATE)
+            data = librosa.core.load(wav_file, SAMPLE_RATE)[0]
 
             extracted_audio_times = extractor.extract_keywords(data)
 

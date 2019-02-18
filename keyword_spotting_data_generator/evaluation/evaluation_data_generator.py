@@ -172,6 +172,7 @@ def main():
 
             _, cc_time, cc_text = cc_split
             cc_text = srt_tag_re.sub('', cc_text)
+            cc_text = cc_text.encode('ascii',errors='ignore').decode()
 
             # clean up punctuation
             cc_text = cc_text.translate(translator)

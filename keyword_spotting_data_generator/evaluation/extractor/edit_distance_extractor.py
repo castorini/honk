@@ -4,8 +4,8 @@ import librosa
 from .base_extractor import BaseAudioExtractor
 
 class EditDistanceExtractor(BaseAudioExtractor):
-    def __init__(self, target, threshold, sr=16000, n_dct_filters=40, n_mels=40, f_max=4000, f_min=20, n_fft=480, hop_ms=10):
-        super().__init__(target, threshold)
+    def __init__(self, target_audios, threshold, sr=16000, n_dct_filters=40, n_mels=40, f_max=4000, f_min=20, n_fft=480, hop_ms=10):
+        super().__init__(target_audios, threshold)
         self.n_mels = n_mels
         self.dct_filters = librosa.filters.dct(n_dct_filters, n_mels)
         self.sr = sr
@@ -14,10 +14,15 @@ class EditDistanceExtractor(BaseAudioExtractor):
         self.n_fft = n_fft
         self.hop_length = sr // 1000 * hop_ms
 
-        # TODO :: process the target audio
+        # TODO :: process the target audios
 
-        # mfcc_target = self.compute_mfccs(target)
-        # self.processed_target = self.vector_quantization(mfcc_target)
+        # self.processed_target = ...
+
+        # for target in target_audios:
+        #     mfcc_target = self.compute_mfccs(target)
+        #     quantized_target = self.vector_quantization(mfcc_target)
+        # 
+        #     TODO :: aggregate and update processed_target
 
     def compute_mfccs(self, data):
         data = librosa.feature.melspectrogram(

@@ -96,5 +96,5 @@ python evaluation_audio_generator.py
 	-d < path to audio files >
 	-r < type of extraction algorithm to use >
 	-th < threshold for retrieving a window >
-	-t < path to target audio file >
+	-t < path to target audio folder >
 ```
