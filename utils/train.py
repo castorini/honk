@@ -42,7 +42,7 @@ def print_eval(name, scores, labels, loss, end="\n"):
     accuracy = (torch.max(scores, 1)[1].view(batch_size).data == labels.data).float().sum() / batch_size
     loss = loss.item()
     print("{} accuracy: {:>5}, loss: {:<25}".format(name, accuracy, loss), end=end)
-    return accuracy
+    return accuracy.item()
 
 def set_seed(config):
     seed = config["seed"]
@@ -55,7 +55,10 @@ def set_seed(config):
 def evaluate(config, model=None, test_loader=None):
     if not test_loader:
         _, _, test_set = mod.SpeechDataset.splits(config)
-        test_loader = data.DataLoader(test_set, batch_size=len(test_set))
+        test_loader = data.DataLoader(
+            test_set,
+            batch_size=len(test_set),
+            collate_fn=test_set.collate_fn)
     if not config["no_cuda"]:
         torch.cuda.set_device(config["gpu_no"])
     if not model:
@@ -81,6 +84,11 @@ def evaluate(config, model=None, test_loader=None):
     print("final test accuracy: {}".format(sum(results) / total))
 
 def train(config):
+    output_dir = os.path.dirname(os.path.abspath(config["output_file"]))
+    if not os.path.exists(output_dir):
+        print(output_dir)
+        os.makedirs(output_dir)
+
     train_set, dev_set, test_set = mod.SpeechDataset.splits(config)
     model = config["model_class"](config)
     if config["input_file"]:
