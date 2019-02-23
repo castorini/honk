@@ -85,7 +85,7 @@ There are command options available:
 | `--conv2_pool`   | [1, inf) [1, inf) |  1 1    | the width and height of the pool filter            |
 | `--conv2_size`     | [1, inf) [1, inf) | 10 4  | the width and height of the conv filter            |
 | `--conv2_stride`     | [1, inf) [1, inf) | 1 1  | the width and length of the stride            |
-| `--data_folder`   | string       | /data/speech_dataset     | path to data       |
+| `--data_folder`   | [string]       | [/data/speech_dataset]     | list of paths to data       |
 | `--dev_every`    | [1, inf)     |  10     | dev interval in terms of epochs            |
 | `--dev_pct`   | [0, 100]       | 10     | percentage of total set to use for dev        |
 | `--dropout_prob` | [0.0, 1.0)   | 0.5     | the dropout rate to use            |
@@ -118,7 +118,10 @@ There are command options available:
 
 ### Training model for honkling
 `--type json` to generate json format of weight files under model folder.
-`--data_folder` now takes in list of folders and data gets repeated to fill `--pos_key_size`. Default is 1000
+
+`--pos_key_size` decides how many audio data to use per keywords. Default is 1000. If there are less than `pos_key_size` data in the provided dataset, given data is duplicated randomly to fill up `pos_key_size`.
+
+Also, `--data_folder` now takes in list of folders and combines data for same keywords
 
 ### Recording audio
 
