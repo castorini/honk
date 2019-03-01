@@ -86,7 +86,6 @@ def evaluate(config, model=None, test_loader=None):
 def train(config):
     output_dir = os.path.dirname(os.path.abspath(config["output_file"]))
     if not os.path.exists(output_dir):
-        print(output_dir)
         os.makedirs(output_dir)
 
     train_set, dev_set, test_set = mod.SpeechDataset.splits(config)
