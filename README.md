@@ -114,7 +114,10 @@ There are command options available:
 | `--timeshift_ms`| [0, inf)       | 100    | time in milliseconds to shift the audio randomly |
 | `--train_pct`   | [0, 100]       | 80     | percentage of total set to use for training       |
 | `--unknown_prob`     | [0.0, 1.0] | 0.1  | the probability of picking an unknown word    |
-| `--wanted_words` | string1 string2 ... stringn  | command random  | the desired target words            |
+| `--wanted_words` | string1 string2 ... string  | command random  | the desired target words            |
+| `--network_slimming` | {true, false} | false | whether to apply network slimming or not |
+| `--slimming_lambda` | [0.0, 1.0]  | 0.0  | regularization for batch normalization layer used for network slimming             |
+| `--prune_pct` | [0.0, 1.0]  | 0.0  | amount to prune            |
 
 ### Training model for honkling
 `--type json` to generate json format of weight files under model folder.

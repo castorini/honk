@@ -79,6 +79,31 @@ class SerializableModule(nn.Module):
     def load(self, filename):
         self.load_state_dict(torch.load(filename, map_location=lambda storage, loc: storage))
 
+
+class ScalingLayer(nn.Module):
+    def __init__(self, n_features):
+        super().__init__()
+        self.scale = nn.Parameter(torch.ones(n_features))
+        self.register_buffer("drop_indices", None)
+        self.register_buffer("keep_indices", None)
+        self.frozen = False
+
+    def prune(self, percentage, freeze=False):
+        indices = self.scale.abs().sort(descending=False)[1]
+        self.drop_indices = indices[:int((percentage / 100) * self.scale.size(0))]
+        self.keep_indices = indices[int((percentage / 100) * self.scale.size(0)):]
+        self.frozen = freeze
+        if freeze:
+            self.scale.data = self.scale.data[self.keep_indices]
+
+    def forward(self, x):
+        x = self.scale.unsqueeze(0).unsqueeze(-1).unsqueeze(-1).expand_as(x) * x
+        if self.drop_indices is not None and not self.frozen:
+            x[:, self.drop_indices] *= 0
+        return x
+
+
+
 class SpeechResModel(SerializableModule):
     def __init__(self, config):
         super().__init__()
@@ -88,6 +113,7 @@ class SpeechResModel(SerializableModule):
         if "res_pool" in config:
             self.pool = nn.AvgPool2d(config["res_pool"])
 
+        self.slimming_lambda = config["slimming_lambda"]
         self.n_layers = n_layers = config["n_layers"]
         dilation = config["use_dilation"]
         if dilation:
@@ -98,8 +124,37 @@ class SpeechResModel(SerializableModule):
                                     bias=False) for _ in range(n_layers)]
         for i, conv in enumerate(self.convs):
             self.add_module("bn{}".format(i + 1), nn.BatchNorm2d(n_maps, affine=False))
+            if i % 2 == 0:
+                self.add_module("scale{}".format(i + 1), ScalingLayer(n_maps))
             self.add_module("conv{}".format(i + 1), conv)
         self.output = nn.Linear(n_maps, n_labels)
+        self.frozen = False
+
+    def prune(self, percentage, freeze=False):
+        for m in self.modules():
+            if isinstance(m, ScalingLayer):
+                m.prune(percentage, freeze=freeze)
+        if freeze:
+            self.frozen = True
+            for i in range(len(self.convs) - 1):
+                if i % 2 == 0:
+                    bn = getattr(self, "bn{}".format(i + 1))
+                    scale = getattr(self, "scale{}".format(i + 1))
+                    conv = getattr(self, "conv{}".format(i + 1))
+                    conv.weight.data = conv.weight.data[scale.keep_indices]
+                    conv = getattr(self, "conv{}".format(i + 2))
+                    conv.weight.data = conv.weight.data[:, scale.keep_indices]
+                    bn.running_mean = bn.running_mean[scale.keep_indices]
+                    bn.running_var = bn.running_var[scale.keep_indices]
+
+    def regularization(self):
+        if not self.slimming_lambda:
+            return 0
+        reg = 0
+        for m in self.modules():
+            if isinstance(m, ScalingLayer):
+                reg += self.slimming_lambda * m.scale.norm(p=1)
+        return reg
 
     def forward(self, x):
         x = x.unsqueeze(1)
@@ -116,6 +171,8 @@ class SpeechResModel(SerializableModule):
                 x = y
             if i > 0:
                 x = getattr(self, "bn{}".format(i))(x)
+                if i % 2 == 1:
+                    x = getattr(self, "scale{}".format(i))(x)
         x = x.view(x.size(0), x.size(1), -1) # shape: (batch, feats, o3)
         x = torch.mean(x, 2)
         return self.output(x)
@@ -246,6 +303,9 @@ class SpeechDataset(data.Dataset):
         config["train_pct"] = 80
         config["dev_pct"] = 10
         config["test_pct"] = 10
+        config["network_slimming"] = False
+        config["slimming_lambda"] = 0.
+        config["prune_pct"] = 0.
         config["wanted_words"] = ["command", "random"]
         config["data_folder"] = ["/data/speech_dataset"]
         config["pos_key_size"] = 1000
