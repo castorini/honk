@@ -311,69 +311,79 @@ class SpeechDataset(data.Dataset):
         bg_noise_files = []
         unknown_files = []
 
-        pos_key_size = {}
-        for word in words:
-            pos_key_size[word] = 0
+        # pos_key_size = {}
+        # for word in words:
+        #     pos_key_size[word] = 0
 
+        # collect list of folders for each keyword
         keyword_folder_mapping = {}
         for folder in folders:
             for keyword_folder in os.listdir(folder):
+                path_name = os.path.join(folder, keyword_folder)
+
+                if os.path.isfile(path_name):
+                    continue
                 if keyword_folder in keyword_folder_mapping:
                     keyword_folder_mapping[keyword_folder].append(folder)
                 else:
                     keyword_folder_mapping[keyword_folder] = [folder]
 
-        for folder_name, dir_folder_arr in keyword_folder_mapping.items():
-            for dir_folder in dir_folder_arr:
-                path_name = os.path.join(dir_folder, folder_name)
-                is_bg_noise = False
-                if os.path.isfile(path_name):
-                    continue
-                if folder_name in words:
-                    label = words[folder_name]
-                elif folder_name == "_background_noise_":
-                    is_bg_noise = True
+        for keyword, folder_arr in keyword_folder_mapping.items():
+
+            is_bg_noise = False
+            if keyword in words:
+                label = words[keyword]
+            elif keyword == "_background_noise_":
+                is_bg_noise = True
+            else:
+                label = words[cls.LABEL_UNKNOWN]
+
+            file_list = []
+
+            for folder in folder_arr:
+                file_list.extend([os.path.join(folder, keyword, wav_file) for wav_file in os.listdir(os.path.join(folder, keyword))])
+
+            size = config["pos_key_size"]
+            if keyword in words:
+                prev = len(file_list)
+                if len(file_list) >= size:
+                    file_list = random.sample(file_list, config["pos_key_size"])
                 else:
-                    label = words[cls.LABEL_UNKNOWN]
+                    # not enough data to make up pos_key_size.
+                    # randomly select from the existing data to fill up pos_key_size
+                    data_size = len(file_list)
+                    missing_count = size - data_size
 
-                file_list = os.listdir(path_name)
+                    while missing_count > data_size and missing_count > 0:
+                        file_list.extend(file_list)
+                        data_size = len(file_list)
+                        missing_count = size - data_size
 
-                size = config["pos_key_size"]
-                # if pos_key_size is greater than first set of target keyword data,
-                # then randomly select from the existing data to fill up pos_key_size
-                # TODO :: fix to handle multiple data folder
-                if folder_name in words:
-                    if pos_key_size[folder_name] >= config["pos_key_size"]:
-                        continue
+                    randomly_selected = random.sample(file_list, missing_count)
+                    file_list.extend(randomly_selected)
 
-                    missing_count = max(0, size - len(file_list))
-                    randomly_selected = list(np.random.choice(file_list, missing_count))
+                print(keyword, "\t\toriginal data size :", prev, ",\tadjusted data size - ", len(file_list))
 
-                    print(folder_name, ', folder size - ', len(file_list), ', missing count - ', missing_count)
-                    file_list += randomly_selected
-
-                    pos_key_size[folder_name] += len(file_list)
-
-                for filename in file_list:
-                    wav_name = os.path.join(path_name, filename)
-                    if is_bg_noise and os.path.isfile(wav_name):
-                        bg_noise_files.append(wav_name)
-                        continue
-                    elif label == words[cls.LABEL_UNKNOWN]:
-                        unknown_files.append(wav_name)
-                        continue
-                    if config["group_speakers_by_id"]:
-                        hashname = re.sub(r"_nohash_.*$", "", filename)
-                    max_no_wavs = 2**27 - 1
-                    bucket = int(hashlib.sha1(hashname.encode()).hexdigest(), 16)
-                    bucket = (bucket % (max_no_wavs + 1)) * (100. / max_no_wavs)
-                    if bucket < dev_pct:
-                        tag = DatasetType.DEV
-                    elif bucket < test_pct + dev_pct:
-                        tag = DatasetType.TEST
-                    else:
-                        tag = DatasetType.TRAIN
-                    sets[tag.value][wav_name] = label
+            for wav_name in file_list:
+                if is_bg_noise and os.path.isfile(wav_name):
+                    bg_noise_files.append(wav_name)
+                    continue
+                elif label == words[cls.LABEL_UNKNOWN]:
+                    unknown_files.append(wav_name)
+                    continue
+                if config["group_speakers_by_id"]:
+                    filename = wav_name.split("/")[-1]
+                    hashname = re.sub(r"_nohash_.*$", "", filename)
+                max_no_wavs = 2**27 - 1
+                bucket = int(hashlib.sha1(hashname.encode()).hexdigest(), 16)
+                bucket = (bucket % (max_no_wavs + 1)) * (100. / max_no_wavs)
+                if bucket < dev_pct:
+                    tag = DatasetType.DEV
+                elif bucket < test_pct + dev_pct:
+                    tag = DatasetType.TEST
+                else:
+                    tag = DatasetType.TRAIN
+                sets[tag.value][wav_name] = label
 
         for tag, _ in enumerate(sets):
             unknowns[tag] = int(unknown_prob * len(sets[tag]))
