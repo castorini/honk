@@ -41,7 +41,16 @@ class EditDistanceExtractor(BaseAudioExtractor):
         raise NotImplementedError
 
     def compute_edit_distance(self, data):
-        raise NotImplementedError
+        M = [[i for i in range(len(self.processed_target) + 1)],
+             [0 for i in range(len(self.processed_target) + 1)]]
+        for i in range(1, len(data) + 1):
+            idx = i % 2
+            M[idx][0] = i
+            for j in range(1, len(self.processed_target) + 1):
+                temp = M[1 - idx][j - 1] if self.processed_target[j - 1] == data[i - 1] else M[1 - idx][j - 1] + 1
+                M[idx][j] = min((M[1 - idx][j] + 1), (M[idx][j - 1] + 1), temp)
+        return M[len(data) % 2][-1]
+
 
     def extract_keywords(self, data, window_ms=1000, hop_ms=250):
         selected_window = []
