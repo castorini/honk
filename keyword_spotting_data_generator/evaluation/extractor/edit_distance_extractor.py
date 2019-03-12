@@ -45,15 +45,15 @@ class EditDistanceExtractor(BaseAudioExtractor):
             return len(self.processed_target)
         if len(self.processed_target) == 0:
             return len(data)
-        M = [[i for i in range(len(self.processed_target) + 1)],
-             [0 for i in range(len(self.processed_target) + 1)]]
+        distances = [[i for i in range(len(self.processed_target) + 1)],
+                     [0 for i in range(len(self.processed_target) + 1)]]
         for i in range(1, len(data) + 1):
             idx = i % 2
-            M[idx][0] = i
+            distances[idx][0] = i
             for j in range(1, len(self.processed_target) + 1):
-                temp = M[1 - idx][j - 1] if self.processed_target[j - 1] == data[i - 1] else M[1 - idx][j - 1] + 1
-                M[idx][j] = min((M[1 - idx][j] + 1), (M[idx][j - 1] + 1), temp)
-        return M[len(data) % 2][-1]
+                temp = distances[1 - idx][j - 1] if self.processed_target[j - 1] == data[i - 1] else distances[1 - idx][j - 1] + 1
+                distances[idx][j] = min((distances[1 - idx][j] + 1), (distances[idx][j - 1] + 1), temp)
+        return distances[len(data) % 2][-1]
 
 
     def extract_keywords(self, data, window_ms=1000, hop_ms=250):
