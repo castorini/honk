@@ -79,7 +79,7 @@ python evaluation_data_generator.py
 	-o < output csv file to append output to >
 ```
 
-##### `evaluation_data_generator.py`
+##### `evaluation_audio_generator.py`
 Generate set of `.wav` files from the provided summary file
 
 ```
@@ -93,7 +93,7 @@ python evaluation_audio_generator.py
 Measure the quality of the specified similar audio retrieval process on given summary file
 
 ```
-python evaluation_audio_generator.py
+python evaluate.py
 	-k < keywords to search >
 	-f < summary file >
 	-r < type of extraction algorithm to use >

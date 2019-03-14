@@ -1,6 +1,7 @@
 import numpy as np
 import librosa
 
+from scipy.cluster.vq import vq, kmeans, whiten
 from .base_extractor import BaseAudioExtractor
 
 class EditDistanceExtractor(BaseAudioExtractor):
@@ -34,11 +35,12 @@ class EditDistanceExtractor(BaseAudioExtractor):
             fmin=self.f_min,
             fmax=self.f_max)
         data[data > 0] = np.log(data[data > 0])
-        data = [np.matmul(self.dct_filters, x) for x in np.split(data, data.shape[1], axis=1)]
-        return data
+        data = [np.concatenate(np.matmul(self.dct_filters, x)) for x in np.split(data, data.shape[1], axis=1)]
+        return np.array(data)
 
-    def vector_quantization(self, data):
-        raise NotImplementedError
+    def vector_quantization(self, data, code_book):
+        encoding, dist = vq(data, code_book)
+        return encoding
 
     def compute_edit_distance(self, data):
         if len(data) == 0:
@@ -60,12 +62,18 @@ class EditDistanceExtractor(BaseAudioExtractor):
         selected_window = []
 
         current_start = 0
-        while current_start + window_ms < len(data):
-            window = data[current_start:current_start+window_ms]
+
+        mfcc_audio = self.compute_mfccs(data)
+        whitened = whiten(mfcc_audio)
+        K = 100
+        code_book, distortion = kmeans(whitened, K)
+
+        while current_start + window_ms * (self.sr // 1000) < len(data):
+            window = data[current_start:current_start+window_ms*(self.sr//1000)]
 
             # TODO :: process current window
             # mfcc_window = self.compute_mfccs(window)
-            # vq_window = self.vector_quantization(mfcc_window)
+            # vq_window = self.vector_quantization(mfcc_window, code_book)
 
             # TODO :: measure the distance
             # distance = self.compute_edit_distance(vq_window)
@@ -73,6 +81,6 @@ class EditDistanceExtractor(BaseAudioExtractor):
             # if distance < self.threshold:
             #     selected_window.append(current_start)
 
-            current_start += hop_ms
+            current_start += hop_ms * (self.sr // 1000)
 
         return selected_window
