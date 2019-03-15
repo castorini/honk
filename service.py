@@ -19,7 +19,7 @@ try:
 except ImportError:
     pass
 
-from utils.manage_audio import AudioSnippet, preprocess_audio
+from utils.manage_audio import AudioSnippet, AudioPreprocessor
 try:
     import utils.model as model
 except ImportError:
@@ -56,14 +56,14 @@ class Caffe2LabelService(LabelService):
     def __init__(self, onnx_filename, labels):
         self.labels = labels
         self.model_filename = onnx_filename
-        self.filters = librosa.filters.dct(40, 40)
+        self.audio_processor = AudioPreprocessor()
         self._graph = onnx.load(onnx_filename)
         self._in_name = self._graph.graph.input[0].name
         self.model = onnx_caffe2.backend.prepare(self._graph)
 
     def label(self, wav_data):
         wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
-        model_in = np.expand_dims(preprocess_audio(wav_data, 40, self.filters), 0)
+        model_in = np.expand_dims(self.audio_processor.compute_mfccs(wav_data).squeeze(2), 0)
         model_in = np.expand_dims(model_in, 0)
         model_in = model_in.astype(np.float32)
         predictions = _softmax(self.model.run({self._in_name: model_in})[0])
@@ -74,7 +74,7 @@ class TorchLabelService(LabelService):
         self.labels = labels
         self.model_filename = model_filename
         self.no_cuda = no_cuda
-        self.filters = librosa.filters.dct(40, 40)
+        self.audio_processor = AudioPreprocessor()
         self.reload()
 
     def reload(self):
@@ -96,7 +96,7 @@ class TorchLabelService(LabelService):
             A (most likely label, probability) tuple
         """
         wav_data = np.frombuffer(wav_data, dtype=np.int16) / 32768.
-        model_in = torch.from_numpy(preprocess_audio(wav_data, 40, self.filters)).unsqueeze(0)
+        model_in = torch.from_numpy(self.audio_processor.compute_mfccs(wav_data).squeeze(2)).unsqueeze(0)
         model_in = torch.autograd.Variable(model_in, requires_grad=False)
         if not self.no_cuda:
             model_in = model_in.cuda()
