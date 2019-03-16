@@ -77,6 +77,7 @@ def main():
         cp.print_progress("extractor type :", args.extractor, "( threshold :", args.threshold, ", number of target audios : ", len(target_audios), ")")
         extractor = EditDistanceExtractor(target_audios, args.threshold)
 
+    success = 0
     # extract similar audio from each audio blocks
     with open(args.summary_file, "r") as file:
         reader = csv.reader(file, delimiter=",")
@@ -100,13 +101,18 @@ def main():
 
             extracted_audio_times = extractor.extract_keywords(data)
 
-            # TODO :: count how many window has been extracted and compare it against true count
+            true_count = line[-1]
+            if true_count == len(extracted_audio_times):
+                success += 1
+            else:
+                cp.print_info("extracted ", len(extracted_audio_times), " windows, but count is ", true_count)
 
             # TODO :: might be good idea to update threshold if the accuracy is way too low
 
     cp.print_progress("evaluation is completed for ", keyword, " - ", total)
 
-    # TODO :: calculate accuracy and report metrics
+    accuracy = round((success / total) * 100, 2)
+    cp.print_progress("extractor achieved ", accuracy, "% accuracy")
 
     # TODO :: if we update threshold, report threshold as well
 
