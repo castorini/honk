@@ -111,8 +111,8 @@ def main():
 
     cp.print_progress("evaluation is completed for ", keyword, " - ", total)
 
-    accuracy = (success / total) * 100
-    cp.print_info("extractor achieved ", accuracy, "% accuracy")
+    accuracy = round((success / total) * 100, 2)
+    cp.print_progress("extractor achieved ", accuracy, "% accuracy")
 
     # TODO :: if we update threshold, report threshold as well
 
