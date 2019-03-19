@@ -38,9 +38,6 @@ class EditDistanceExtractor(BaseAudioExtractor):
         data = [np.concatenate(np.matmul(self.dct_filters, x)) for x in np.split(data, data.shape[1], axis=1)]
         return np.array(data)
 
-    def vector_quantization(self, data, code_book):
-        encoding, dist = vq(data, code_book)
-        return encoding
 
     def compute_edit_distance(self, data):
         if len(data) == 0:
@@ -62,18 +59,19 @@ class EditDistanceExtractor(BaseAudioExtractor):
         selected_window = []
 
         current_start = 0
+        window_size = window_ms * (self.sr // 1000)
 
         mfcc_audio = self.compute_mfccs(data)
         whitened = whiten(mfcc_audio)
         K = 100
-        code_book, distortion = kmeans(whitened, K)
+        code_book = kmeans(whitened, K)[0]
 
-        while current_start + window_ms * (self.sr // 1000) < len(data):
-            window = data[current_start:current_start+window_ms*(self.sr//1000)]
+        while current_start + window_size < len(data):
+            window = data[current_start:current_start + window_size]
 
             # TODO :: process current window
             # mfcc_window = self.compute_mfccs(window)
-            # vq_window = self.vector_quantization(mfcc_window, code_book)
+            # vq_window = vq(mfcc_window, code_book)[0]
 
             # TODO :: measure the distance
             # distance = self.compute_edit_distance(vq_window)
@@ -82,5 +80,6 @@ class EditDistanceExtractor(BaseAudioExtractor):
             #     selected_window.append(current_start)
 
             current_start += hop_ms * (self.sr // 1000)
+
 
         return selected_window

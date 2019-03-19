@@ -105,7 +105,7 @@ def main():
             if true_count == len(extracted_audio_times):
                 success += 1
             else:
-                cp.print_info("extracted ", len(extracted_audio_times), " windows, but count is ", true_count)
+                cp.print_progress("extracted ", len(extracted_audio_times), " windows, but count is ", true_count)
 
             # TODO :: might be good idea to update threshold if the accuracy is way too low
 
