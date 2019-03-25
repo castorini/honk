@@ -63,8 +63,13 @@ class EditDistanceExtractor(BaseAudioExtractor):
 
         mfcc_audio = self.compute_mfccs(data)
         whitened = whiten(mfcc_audio)
-        K = 100
-        code_book = kmeans(whitened, K)[0]
+
+        k = whitened.shape[0]
+        code_book, distortion = kmeans(whitened, k)
+
+        while distortion < 1:
+            k -= 10
+            code_book, distortion = kmeans(whitened, k)
 
         while current_start + window_size < len(data):
             window = data[current_start:current_start + window_size]
