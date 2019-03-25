@@ -5,7 +5,7 @@ from scipy.cluster.vq import vq, kmeans, whiten
 from .base_extractor import BaseAudioExtractor
 
 class EditDistanceExtractor(BaseAudioExtractor):
-    def __init__(self, target_audios, threshold, sr=16000, n_dct_filters=40, n_mels=40, f_max=4000, f_min=20, n_fft=480, hop_ms=10):
+    def __init__(self, target_audios, threshold, distortion_threshold=1, sr=16000, n_dct_filters=40, n_mels=40, f_max=4000, f_min=20, n_fft=480, hop_ms=10):
         super().__init__(target_audios, threshold)
         self.n_mels = n_mels
         self.dct_filters = librosa.filters.dct(n_dct_filters, n_mels)
@@ -67,7 +67,7 @@ class EditDistanceExtractor(BaseAudioExtractor):
         k = whitened.shape[0]
         code_book, distortion = kmeans(whitened, k)
 
-        while distortion < 1:
+        while distortion < distortion_threshold:
             k -= 10
             code_book, distortion = kmeans(whitened, k)
 
