@@ -14,16 +14,13 @@ class EditDistanceExtractor(BaseAudioExtractor):
         self.f_min = f_min
         self.n_fft = n_fft
         self.hop_length = sr // 1000 * hop_ms
+        self.distortion_threshold = distortion_threshold
 
-        # TODO :: process the target audios
+        # Use the first audio file for now
+        target = target_audios[0]
+        self.processed_target = self.compute_mfccs(target)
+        # TODO :: take average to make processed_target more robust
 
-        # self.processed_target = ...
-
-        # for target in target_audios:
-        #     mfcc_target = self.compute_mfccs(target)
-        #     quantized_target = self.vector_quantization(mfcc_target)
-        # 
-        #     TODO :: aggregate and update processed_target
 
     def compute_mfccs(self, data):
         data = librosa.feature.melspectrogram(
@@ -39,18 +36,18 @@ class EditDistanceExtractor(BaseAudioExtractor):
         return np.array(data)
 
 
-    def compute_edit_distance(self, data):
+    def compute_edit_distance(self, data, target):
         if len(data) == 0:
-            return len(self.processed_target)
-        if len(self.processed_target) == 0:
+            return len(target)
+        if len(target) == 0:
             return len(data)
-        distances = [[i for i in range(len(self.processed_target) + 1)],
-                     [0 for i in range(len(self.processed_target) + 1)]]
+        distances = [[i for i in range(len(target) + 1)],
+                     [0 for i in range(len(target) + 1)]]
         for i in range(1, len(data) + 1):
             idx = i % 2
             distances[idx][0] = i
-            for j in range(1, len(self.processed_target) + 1):
-                temp = distances[1 - idx][j - 1] if self.processed_target[j - 1] == data[i - 1] else distances[1 - idx][j - 1] + 1
+            for j in range(1, len(target) + 1):
+                temp = distances[1 - idx][j - 1] if target[j - 1] == data[i - 1] else distances[1 - idx][j - 1] + 1
                 distances[idx][j] = min((distances[1 - idx][j] + 1), (distances[idx][j - 1] + 1), temp)
         return distances[len(data) % 2][-1]
 
@@ -67,22 +64,22 @@ class EditDistanceExtractor(BaseAudioExtractor):
         k = whitened.shape[0]
         code_book, distortion = kmeans(whitened, k)
 
-        while distortion < distortion_threshold:
+        while distortion < self.distortion_threshold:
             k -= 10
             code_book, distortion = kmeans(whitened, k)
+
+        target_vq_window = vq(self.processed_target, code_book)[0]
 
         while current_start + window_size < len(data):
             window = data[current_start:current_start + window_size]
 
-            # TODO :: process current window
-            # mfcc_window = self.compute_mfccs(window)
-            # vq_window = vq(mfcc_window, code_book)[0]
+            mfcc_window = self.compute_mfccs(window)
+            vq_window = vq(mfcc_window, code_book)[0]
 
-            # TODO :: measure the distance
-            # distance = self.compute_edit_distance(vq_window)
+            distance = self.compute_edit_distance(vq_window, target_vq_window)
 
-            # if distance < self.threshold:
-            #     selected_window.append(current_start)
+            if distance / len(target_vq_window) < self.threshold:
+                selected_window.append(current_start)
 
             current_start += hop_ms * (self.sr // 1000)
 

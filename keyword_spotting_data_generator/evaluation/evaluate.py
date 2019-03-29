@@ -40,7 +40,7 @@ def main():
         "-th",
         "--threshold",
         type=float,
-        default=0.95,
+        default=0.5,
         help="threshold for retrieving a window")
 
     args = parser.parse_args()
@@ -69,7 +69,7 @@ def main():
         exit()
 
     for file_name in os.listdir(target_audio_dir):
-        target_audios.append(librosa.core.load(os.path.join(target_audio_dir, file_name))[0])
+        target_audios.append(librosa.core.load(os.path.join(target_audio_dir, file_name), SAMPLE_RATE)[0])
 
     # instantiate extractor
     extractor = None
