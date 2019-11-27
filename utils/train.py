@@ -159,7 +159,7 @@ def train(config):
                 print("saving best model...")
                 max_acc = avg_acc
                 model.save(config["output_file"])
-                best_model=copy_deepcopy(model)
+                best_model=copy.deepcopy(model)
     evaluate(config, best_model, test_loader)
 
 def main():
