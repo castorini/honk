@@ -9,6 +9,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.utils.data as data
+import copy
 
 from . import model as mod
 from .manage_audio import AudioPreprocessor
@@ -110,12 +111,12 @@ def train(config):
     dev_loader = data.DataLoader(
         dev_set,
         batch_size=min(len(dev_set), 16),
-        shuffle=True,
+        shuffle=False,
         collate_fn=dev_set.collate_fn)
     test_loader = data.DataLoader(
         test_set,
-        batch_size=min(len(test_set), 16),
-        shuffle=True,
+        batch_size=len(test_set),
+        shuffle=False,
         collate_fn=test_set.collate_fn)
     step_no = 0
 
@@ -151,7 +152,6 @@ def train(config):
                 scores = model(model_in)
                 labels = Variable(labels, requires_grad=False)
                 loss = criterion(scores, labels)
-                loss_numeric = loss.item()
                 accs.append(print_eval("dev", scores, labels, loss))
             avg_acc = np.mean(accs)
             print("final dev accuracy: {}".format(avg_acc))
@@ -159,7 +159,8 @@ def train(config):
                 print("saving best model...")
                 max_acc = avg_acc
                 model.save(config["output_file"])
-    evaluate(config, model, test_loader)
+                best_model=copy.deepcopy(model)
+    evaluate(config, best_model, test_loader)
 
 def main():
     output_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "model", "model.pt")

@@ -275,7 +275,7 @@ class SpeechDataset(data.Dataset):
     def load_audio(self, example, silence=False):
         if silence:
             example = "__silence__"
-        if random.random() < 0.7:
+        if random.random() < 0.7 or not self.set_type == DatasetType.TRAIN:
             try:
                 return self._audio_cache[example]
             except KeyError:
