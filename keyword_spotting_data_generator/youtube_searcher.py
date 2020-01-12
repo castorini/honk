@@ -1,6 +1,5 @@
 from googleapiclient.discovery import build
-
-from .url_fetcher import UrlFetcher
+from url_fetcher import UrlFetcher
 from utils import color_print as cp
 
 class YoutubeSearcher(UrlFetcher):
