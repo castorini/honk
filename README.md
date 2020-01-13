@@ -7,6 +7,7 @@
 Honk is a PyTorch reimplementation of Google's TensorFlow convolutional neural networks for keyword spotting, which accompanies the recent release of their [Speech Commands Dataset](https://research.googleblog.com/2017/08/launching-speech-commands-dataset.html). For more details, please consult our writeup:
 
 + Raphael Tang, Jimmy Lin. [Honk: A PyTorch Reimplementation of Convolutional Neural Networks for Keyword Spotting.](https://arxiv.org/abs/1710.06554) _arXiv:1710.06554_, October 2017.
++ Raphael Tang, Jimmy Lin. [Deep Residual Learning for Small-Footprint Keyword Spotting.](https://arxiv.org/abs/1710.10361) _Proceedings of the 2018 IEEE International Conference on Acoustics, Speech and Signal Processing_, pp. 5479-5483.
 
 Honk is useful for building on-device speech recognition capabilities for interactive intelligent agents. Our code can be used to identify simple commands (e.g., "stop" and "go") and be adapted to detect custom "command triggers" (e.g., "Hey Siri!").
 
@@ -116,6 +117,16 @@ There are command options available:
 | `--train_pct`   | [0, 100]       | 80     | percentage of total set to use for training       |
 | `--unknown_prob`     | [0.0, 1.0] | 0.1  | the probability of picking an unknown word    |
 | `--wanted_words` | string1 string2 ... stringn  | command random  | the desired target words            |
+
+### JavaScript-based Keyword Spotting
+
+[Honkling](https://github.com/castorini/honkling) is a JavaScript implementation of Honk.
+With Honkling, it is possible to implement various web applications with in-browser keyword spotting functionality.
+
+### Keyword Spotting Data Generator
+
+In order to improve the flexibility of Honk and Honkling, we provide a program that constructs a dataset from youtube videos.
+Details can be found in `keyword_spotting_data_generator` folder
 
 ### Recording audio
 

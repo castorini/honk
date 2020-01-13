@@ -1,6 +1,6 @@
 # Keyword Spotting Data Generator
 ---
-In order to add flexibility of keyword spotting, we are working on dataset generator using youtube videos.
+In order to improve the flexibility of [Honk](https://github.com/castorini/honk) and [Honkling](https://github.com/castorini/honkling), we provide a program that constructs a dataset from youtube videos.
 Key idea is to decrease the search space by utilizing subtitles and extract target audio using [PocketSphinx](https://github.com/cmusphinx/pocketsphinx).
 
 ## < Preparation >
