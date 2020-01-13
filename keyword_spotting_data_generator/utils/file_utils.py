@@ -1,5 +1,5 @@
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 def ensure_dir(dir_path):
     dir_path = Path(dir_path)
@@ -9,4 +9,4 @@ def ensure_dir(dir_path):
 def remove_dir(dir_path):
     dir_path = Path(dir_path)
     if not dir_path.is_dir():
-        shutil.rmtree(dir_path) 
+        shutil.rmtree(dir_path)

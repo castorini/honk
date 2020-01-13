@@ -1,7 +1,7 @@
-import re
-import os
-import subprocess
 import librosa
+import os
+import re
+import subprocess
 from pydub import AudioSegment
 from pytube import YouTube as PyTube
 
@@ -91,8 +91,6 @@ class YoutubeCrawler():
 
         if not os.path.isfile(temp_file_name + ".mp4"):
             raise Exception("crawled file is not in format of mp4")
-            
-        # TODO:: clean up the downloaded file
 
         ffmpeg_template = "ffmpeg -i {0}.mp4 -codec:a pcm_s16le -ac 1 {0}.wav"
         cmd = ffmpeg_template.format(temp_file_name).split()

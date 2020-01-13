@@ -9,9 +9,9 @@ import youtube_processor as yp
 from argparse import ArgumentParser
 from extractor import SphinxSTTExtractor
 from pytube import YouTube as PyTube
-from youtube_searcher import YoutubeSearcher
 from utils import color_print as cp
 from utils import file_utils
+from youtube_searcher import YoutubeSearcher
 
 
 TEMP_DIR = "/tmp/keyword_generator"
@@ -45,7 +45,7 @@ def process_cation(keyword, caption, punctutation_translator, srt_tag_re):
     if len(cc_split) == 4 and cc_split[0] == '':
         cc_split = (cc_split[1], cc_split[2], cc_split[3])
     elif len(cc_split) != 3:
-        # cp.print_yellow("srt format is not interpretable for the video")
+        # cp.print_color(cp.ColorEnum.YELLOW, "srt format is not interpretable for the video")
         return None, None, None
 
     _, cc_time, cc_text = cc_split
@@ -61,7 +61,7 @@ def process_cation(keyword, caption, punctutation_translator, srt_tag_re):
     keyword_exist = contain_keyword(keyword, words)
 
     if not keyword_exist:
-        # cp.print_yellow("srt format is not interpretable for the video")
+        # cp.print_color(cp.ColorEnum.YELLOW, "srt format is not interpretable for the video")
         return None, None, None
 
     try:
@@ -69,7 +69,7 @@ def process_cation(keyword, caption, punctutation_translator, srt_tag_re):
     except (KeyboardInterrupt, SystemExit):
         raise
     except Exception as exception:
-        # cp.print_yellow(exception)
+        # cp.print_color(cp.ColorEnum.YELLOW, exception)
         return None, None, None
 
     return start_time, end_time, words
@@ -86,12 +86,12 @@ def retrieve_captions(url, keyword):
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
-        cp.print_yellow("failed to generate PyTube representation for the video")
+        cp.print_color(cp.ColorEnum.YELLOW, "failed to generate PyTube representation for the video")
         return None
 
     caption = video.captions.get_by_language_code('en')
     if not caption:
-        cp.print_yellow("no caption available for the video")
+        cp.print_color(cp.ColorEnum.YELLOW, "no caption available for the video")
         return None
 
     try:
@@ -99,7 +99,7 @@ def retrieve_captions(url, keyword):
     except (KeyboardInterrupt, SystemExit):
         raise
     except:
-        cp.print_yellow("failed to retrieve for the video")
+        cp.print_color(cp.ColorEnum.YELLOW, "failed to retrieve for the video")
         return None
 
     # make sure the keyword appear in captions before crawling
@@ -110,7 +110,7 @@ def retrieve_captions(url, keyword):
         if keyword_exist:
             return srt_captions
 
-    cp.print_yellow("captions do not contain the keyword")
+    cp.print_color(cp.ColorEnum.YELLOW, "captions do not contain the keyword")
     return None
 
 
@@ -144,7 +144,7 @@ def extract_keyword(url, extractor, audio_segmentor, audio_data, start_time, end
     return extracted_audio_count
 
 
-def generate_dataset(api_key, keyword, data_size, output_dir):
+def generate_dataset(youtube_api_key, words_api_key, keyword, data_size, output_dir):
     '''
     search keyword on youtube and extract keyword audio
     '''
@@ -154,7 +154,7 @@ def generate_dataset(api_key, keyword, data_size, output_dir):
     keyword = keyword.lower()
 
     # list of keywords to search youtube about
-    synonyms = wordset.get_relevant_words(keyword)
+    synonyms = wordset.get_relevant_words(keyword, words_api_key)
     synonyms = [keyword] + synonyms
 
     search_terms = []
@@ -182,14 +182,14 @@ def generate_dataset(api_key, keyword, data_size, output_dir):
     urls = []
     for search_term in search_terms:
 
-        url_fetcher = YoutubeSearcher(api_key, search_term)
-        cp.print_bold(f"search term : {search_term}")
+        url_fetcher = YoutubeSearcher(youtube_api_key, search_term)
+        cp.print_color(cp.ColorEnum.BOLD, f"search term : {search_term}")
 
         while True:
             url = url_fetcher.next()[0]
 
             if not url:
-                cp.print_yellow("there are no more urls to process")
+                cp.print_color(cp.ColorEnum.YELLOW, "there are no more urls to process")
                 break
 
             print(f"keyword: {keyword}")
@@ -197,7 +197,7 @@ def generate_dataset(api_key, keyword, data_size, output_dir):
             print(f"url: {url}")
 
             if url in urls:
-                cp.print_yellow("the video is already added")
+                cp.print_color(cp.ColorEnum.YELLOW, "the video is already added")
                 continue
 
             # check for valid format and retreive captions
@@ -215,8 +215,8 @@ def generate_dataset(api_key, keyword, data_size, output_dir):
             except (KeyboardInterrupt, SystemExit):
                 raise
             except Exception as exception:
-                cp.print_yellow("failed to download audio file for the video")
-                cp.print_yellow(exception)
+                cp.print_color(cp.ColorEnum.YELLOW, "failed to download audio file for the video")
+                cp.print_color(cp.ColorEnum.YELLOW, exception)
                 continue
 
             # locate and segment keyword audio
@@ -236,13 +236,13 @@ def generate_dataset(api_key, keyword, data_size, output_dir):
 
                 if extracted_audio_counts > 0:
                     audio_counter += extracted_audio_counts
-                    cp.print_green(f"{keyword} - {audio_counter}/{data_size}")
+                    cp.print_color(cp.ColorEnum.GREEN, f"{keyword} - {audio_counter}/{data_size}")
 
             if audio_counter > data_size:
                 break
 
         if audio_counter > data_size:
-            cp.print_bold(f"successfully extracted {audio_counter} audios of {keyword}")
+            cp.print_color(cp.ColorEnum.BOLD, f"successfully extracted {audio_counter} audios of {keyword}")
             break
 
     return audio_counter
@@ -251,11 +251,18 @@ def main():
     parser = ArgumentParser()
 
     parser.add_argument(
-        "-a",
-        "--api_key",
+        "-y",
+        "--youtube_api_key",
         type=str,
         required=True,
         help="API key for youtube data v3 API")
+
+    parser.add_argument(
+        "-w",
+        "--words_api_key",
+        type=str,
+        required=True,
+        help="API key for words API")
 
     parser.add_argument(
         "-k",
@@ -287,14 +294,14 @@ def main():
     collection_result = {}
 
     for index, keyword in enumerate(args.keyword_list):
-        cp.print_bold(f"collecting {args.samples_per_keyword} audio samples of keyword : {keyword}")
+        cp.print_color(cp.ColorEnum.BOLD, f"collecting {args.samples_per_keyword} audio samples of keyword : {keyword}")
 
-        count = generate_dataset(args.api_key, keyword, args.samples_per_keyword, args.output_dir)
+        count = generate_dataset(args.youtube_api_key, args.words_api_key, keyword, args.samples_per_keyword, args.output_dir)
 
         collection_result[keyword] = count
 
     for keyword, count in collection_result.items():
-        cp.print_bold(f"collected {count} keywords of {keyword}")
+        cp.print_color(cp.ColorEnum.BOLD, f"collected {count} keywords of {keyword}")
 
     file_utils.remove_dir(TEMP_DIR)
 

@@ -6,12 +6,14 @@ Key idea is to decrease the search space by utilizing subtitles and extract targ
 ## < Preparation >
 - Necessary python packages can be downloaded with `pip -r install requirements.txt`
 - [ffmpeg](https://www.ffmpeg.org/) and [SoX](http://sox.sourceforge.net/) must be available as well.
-- YouTube Data API - follow [this instruction](https://developers.google.com/youtube/v3/getting-started) to obtain a new API key
+- YouTube Data API Key - follow [this instruction](https://developers.google.com/youtube/v3/getting-started) to obtain a new API key
+- [Words API Key](https://www.wordsapi.com/)
 
 ## < Usage >
 ```
 python keyword_data_generator.py
-	-a < youtube data v3 API key >
+	-y < youtube data v3 API key >
+	-w < words API key >
 	-k < list of keywords to search >
 	-s < number of samples to collect per keyword (default: 10) >
 	-o < output path (default: "./generated_keyword_audios") >
@@ -19,7 +21,7 @@ python keyword_data_generator.py
 
 example:
 ```
-python keyword_data_generator.py -a $YOUTUBE_API_KEY -k google slack -s 20 -o ./generated
+python keyword_data_generator.py -y $YOUTUBE_API_KEY -w $WORDS_API_KEY -k google slack -s 20 -o ./generated
 ```
 
 ## < Improvements >

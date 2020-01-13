@@ -1,5 +1,5 @@
-import numpy as np
 import inflect
+import numpy as np
 
 class BaseAudioExtractor():
     def __init__(self, keyword, threshold):

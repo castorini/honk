@@ -12,7 +12,7 @@ class YoutubeSearcher(UrlFetcher):
 
     def search_videos(self, query, max_results=50, token=None):
         if token == "last_page":
-            cp.print_warning("No more search results available for ", query)
+            cp.print_color(cp.ColorEnum.YELLOW, "No more search results available for ", query)
             return (None, [])
         youtube = build("youtube", "v3", developerKey=self.api_key)
         search_response = youtube.search().list(

@@ -1,7 +1,6 @@
 import os
-
-from pocketsphinx import get_model_path, AudioFile, Pocketsphinx
 from .base_extractor import BaseAudioExtractor
+from pocketsphinx import get_model_path, AudioFile, Pocketsphinx
 
 class SphinxSTTExtractor(BaseAudioExtractor):
     def __init__(self, keyword, threshold=1e-20):
