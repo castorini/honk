@@ -66,6 +66,8 @@ def process_cation(keyword, caption, punctutation_translator, srt_tag_re):
 
     try:
         start_time, end_time = yp.parse_srt_time(cc_time)
+    except (KeyboardInterrupt, SystemExit):
+        raise
     except Exception as exception:
         # cp.print_yellow(exception)
         return None, None, None
@@ -81,7 +83,9 @@ def retrieve_captions(url, keyword):
 
     try:
         video = PyTube(yp.get_youtube_url(url))
-    except Exception as exception:
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
         cp.print_yellow("failed to generate PyTube representation for the video")
         return None
 
@@ -92,7 +96,9 @@ def retrieve_captions(url, keyword):
 
     try:
         srt_captions = caption.generate_srt_captions().lower().split('\n\n')
-    except Exception as exception:
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
         cp.print_yellow("failed to retrieve for the video")
         return None
 
@@ -206,6 +212,8 @@ def generate_dataset(api_key, keyword, data_size, output_dir):
             try:
                 crawler = yp.YoutubeCrawler(url)
                 audio_data = crawler.get_audio()
+            except (KeyboardInterrupt, SystemExit):
+                raise
             except Exception as exception:
                 cp.print_yellow("failed to download audio file for the video")
                 cp.print_yellow(exception)
