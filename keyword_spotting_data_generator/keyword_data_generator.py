@@ -1,263 +1,309 @@
-import datetime
-import math
+import inflect
+import librosa
 import os
 import re
-import string
 import subprocess
-import sys
-import time
-from argparse import ArgumentParser
-import numpy as np
-import librosa
-from aeneas.executetask import ExecuteTask
-from aeneas.task import Task
-from pytube import YouTube
+import string
 import wordset
-import search
+import youtube_processor as yp
+from argparse import ArgumentParser
+from extractor import SphinxSTTExtractor
+from pytube import YouTube as PyTube
+from utils import color_print as cp
+from utils import file_utils
+from youtube_searcher import YoutubeSearcher
 
-TEXT_COLOUR = {
-    'HEADER' : '\033[95m',
-    'OKBLUE' : '\033[94m',
-    'OKGREEN' : '\033[92m',
-    'WARNING' : '\033[93m',
-    'FAIL' : '\033[91m',
-    'ENDC' : '\033[0m',
-    'BOLD' : '\033[1m',
-    'UNDERLINE' : '\033[4m'
-}
 
-DATA_DIR = "data"
-TEMP_DIR = DATA_DIR + "/temp/"
+TEMP_DIR = "/tmp/keyword_generator"
 
-def grab_videos(keyword, token=None):
-    res = search.youtube_search(keyword, max_results=50, token=token)
-    token = res[0]
-    videos = res[1]
-    video_dict = {}
+def count_keyword(keyword, words):
+    keyword_count = 0
 
-    for video_data in videos:
-        # print(json.dumps(video_data, indent=4, sort_keys=True))
-        video_id = video_data['id']['videoId']
-        video_title = video_data['snippet']['title']
-        video_dict[video_id] = video_title
-    print("search returned " + str(len(videos)) + " videos")
-    return token, video_dict
+    for word in words:
+        if word == keyword:
+            keyword_count += 1
+            continue
 
-def srt_time_to_ms(hour, minute, second, msecond):
-    converted = int(msecond)
-    converted += (1000 * int(second))
-    converted += (1000 * 60 * int(minute))
-    converted += (1000 * 60 * 60 * int(hour))
-    return converted
+    return keyword_count
 
-def pad_and_center_align(arr, size):
-    pad_size = size - len(arr)
-    left_pad = math.floor(pad_size/2)
-    right_pad = pad_size - left_pad
-    return np.pad(arr, (left_pad, right_pad), 'constant')
+def contain_keyword(keyword, caption):
+    keyword_exist = False
 
-URL_TEMPLATE = "http://youtube.com/watch?v={}"
-FFMPEG_TEMPLATE = "ffmpeg -i {0}.mp4 -codec:a pcm_s16le -ac 1 {0}.wav"
+    if keyword in caption:
+        keyword_exist = True
 
-TAG_CLEANER = re.compile(r"<.*?>|\(.*?\)|\[.*?\]")
-SRT_TIME_PARSER = re.compile(r"(\d+):(\d+):(\d+),(\d+)\s-->\s(\d+):(\d+):(\d+),(\d+)")
-TRANSPLATOR = str.maketrans('', '', string.punctuation)
+    return keyword_exist
 
-ALIGNER_CONFIG_STRING = "task_language=eng|is_text_type=plain|os_task_file_format=json"
 
-def clean_up_temp_files():
-    for filename in os.listdir(TEMP_DIR):
-        os.remove(TEMP_DIR + "/" + filename)
+def process_cation(keyword, caption, punctutation_translator, srt_tag_re):
+    '''
+    process caption to get caption time and text
+    if the target keyword is missing or srt format is incorrect, return None
+    '''
 
-def retrieve_keyword_audio(vid, keyword):
-    audio_index = 0
-    v_url = URL_TEMPLATE.format(vid)
-    youtube = YouTube(v_url)
+    cc_split = caption.split('\n')
+    if len(cc_split) == 4 and cc_split[0] == '':
+        cc_split = (cc_split[1], cc_split[2], cc_split[3])
+    elif len(cc_split) != 3:
+        # cp.print_color(cp.ColorEnum.YELLOW, "srt format is not interpretable for the video")
+        return None, None, None
 
-    if int(youtube.length) > 2700:
-        # only consider video < 45 mins
-        return audio_index
+    _, cc_time, cc_text = cc_split
+    cc_text = srt_tag_re.sub('', cc_text)
+    cc_text = cc_text.encode('ascii', errors='ignore').decode()
 
-    caption = youtube.captions.get_by_language_code('en')
-    if caption:
-        # retrieve audio from video
-        youtube.streams.first().download(output_path=TEMP_DIR, filename=vid)
+    # clean up punctuation
+    cc_text = cc_text.translate(punctutation_translator)
+    cc_text = cc_text.lower().strip().replace(',', '')
+    words = cc_text.strip().split()
 
-        temp_file_name = TEMP_DIR+vid
-        if not os.path.isfile(temp_file_name + ".mp4"):
-            return audio_index
+    # check if the caption contain the keyword
+    keyword_exist = contain_keyword(keyword, words)
 
-        time.sleep(1) # need to wait before ffmpeg takes in as input file
-        cmd = FFMPEG_TEMPLATE.format(temp_file_name).split()
-        subprocess.check_output(cmd)
+    if not keyword_exist:
+        # cp.print_color(cp.ColorEnum.YELLOW, "srt format is not interpretable for the video")
+        return None, None, None
 
-        audio = librosa.core.load(temp_file_name+".wav", 16000)[0]
+    try:
+        start_time, end_time = yp.parse_srt_time(cc_time)
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except Exception as exception:
+        # cp.print_color(cp.ColorEnum.YELLOW, exception)
+        return None, None, None
 
-        os.remove(temp_file_name + ".mp4")
-        os.remove(temp_file_name + ".wav")
+    return start_time, end_time, words
 
-        formatted_vid = vid.replace('_', '-')
 
-        cc_arr = caption.generate_srt_captions().split('\n\n')
-        for captions in cc_arr:
-            cc_split = captions.split('\n')
-            if len(cc_split) == 4 and cc_split[0] == '':
-                cc_split = (cc_split[1], cc_split[2], cc_split[3])
-            elif len(cc_split) != 3:
-                continue
+def retrieve_captions(url, keyword):
+    '''
+    return captions if the video is in right format and contains target keyword
+    else, return None
+    '''
 
-            _, cc_time, cc_text = cc_split
-            cc_text = TAG_CLEANER.sub('', cc_text)
+    try:
+        video = PyTube(yp.get_youtube_url(url))
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        cp.print_color(cp.ColorEnum.YELLOW, "failed to generate PyTube representation for the video")
+        return None
 
-            # clean up punctuation
-            cc_text = cc_text.translate(TRANSPLATOR)
+    caption = video.captions.get_by_language_code('en')
+    if not caption:
+        cp.print_color(cp.ColorEnum.YELLOW, "no caption available for the video")
+        return None
 
-            cc_text = cc_text.lower()
-            words = cc_text.strip().split()
+    try:
+        srt_captions = caption.generate_srt_captions().lower().split('\n\n')
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except:
+        cp.print_color(cp.ColorEnum.YELLOW, "failed to retrieve for the video")
+        return None
 
-            # steming words
-            if keyword not in words and keyword + "s" not in words and keyword + "es" not in words:
-                continue
+    # make sure the keyword appear in captions before crawling
+    keyword_exist = False
+    for caption in srt_captions:
+        keyword_exist = contain_keyword(keyword, caption)
 
-            aligner_task = Task(config_string=ALIGNER_CONFIG_STRING)
+        if keyword_exist:
+            return srt_captions
 
-            # prepare label file for forced aligner
+    cp.print_color(cp.ColorEnum.YELLOW, "captions do not contain the keyword")
+    return None
 
-            label_file = temp_file_name + ".txt"
-            with open(label_file, "w+") as file:
-                for word in words:
-                    file.write(word+"\n")
 
-            # prepare audio file for forced aligner
+def extract_keyword(url, extractor, audio_segmentor, audio_data, start_time, end_time, cc_count):
+    '''
+    process audio and extract one second long audio using Sphinx keyword spotting
+    '''
+    temp_audio_file = os.path.join(TEMP_DIR, "temp.wav")
+    audio_file = os.path.join(TEMP_DIR, f"{url.replace('_', '-')}_{start_time}.wav")
 
-            match_result = SRT_TIME_PARSER.match(cc_time)
-            if match_result:
-                start_time_ms = srt_time_to_ms(
-                    match_result.group(1),
-                    match_result.group(2),
-                    match_result.group(3),
-                    match_result.group(4))
-                stop_time_ms = srt_time_to_ms(
-                    match_result.group(5),
-                    match_result.group(6),
-                    match_result.group(7),
-                    match_result.group(8))
+    # generate an audip file for the current block
+    librosa.output.write_wav(temp_audio_file, audio_data[start_time:end_time], 16000)
 
-                start_pos = start_time_ms * 16
-                stop_pos = stop_time_ms * 16
+    # librosa stores floating-point data but we need signed-integer for speech-to-text
+    # https://github.com/wblgers/py_speech_seg/issues/2
+    sox_command_template = "sox {0} -b 16 -e signed-integer {1}"
+    cmd = sox_command_template.format(temp_audio_file, audio_file).split()
+    subprocess.check_output(cmd)
 
-                block = audio[start_pos:stop_pos] # *16 since 16 samples are captured per each ms
+    os.remove(temp_audio_file)
+    extracted_audio_times = extractor.extract_keywords(audio_file, 16000)
 
-                # temporary audio file for forced aligner
-                audio_file = temp_file_name + ".wav"
-                librosa.output.write_wav(audio_file, block, 16000)
-                time.sleep(1) # buffer for writing wav file
+    extracted_audio_count = 0
+    # to increase the quality of the audio generated, only extract if counts from caption is equal to the kws count
+    if len(extracted_audio_times) == cc_count:
+        audio_segmentor.segment_audio(audio_file, extracted_audio_times)
+        extracted_audio_count = len(extracted_audio_times)
 
-            else:
-                print(TEXT_COLOUR['FAIL'] + "failed pasing srt time : "
-                      + cc_time + TEXT_COLOUR['ENDC'])
-                raise Exception('srt time fail error')
+    os.remove(audio_file)
 
-            aligner_task.text_file_path_absolute = label_file
-            aligner_task.audio_file_path_absolute = audio_file
+    return extracted_audio_count
 
-            # process aligning task
-            ExecuteTask(aligner_task).execute()
 
-            for fragment in aligner_task.sync_map_leaves():
-                if fragment.is_regular and keyword in fragment.text and fragment.length < 0.9:
-                    begin = int(fragment.begin * 16000)
-                    end = int(fragment.end * 16000)
-                    keyword_audio = pad_and_center_align(block[begin:end], 16000)
+def generate_dataset(youtube_api_key, words_api_key, keyword, data_size, output_dir):
+    '''
+    search keyword on youtube and extract keyword audio
+    '''
+    plural_engine = inflect.engine()
 
-                    file_name = formatted_vid+"_"+str(audio_index)+".wav"
-                    librosa.output.write_wav(
-                        DATA_DIR + "/" + keyword + "/" + file_name, keyword_audio, 16000)
-                    audio_index += 1
+    # valid form of keyword
+    keyword = keyword.lower()
 
-    return audio_index
+    # list of keywords to search youtube about
+    synonyms = wordset.get_relevant_words(keyword, words_api_key)
+    synonyms = [keyword] + synonyms
 
-def generate_dataset(keyword, data_size):
+    search_terms = []
+    for term in synonyms:
+        if term not in search_terms:
+            search_terms.append(term)
+
+        plural = plural_engine.plural(term)
+        if plural not in search_terms:
+            search_terms.append(plural)
+
+    print(f"searching synonyms : {search_terms}")
+
+    # search youtube about the term one by one
     audio_counter = 0
 
-    youtube_search_terms = wordset.get_relevant_words(keyword)
-    print("\n" + TEXT_COLOUR['WARNING'] + str(datetime.datetime.now())
-          + " - search terms for keyword " + str(keyword) + " : " + str(youtube_search_terms)
-          + " (" + str(len(youtube_search_terms)) + ")" + TEXT_COLOUR['ENDC'])
-    term_index = 0
+    # to clean up the captions
+    punctutation_translator = str.maketrans('', '', string.punctuation)
+    srt_tag_re = re.compile(r"<.*?>|\(.*?\)|\[.*?\]")
 
-    token = None
-    while audio_counter < data_size and term_index < len(youtube_search_terms):
-        term = youtube_search_terms[term_index]
-        token, video_dict = grab_videos(term, token=token)
-        if not video_dict or token == "last_page":
-            token = None
-            term_index += 1
+    # for audio processing
+    extractor = SphinxSTTExtractor(keyword)
+    audio_segmentor = yp.AudioSegmentor(keyword, output_dir)
 
-        for vid, title in video_dict.items():
-            print(vid + " - " + title)
-            prev_counter = audio_counter
+    urls = []
+    for search_term in search_terms:
+
+        url_fetcher = YoutubeSearcher(youtube_api_key, search_term)
+        cp.print_color(cp.ColorEnum.BOLD, f"search term : {search_term}")
+
+        while True:
+            url = url_fetcher.next()[0]
+
+            if not url:
+                cp.print_color(cp.ColorEnum.YELLOW, "there are no more urls to process")
+                break
+
+            print(f"keyword: {keyword}")
+            print(f"searched term: {search_term}")
+            print(f"url: {url}")
+
+            if url in urls:
+                cp.print_color(cp.ColorEnum.YELLOW, "the video is already added")
+                continue
+
+            # check for valid format and retreive captions
+            srt_captions = retrieve_captions(url, keyword)
+            if srt_captions is None:
+                continue
+
+            # prevent crawler from repeating same url
+            urls.append(url)
+
+            # crawl the video
             try:
-                audio_counter += retrieve_keyword_audio(vid, keyword)
-            except KeyboardInterrupt:
-                print(TEXT_COLOUR['FAIL'] + "keyboard interruption. terminating ..."
-                      + TEXT_COLOUR['ENDC'])
-                sys.exit()
+                crawler = yp.YoutubeCrawler(url)
+                audio_data = crawler.get_audio()
+            except (KeyboardInterrupt, SystemExit):
+                raise
             except Exception as exception:
-                print(TEXT_COLOUR['FAIL'])
-                print("an error has occured while processing video")
-                print(exception)
-                print(TEXT_COLOUR['ENDC'])
-            finally:
-                time.sleep(1)
-                clean_up_temp_files()
-            if prev_counter < audio_counter:
-                print("\n" + TEXT_COLOUR['WARNING'] + str(datetime.datetime.now())
-                      + " - collected " + str(audio_counter) + " / " + str(data_size)
-                      + " " + keyword + TEXT_COLOUR['ENDC'])
+                cp.print_color(cp.ColorEnum.YELLOW, "failed to download audio file for the video")
+                cp.print_color(cp.ColorEnum.YELLOW, exception)
+                continue
+
+            # locate and segment keyword audio
+            for caption in srt_captions:
+                start_time, end_time, words = process_cation(keyword, caption, punctutation_translator, srt_tag_re)
+
+                if words is None:
+                    continue
+
+                # occurance in captions
+                cc_count = count_keyword(keyword, words)
+
+                if cc_count == 0:
+                    continue
+
+                extracted_audio_counts = extract_keyword(url, extractor, audio_segmentor, audio_data, start_time, end_time, cc_count)
+
+                if extracted_audio_counts > 0:
+                    audio_counter += extracted_audio_counts
+                    cp.print_color(cp.ColorEnum.GREEN, f"{keyword} - {audio_counter}/{data_size}")
+
+            if audio_counter > data_size:
+                break
+
+        if audio_counter > data_size:
+            cp.print_color(cp.ColorEnum.BOLD, f"successfully extracted {audio_counter} audios of {keyword}")
+            break
+
     return audio_counter
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument("-s", "--size_per_keyword", dest="data_size", type=int, default=100)
-    parser.add_argument('-k', '--keyword_list', nargs='+', dest="keyword_list",
-                        type=str, required=True)
+
+    parser.add_argument(
+        "-y",
+        "--youtube_api_key",
+        type=str,
+        required=True,
+        help="API key for youtube data v3 API")
+
+    parser.add_argument(
+        "-w",
+        "--words_api_key",
+        type=str,
+        required=True,
+        help="API key for words API")
+
+    parser.add_argument(
+        "-k",
+        "--keyword_list",
+        nargs='+',
+        type=str,
+        required=True,
+        help="list of keywords to collect")
+
+    parser.add_argument(
+        "-s",
+        "--samples_per_keyword",
+        type=int,
+        default=10,
+        help="number of samples to collect per keyword")
+
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        type=str,
+        default="./generated_keyword_audios",
+        help="path to the output dir")
 
     args = parser.parse_args()
-    print(TEXT_COLOUR['WARNING'] + str(datetime.datetime.now()) + " - collecting "
-          + str(args.data_size) + " audios of keywords : " + str(args.keyword_list)
-          + TEXT_COLOUR['ENDC'])
+    file_utils.ensure_dir(TEMP_DIR)
 
-    if not os.path.exists(DATA_DIR):
-        os.makedirs(DATA_DIR)
-
-    if not os.path.exists(TEMP_DIR):
-        os.makedirs(TEMP_DIR)
+    file_utils.ensure_dir(args.output_dir)
 
     collection_result = {}
 
     for index, keyword in enumerate(args.keyword_list):
-        start_time = datetime.datetime.now()
-        output_dir = DATA_DIR + "/" + keyword + "/"
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        count = generate_dataset(keyword.lower(), args.data_size)
-        finish_time = datetime.datetime.now()
+        cp.print_color(cp.ColorEnum.BOLD, f"collecting {args.samples_per_keyword} audio samples of keyword : {keyword}")
 
-        minute_elasped = math.floor((finish_time - start_time).total_seconds() / 60.0)
-        print("\n" + TEXT_COLOUR['WARNING'] + str(datetime.datetime.now())
-              + " - completed collecting " + str(index) + " th keyword ("
-              + str(len(args.keyword_list)) + ") : " + keyword + " - " + str(count)
-              + TEXT_COLOUR['ENDC'])
-        print("\n" + TEXT_COLOUR['WARNING'] + "\t took " + str(minute_elasped) + " minutes"
-              + TEXT_COLOUR['ENDC'])
+        count = generate_dataset(args.youtube_api_key, args.words_api_key, keyword, args.samples_per_keyword, args.output_dir)
 
         collection_result[keyword] = count
 
     for keyword, count in collection_result.items():
-        print(TEXT_COLOUR['OKGREEN'] + keyword + " - " + str(count) + TEXT_COLOUR['ENDC'])
+        cp.print_color(cp.ColorEnum.BOLD, f"collected {count} keywords of {keyword}")
 
-    os.rmdir(TEMP_DIR)
+    file_utils.remove_dir(TEMP_DIR)
 
 if __name__ == "__main__":
     main()

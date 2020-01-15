@@ -1,18 +1,17 @@
 import requests
 
-# https://www.wordsapi.com/
+# retrieving relevant terms using https://www.wordsapi.com/
 
 API_URL = "https://wordsapiv1.p.rapidapi.com/words/"
-API_KEY = "WORDS_API_KEY"
 
-def get_relevant_words(search_term, depth=1):
+def get_relevant_words(search_term, api_key, depth=1):
     relevant_arr = [search_term]
     to_be_searched = [search_term]
 
     while depth > 0 and to_be_searched:
         next_to_be_searched = []
         for word in to_be_searched:
-            response = requests.get(API_URL+word, headers={"X-RapidAPI-Key": API_KEY}).json()
+            response = requests.get(API_URL+word, headers={"X-RapidAPI-Key": api_key}).json()
             if "results" not in response:
                 continue
 
@@ -38,4 +37,3 @@ def get_relevant_words(search_term, depth=1):
         depth -= 1
 
     return relevant_arr
-    
