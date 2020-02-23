@@ -1,6 +1,8 @@
 librosa
 pytube
 requests
+msgpack
 inflect
 pocketsphinx
+google-api-python-client
 pydub

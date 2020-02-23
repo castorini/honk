@@ -24,16 +24,13 @@ class SphinxSTTExtractor(BaseAudioExtractor):
 
         for phrase in audio:
             result = phrase.segments(detailed=True)
-            if len(result) == 0:
-                continue
-            start_time = result[0][2] * 10
-            end_time = result[0][3] * 10
-            # print('%4sms ~ %4sms' % (start_time, end_time))
 
-            if len(result) > 1:
-                print(result)
-                raise ValueError('Result has more than one entry')
+            # TODO:: confirm that when multiple keywords are detected, every detection is valid
+            if len(result) == 1:
+                start_time = result[0][2] * 10
+                end_time = result[0][3] * 10
+                # print('%4sms ~ %4sms' % (start_time, end_time))
 
-            kws_results.append((start_time, end_time))
+                kws_results.append((start_time, end_time))
 
         return kws_results
