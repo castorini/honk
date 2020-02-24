@@ -186,11 +186,13 @@ def generate_dataset(youtube_api_key, words_api_key, keyword, data_size, output_
         cp.print_color(cp.ColorEnum.BOLD, f"search term : {search_term}")
 
         while True:
-            url = url_fetcher.next()[0]
+            url = url_fetcher.next()
 
-            if not url:
+            if len(url) == 0:
                 cp.print_color(cp.ColorEnum.YELLOW, "there are no more urls to process")
                 break
+
+            url = url[0]
 
             print(f"keyword: {keyword}")
             print(f"searched term: {search_term}")
