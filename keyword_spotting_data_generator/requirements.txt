@@ -1,8 +1,7 @@
-librosa
-pytube
-requests
-msgpack
-inflect
-pocketsphinx
-google-api-python-client
-pydub
+librosa==0.6.2
+pytube==9.5.2
+requests==2.21.0
+inflect==2.1.0
+pocketsphinx==0.1.15
+google-api-python-client==1.7.11
+pydub==0.23.1
